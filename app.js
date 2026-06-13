@@ -11824,17 +11824,6 @@ movePilotPrintWindowWatcher = setInterval(function() {
             </style>
         </head>
         <body>
-            <!-- PDF Ready Pop-up -->
-<div id="pdf-ready-overlay" class="app-popup" style="display:none;">
-    <div class="app-popup-header">PDF Ready</div>
-    <div class="app-popup-body">
-        <p>Your PDF is ready to share or download.</p>
-        <div class="app-popup-actions">
-            <button class="app-btn primary" onclick="sharePreparedListedInventoryPdf()">Share / Download PDF</button>
-            <button class="app-btn secondary" onclick="closeListedPdfReadyModal()">Close</button>
-        </div>
-    </div>
-</div>
             <div class="pdf-topbar">
                 <div>
                     <div class="pdf-title">MovePilot Listed Inventory</div>
