@@ -4634,6 +4634,7 @@ function formatDashboardMoney(value) {
         maximumFractionDigits: 0
     });
 }
+
 function dashboardJobHasMissingPrices(job) {
     const sequences = Array.isArray(job.sequences) ? job.sequences : [];
 
@@ -4649,6 +4650,8 @@ function dashboardJobHasMissingPrices(job) {
 // -----------------------------------------------------------------------------
 // Dashboard rendering
 // -----------------------------------------------------------------------------
+
+// Dashboard list
 function renderDashboard() {
     const isDevMode =
         typeof MOVEPILOT_DEV_SKIP_ACTIVATION !== "undefined" &&
@@ -4658,33 +4661,33 @@ function renderDashboard() {
         const safeSequences = Array.isArray(j.sequences) ? j.sequences : [];
 
         let seqBreakdown = safeSequences.length > 0
-    ? `
-        <div class="dashboard-seq-head">
-            <span>Sequence</span>
-            <span>Volume</span>
-            <span>Price</span>
-        </div>
-
-        ${safeSequences.map(function(s, index) {
-            const seqVolume = getDashboardSequenceVolume(j, s.id);
-            const seqPrice = getDashboardSequencePrice(j, s.id);
-
-            return `
-                <div class="seq-row dashboard-seq-row">
-                    <div class="dashboard-seq-main">
-                        <span class="dashboard-seq-title">Seq ${index + 1}: ${s.moveType || 'New Seq'}</span>
-                        <span class="dashboard-seq-sub">${s.packOption || 'No Packing Set'}</span>
-                    </div>
-
-                    <span class="dashboard-seq-volume dashboard-volume-display">${formatVolumeDisplayFromCuft(seqVolume)}</span>
-                    <span class="dashboard-seq-price ${Number(seqPrice || 0) <= 0 && seqVolume > 0 ? "missing" : ""}">
-    ${Number(seqPrice || 0) <= 0 && seqVolume > 0 ? "Price missing" : formatDashboardMoney(seqPrice)}
-</span>
+            ? `
+                <div class="dashboard-seq-head">
+                    <span>Sequence</span>
+                    <span>Volume</span>
+                    <span>Price</span>
                 </div>
-            `;
-        }).join('')}
-    `
-    : `<div class="text-[8px] text-slate-300 italic mt-2 uppercase font-bold">No sequences</div>`;
+
+                ${safeSequences.map(function(s, index) {
+                    const seqVolume = getDashboardSequenceVolume(j, s.id);
+                    const seqPrice = getDashboardSequencePrice(j, s.id);
+
+                    return `
+                        <div class="seq-row dashboard-seq-row">
+                            <div class="dashboard-seq-main">
+                                <span class="dashboard-seq-title">Seq ${index + 1}: ${s.moveType || 'New Seq'}</span>
+                                <span class="dashboard-seq-sub">${s.packOption || 'No Packing Set'}</span>
+                            </div>
+
+                            <span class="dashboard-seq-volume dashboard-volume-display">${formatVolumeDisplayFromCuft(seqVolume)}</span>
+                            <span class="dashboard-seq-price ${Number(seqPrice || 0) <= 0 && seqVolume > 0 ? "missing" : ""}">
+                                ${Number(seqPrice || 0) <= 0 && seqVolume > 0 ? "Price missing" : formatDashboardMoney(seqPrice)}
+                            </span>
+                        </div>
+                    `;
+                }).join('')}
+            `
+            : `<div class="text-[8px] text-slate-300 italic mt-2 uppercase font-bold">No sequences</div>`;
 
         const hasMissingPrices = dashboardJobHasMissingPrices(j);
         return `
@@ -4697,10 +4700,10 @@ function renderDashboard() {
                         <h3 class="text-xl font-black text-slate-800 uppercase leading-none mt-1">${j.name || 'Unnamed Job'}</h3>
                         <p class="dashboard-job-ref">REF: <span>${j.ref || '---'}</span></p>
                         ${
-    hasMissingPrices
-        ? `<div class="dashboard-price-warning">Price missing on one or more sequences</div>`
-        : ""
-}
+                            hasMissingPrices
+                                ? `<div class="dashboard-price-warning">Price missing on one or more sequences</div>`
+                                : ""
+                        }
                         ${j.notes ? `<div class="notes-preview">${j.notes}</div>` : ''}
                         <div class="mt-4 border-t pt-2">${seqBreakdown}</div>
                     </div>
@@ -4716,6 +4719,8 @@ function renderDashboard() {
 
     filterFiles();
 }
+
+// Dashboard job actions
 async function deleteDashboardJob(event, jobId) {
     if (event) {
         event.stopPropagation();
@@ -4756,8 +4761,11 @@ async function deleteDashboardJob(event, jobId) {
 
     await appAlert("Survey file deleted from this device.", "Deleted");
 }
- function addSequence() {
+
+// Sequence actions
+function addSequence() {
     const id = Date.now();
+
     currentJob.sequences.push({
         id: id,
         moveType: "",
@@ -4769,13 +4777,16 @@ async function deleteDashboardJob(event, jobId) {
         schedule: createEmptySequenceSchedule(),
         quote: createEmptySequenceQuote()
     });
+
     activeSeqId = id;
+
     renderSequenceUI();
     renderInventorySequenceDropdown();
     renderInventoryDeliveryDropdown();
     renderScheduleSequenceDropdown();
     saveToDevice();
 }
+
 function copyInventoryItemsFromSequenceToSequence(sourceSequenceId, targetSequenceId) {
     if (!currentJob) return 0;
 
@@ -4810,6 +4821,7 @@ function copyInventoryItemsFromSequenceToSequence(sourceSequenceId, targetSequen
 
     return copiedItems.length;
 }
+
 function copyAdditionalCostLinesFromSequenceToSequence(sourceSequenceId, targetSequenceId) {
     const sourceState = ensureQuoteSequenceState(sourceSequenceId);
     const targetState = ensureQuoteSequenceState(targetSequenceId);
@@ -4828,6 +4840,7 @@ function copyAdditionalCostLinesFromSequenceToSequence(sourceSequenceId, targetS
         return copiedLine;
     });
 }
+
 let sequenceCopyFeedbackTimer = null;
 
 function showSequenceCopyFeedback() {
@@ -4845,9 +4858,10 @@ function showSequenceCopyFeedback() {
         feedbackEl.classList.remove("show");
     }, 3500);
 }
-        function copySequence() {
+function copySequence() {
     const sourceSequenceId = activeSeqId;
     const original = currentJob.sequences.find(s => s.id == sourceSequenceId);
+
     if (!original) return;
 
     const copy = JSON.parse(JSON.stringify(original));
@@ -4861,45 +4875,52 @@ function showSequenceCopyFeedback() {
     copy.schedule.manualDays = Array.isArray(copy.schedule.manualDays)
         ? copy.schedule.manualDays.map(day => ({
             ...day,
-            id: "day_" + Date.now() + "_" + Math.random().toString(36).slice(2,7),
-            groupId: day.groupId || ("grp_" + Date.now() + "_" + Math.random().toString(36).slice(2,7))
+            id: "day_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+            groupId: day.groupId || ("grp_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7))
         }))
         : [];
 
     currentJob.sequences.push(copy);
 
-copyInventoryItemsFromSequenceToSequence(sourceSequenceId, copy.id);
-copyAdditionalCostLinesFromSequenceToSequence(sourceSequenceId, copy.id);
+    copyInventoryItemsFromSequenceToSequence(sourceSequenceId, copy.id);
+    copyAdditionalCostLinesFromSequenceToSequence(sourceSequenceId, copy.id);
 
-activeSeqId = copy.id;
+    activeSeqId = copy.id;
 
     if (currentJob.inventory) {
         currentJob.inventory.activeSequenceId = copy.id;
     }
+
     ensureCostingStore();
-currentJob.costingQuote.selectedSequenceId = String(copy.id);
+    currentJob.costingQuote.selectedSequenceId = String(copy.id);
 
     renderSequenceUI();
     renderInventorySequenceDropdown();
     renderInventoryDeliveryDropdown();
     renderScheduleSequenceDropdown();
-   rebuildLiveInventoryFromSequence(activeSeqId);
-saveCalculatorFeedForActiveSequence();
-showSequenceCopyFeedback();
-saveToDevice();
+    rebuildLiveInventoryFromSequence(activeSeqId);
+    saveCalculatorFeedForActiveSequence();
+    showSequenceCopyFeedback();
+    saveToDevice();
 }
-        function deleteSequence() {
-            if(currentJob.sequences.length <= 1) return;
-            currentJob.sequences = currentJob.sequences.filter(s => s.id != activeSeqId);
-           activeSeqId = currentJob.sequences[0].id;
-renderSequenceUI();
-renderInventorySequenceDropdown();
-renderInventoryDeliveryDropdown();
-renderScheduleSequenceDropdown();
-saveToDevice();
-        }
-    function addProperty() {
+
+function deleteSequence() {
+    if (currentJob.sequences.length <= 1) return;
+
+    currentJob.sequences = currentJob.sequences.filter(s => s.id != activeSeqId);
+    activeSeqId = currentJob.sequences[0].id;
+
+    renderSequenceUI();
+    renderInventorySequenceDropdown();
+    renderInventoryDeliveryDropdown();
+    renderScheduleSequenceDropdown();
+    saveToDevice();
+}
+
+// Property actions
+function addProperty() {
     const newId = Date.now();
+
     currentJob.properties.push({ 
         id: newId, 
         label: "Add Address", 
@@ -4910,16 +4931,22 @@ saveToDevice();
         isCore: false, 
         isSaved: false 
     });
+
     activePropId = newId; 
+
     renderAddressUI();
     saveToDevice();
 }
-        function deleteProperty(id) {
-            currentJob.properties = currentJob.properties.filter(p => p.id !== id);
-            activePropId = currentJob.properties[0].id; renderAddressUI();
-            saveToDevice();
-        }
-       function updateSeqField(f, v) {
+
+function deleteProperty(id) {
+    currentJob.properties = currentJob.properties.filter(p => p.id !== id);
+    activePropId = currentJob.properties[0].id;
+
+    renderAddressUI();
+    saveToDevice();
+}
+
+function updateSeqField(f, v) {
     const seq = currentJob.sequences.find(s => s.id == activeSeqId);
     if (!seq) return;
 
@@ -4940,10 +4967,24 @@ saveToDevice();
     renderInventorySequenceDropdown();
     saveToDevice();
 }
-        function updateStop(type, idx, val) { currentJob.sequences.find(s => s.id == activeSeqId)[type][idx] = val; }
-        function addStop(type) { currentJob.sequences.find(s => s.id == activeSeqId)[type].push(currentJob.properties[0].id); renderSequenceUI(); }
-        function removeStop(type, idx) { currentJob.sequences.find(s => s.id == activeSeqId)[type].splice(idx, 1); renderSequenceUI(); }
-        function updatePropLabel(v) { currentJob.properties.find(p => p.id === activePropId).label = v; }
+function updateStop(type, idx, val) {
+    currentJob.sequences.find(s => s.id == activeSeqId)[type][idx] = val;
+}
+
+function addStop(type) {
+    currentJob.sequences.find(s => s.id == activeSeqId)[type].push(currentJob.properties[0].id);
+    renderSequenceUI();
+}
+
+function removeStop(type, idx) {
+    currentJob.sequences.find(s => s.id == activeSeqId)[type].splice(idx, 1);
+    renderSequenceUI();
+}
+
+function updatePropLabel(v) {
+    currentJob.properties.find(p => p.id === activePropId).label = v;
+}
+
 function updatePropData(f, v) {
     const prop = currentJob.properties.find(p => p.id === activePropId);
     prop[f] = v;
@@ -4975,12 +5016,20 @@ function updatePropData(f, v) {
         if (hdrName) hdrName.innerText = currentJob.customer.displayName || currentJob.name || "";
     }
 }
-        function loadProperty(id) { activePropId = parseInt(id); renderAddressUI(); }
-     function loadSequence(id) {
+
+function loadProperty(id) {
+    activePropId = parseInt(id);
+    renderAddressUI();
+}
+
+// Editor navigation
+function loadSequence(id) {
     activeSeqId = id;
     loadManualScheduleFromActiveSequence();
-        loadScheduleInputsFromActiveSequence();
+    loadScheduleInputsFromActiveSequence();
+
     if (!currentJob.inventory) currentJob.inventory = {};
+
     currentJob.inventory.activeSequenceId = id;
     currentJob.inventory.activeDeliveryId = null;
 
@@ -4989,18 +5038,27 @@ function updatePropData(f, v) {
 
     renderSequenceUI();
     renderInventorySequenceDropdown();
-        renderScheduleSequenceDropdown();
-        renderInventoryDeliveryDropdown();
+    renderScheduleSequenceDropdown();
+    renderInventoryDeliveryDropdown();
 
     saveInventoryContext();
     rebuildLiveInventoryFromSequence(activeSeqId);
 
-saveCalculatorFeedForActiveSequence();
-saveToDevice();
+    saveCalculatorFeedForActiveSequence();
+    saveToDevice();
 }
-        function triggerPulse(id) { const el = document.getElementById(id); if(el) { el.classList.remove('pulse-new'); void el.offsetWidth; el.classList.add('pulse-new'); } }
-        
-        function switchTab(t) {
+
+function triggerPulse(id) {
+    const el = document.getElementById(id);
+
+    if (el) {
+        el.classList.remove('pulse-new');
+        void el.offsetWidth;
+        el.classList.add('pulse-new');
+    }
+}
+
+function switchTab(t) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('content-' + t).classList.remove('hidden');
@@ -5008,14 +5066,16 @@ saveToDevice();
     updateInventoryHeaderReorderVisibility(t);
 
     if (t === 'sequence') {
-    if (!activeSeqId && currentJob && currentJob.inventory && currentJob.inventory.activeSequenceId) {
-        activeSeqId = currentJob.inventory.activeSequenceId;
+        if (!activeSeqId && currentJob && currentJob.inventory && currentJob.inventory.activeSequenceId) {
+            activeSeqId = currentJob.inventory.activeSequenceId;
+        }
+
+        if (!activeSeqId) {
+            setActiveSequenceToDefault();
+        }
+
+        renderSequenceUI();
     }
-    if (!activeSeqId) {
-        setActiveSequenceToDefault();
-    }
-    renderSequenceUI();
-}
 
     if (t === 'address') {
         renderAddressUI();
@@ -5055,12 +5115,13 @@ saveToDevice();
         renderInventoryRoomDropdown();
         renderInventoryFloorDropdown();
         renderInventoryButtons();
-      rebuildLiveInventoryFromSequence(activeSeqId);
-syncInventoryDisplayFromSequence(activeSeqId);
-renderActionButtonStates();
-updateUndoButtonState();
-saveCalculatorFeedForActiveSequence();
+        rebuildLiveInventoryFromSequence(activeSeqId);
+        syncInventoryDisplayFromSequence(activeSeqId);
+        renderActionButtonStates();
+        updateUndoButtonState();
+        saveCalculatorFeedForActiveSequence();
     }
+
     if (t === 'schedule') {
         if (!activeSeqId && currentJob && currentJob.inventory && currentJob.inventory.activeSequenceId) {
             activeSeqId = currentJob.inventory.activeSequenceId;
@@ -5070,11 +5131,12 @@ saveCalculatorFeedForActiveSequence();
         }
 
         loadManualScheduleFromActiveSequence();
-                loadScheduleInputsFromActiveSequence();
+        loadScheduleInputsFromActiveSequence();
         saveCalculatorFeedForActiveSequence();
-                renderScheduleSequenceDropdown();
+        renderScheduleSequenceDropdown();
         renderScheduleCalculator();
     }
+
     if (t === 'listed') {
         saveInventoryContext();
 
@@ -5096,6 +5158,7 @@ saveCalculatorFeedForActiveSequence();
     }
 }
 
+// Manual job entry
 function splitManualName(fullName) {
     const cleaned = (fullName || "").trim();
 
@@ -5118,7 +5181,13 @@ function splitManualName(fullName) {
         firstName: words.slice(1).join(" ")
     };
 }
-        function toggleManualArea() { const area = document.getElementById('manual-entry-area'); area.style.display = (area.style.display === "block") ? "none" : "block"; document.getElementById('timestamp-val').innerText = new Date().toLocaleString('en-GB'); }
+
+function toggleManualArea() {
+    const area = document.getElementById('manual-entry-area');
+    area.style.display = (area.style.display === "block") ? "none" : "block";
+    document.getElementById('timestamp-val').innerText = new Date().toLocaleString('en-GB');
+}
+
 function createManualJob() {
     const name = document.getElementById('m-name').value.trim();
     if (!name) return;
@@ -5171,18 +5240,23 @@ function createManualJob() {
 
     toggleManualArea();
 }
-        function exitToDashboard() { document.getElementById('view-editor').classList.add('hidden'); document.getElementById('view-dashboard').classList.remove('hidden'); renderDashboard(); }
-function calculateMoveCost(){
 
-let crew = parseFloat(document.getElementById("crew-cost").value) || 0;
-let vehicle = parseFloat(document.getElementById("vehicle-cost").value) || 0;
-let other = parseFloat(document.getElementById("other-costs").value) || 0;
-
-let total = crew + vehicle + other;
-
-document.getElementById("total-cost").value = total;
-
+function exitToDashboard() {
+    document.getElementById('view-editor').classList.add('hidden');
+    document.getElementById('view-dashboard').classList.remove('hidden');
+    renderDashboard();
 }
+
+// Simple costing helper
+function calculateMoveCost() {
+    let crew = parseFloat(document.getElementById("crew-cost").value) || 0;
+    let vehicle = parseFloat(document.getElementById("vehicle-cost").value) || 0;
+    let other = parseFloat(document.getElementById("other-costs").value) || 0;
+
+    let total = crew + vehicle + other;
+    document.getElementById("total-cost").value = total;
+}
+
 function getInventoryAddQty() {
     const qtyInput = document.getElementById("inv-qty");
     if (!qtyInput) return 1;
