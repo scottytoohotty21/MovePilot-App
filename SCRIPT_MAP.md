@@ -127,6 +127,14 @@ This is the working map for `js/app.js`. It is meant to make the next cleanup pa
 - Left crew-instruction summary logic for the next pass.
 - Verified `js/app.js` still passes JavaScript syntax checking after the customer-responsibility pass.
 
+## Pass 7 Changes
+
+- Added a `Crew instruction summary` label before `buildCrewInstructionsSummary()`.
+- Reformatted the crew summary object and top-level export-wrap state.
+- Tidied part of the note-handling logic that decides whether an item note belongs with customer responsibilities or crew notes.
+- Left encoded text/template-output lines untouched to avoid changing PDF/listed-inventory wording.
+- Verified `js/app.js` still passes JavaScript syntax checking after the crew-responsibility pass.
+
 ## Principle For The Next Pass
 
 Keep all existing function names in global scope for now. The HTML still uses inline handlers such as `onclick="..."`, so renaming or wrapping functions too early could break buttons.
