@@ -236,3 +236,15 @@ Keep all existing function names in global scope for now. The HTML still uses in
   - `tryShareListedInventoryPdfFromGesture(...)`
 - Verified there are no remaining references to the superseded function names.
 - Verified `js/app.js` still passes JavaScript syntax checking after removing the duplicate PDF code.
+
+## Pass 12 PDF Ready Modal Cleanup
+
+- Removed the older unused `listed-pdf-ready-overlay` modal from `index.html`.
+- Removed the unused `listed-pdf-ready-name` CSS rule from `styles.css`.
+- Updated `closeAllListedPdfShareOverlays()` so it only closes the live `pdf-ready-overlay`.
+- Left the active PDF-ready popup untouched:
+  - `pdf-ready-overlay`
+  - `pdf-share-now-btn`
+  - `pdf-download-link`
+- Verified there are no remaining references to `listed-pdf-ready-overlay` or `listed-pdf-ready-name`.
+- Verified `js/app.js` still passes JavaScript syntax checking after the modal cleanup.
