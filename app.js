@@ -10343,6 +10343,7 @@ function loadSignatureImageToCanvas(imageData) {
     };
     img.src = imageData;
 }
+// Printable listed inventory content
 function getPrintableListedSections(items) {
     const groupedSections = groupInventoryItemsForListedView(items);
 
@@ -10634,6 +10635,7 @@ function makeSafePdfFilenamePart(value) {
         .slice(0, 50) || "MovePilot";
 }
 
+// Printable/PDF styling
 function getListedInventoryDownloadCss() {
     return `
         .pdf-download-doc {
@@ -10918,6 +10920,7 @@ function getListedInventoryDownloadCss() {
 }
     `;
 }
+// PDF share/download state
 let listedInventoryPreparedSharePayload = null;
 let listedInventoryPreparedShareFileName = "";
 // --- Helper functions for old tablets ---
@@ -11365,6 +11368,7 @@ bindPdfShareButton(pdfFile);
         }
     }
 }
+// PDF ready modal
 function openListedPdfReadyModal() {
     const overlay = document.getElementById("pdf-ready-overlay");
     if (!overlay) return;
@@ -11598,6 +11602,7 @@ ${getPrintableSurveyorSignatureHtml()}
         wrapper.remove();
     }
 }
+// Browser print/review fallback
 async function printListedInventoryPdf() {
     closeAllMovePilotModals();
     if (!currentJob) return;
