@@ -135,6 +135,33 @@ This is the working map for `js/app.js`. It is meant to make the next cleanup pa
 - Left encoded text/template-output lines untouched to avoid changing PDF/listed-inventory wording.
 - Verified `js/app.js` still passes JavaScript syntax checking after the crew-responsibility pass.
 
+## Pass 8 PDF/Export Map
+
+- Added non-behavioural labels in the PDF/export area:
+  - Printable listed inventory content
+  - Printable/PDF styling
+  - PDF share/download state
+  - PDF ready modal
+  - Browser print/review fallback
+- Identified the main PDF areas:
+  - `getPrintableListedSections()`
+  - `getPrintableMaterialsHtml()`
+  - `getPrintableResponsibilitiesHtml()`
+  - `getPrintableCrewInstructionsHtml()`
+  - `getListedInventoryDownloadCss()`
+  - `shareListedInventoryPdf()`
+  - `saveListedInventoryPdfToDevice()`
+  - `printListedInventoryPdf()`
+  - PDF ready modal helpers
+- Important finding: `sharePreparedListedInventoryPdf()` is defined twice, and `saveListedInventoryPdfToDevice()` is defined twice. JavaScript will use the later definitions. Do not remove either copy casually; first compare the two versions and confirm which behaviour the app currently depends on.
+- Recommended next PDF pass:
+  1. Compare duplicate PDF share/save functions.
+  2. Preserve the currently active behaviour.
+  3. Remove or rename superseded duplicate code only after testing.
+  4. Extract shared PDF document-building logic so save/share/print do not each rebuild near-identical HTML.
+  5. Keep PDF wording and layout unchanged until the duplicate flow is stable.
+- Verified `js/app.js` still passes JavaScript syntax checking after adding PDF/export labels.
+
 ## Principle For The Next Pass
 
 Keep all existing function names in global scope for now. The HTML still uses inline handlers such as `onclick="..."`, so renaming or wrapping functions too early could break buttons.
