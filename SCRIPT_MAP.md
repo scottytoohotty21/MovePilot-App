@@ -80,6 +80,27 @@ This is the working map for `js/app.js`. It is meant to make the next cleanup pa
 - Reformatted `loadSequence()`, `triggerPulse()`, `switchTab()`, `toggleManualArea()`, `exitToDashboard()`, and `calculateMoveCost()`.
 - Verified `js/app.js` still passes JavaScript syntax checking after the dashboard readability pass.
 
+## Pass 4 Changes
+
+- Added internal inventory landmarks:
+  - Inventory sequence and delivery controls
+  - Raw inventory store
+  - Live inventory display and item actions
+  - Schedule calculator feed from inventory
+  - Room and floor controls
+  - Inventory button order, search, and rendering
+  - Shared modal helpers
+  - Mileage and route helpers
+  - Sequence tab rendering
+- Reformatted the sequence/delivery dropdown area.
+- Reformatted raw inventory entry creation and live item action button state handling.
+- Reformatted the schedule calculator feed counters and special-items object.
+- Reformatted live inventory key/build/rebuild helpers.
+- Reformatted room/floor control helpers and inventory button rendering.
+- Tidied selected simple-input modal branches for quantity, listed quantity, listed notes, and schedule numbers.
+- Added a clear boundary where inventory-related helpers move into sequence-tab rendering and then dashboard rendering.
+- Verified `js/app.js` still passes JavaScript syntax checking after the inventory map/readability pass.
+
 ## Principle For The Next Pass
 
 Keep all existing function names in global scope for now. The HTML still uses inline handlers such as `onclick="..."`, so renaming or wrapping functions too early could break buttons.
