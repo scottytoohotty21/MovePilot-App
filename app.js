@@ -8024,14 +8024,14 @@ function renderListedPhotoReview(items) {
             </div>
 
            <div class="listed-photo-section">
-    <div class="listed-photo-section-title">Address Access Photos (${addressPhotos.length})</div>
-    ${renderListedPhotoThumbs(addressPhotos)}
-</div>
+                <div class="listed-photo-section-title">Address Access Photos (${addressPhotos.length})</div>
+                ${renderListedPhotoThumbs(addressPhotos)}
+            </div>
 
-<div class="listed-photo-section">
-    <div class="listed-photo-section-title">Inventory Item Photos (${inventoryPhotos.length})</div>
-    ${renderListedPhotoThumbs(inventoryPhotos)}
-</div>
+            <div class="listed-photo-section">
+                <div class="listed-photo-section-title">Inventory Item Photos (${inventoryPhotos.length})</div>
+                ${renderListedPhotoThumbs(inventoryPhotos)}
+            </div>
         </div>
     `;
 }
@@ -8143,13 +8143,16 @@ function handleListedCbmLineItemsToggle(checked) {
 // -----------------------------------------------------------------------------
 // Listed inventory tab
 // -----------------------------------------------------------------------------
+
+// Listed filters and display options
 function renderListedInventoryFilters(items) {
     const seqSelect = document.getElementById("listed-sequence-filter");
-const deliverySelect = document.getElementById("listed-delivery-filter");
-const textInput = document.getElementById("listed-text-filter");
-const cbmLineItemsInput = document.getElementById("listed-show-cbm-lines");
+    const deliverySelect = document.getElementById("listed-delivery-filter");
+    const textInput = document.getElementById("listed-text-filter");
+    const cbmLineItemsInput = document.getElementById("listed-show-cbm-lines");
 
     if (!seqSelect || !deliverySelect) return;
+
     const seqOptions = getListedSequenceFilterOptions(items);
     const deliveryOptions = getListedDeliveryFilterOptions(items);
 
@@ -8176,7 +8179,7 @@ const cbmLineItemsInput = document.getElementById("listed-show-cbm-lines");
             return `<option value="${option.value}" ${selected}>${option.label}</option>`;
         }).join("");
 
-        deliverySelect.innerHTML =
+    deliverySelect.innerHTML =
         `<option value="__all__">All Deliveries</option>` +
         deliveryOptions.map(function(option) {
             const selected = option.value === String(listedDeliveryFilter) ? "selected" : "";
@@ -8186,9 +8189,10 @@ const cbmLineItemsInput = document.getElementById("listed-show-cbm-lines");
     if (textInput) {
         textInput.value = listedTextFilter || "";
     }
+
     if (cbmLineItemsInput) {
-    cbmLineItemsInput.checked = shouldShowListedCbmLineItems();
-}
+        cbmLineItemsInput.checked = shouldShowListedCbmLineItems();
+    }
 }
 
 function handleListedSequenceFilterChange(value) {
@@ -8245,6 +8249,8 @@ function setInventoryReturnContextFromEntry(entry) {
         roomName: entry.roomName || "Hallway"
     };
 }
+
+// Listed item editing and raw-entry matching
 function getRawEntriesForListedEntry(entry) {
     if (!currentJob || !currentJob.inventory || !Array.isArray(currentJob.inventory.items)) {
         return [];
@@ -8258,9 +8264,10 @@ function getRawEntriesForListedEntry(entry) {
             entry.crateDims.unit || ""
         ].join("|")
         : "";
-        const safeText = entry.safeDetails
-    ? JSON.stringify(entry.safeDetails)
-    : "";
+
+    const safeText = entry.safeDetails
+        ? JSON.stringify(entry.safeDetails)
+        : "";
 
     return currentJob.inventory.items.filter(function(raw) {
         const rawCrateText = raw.crated && raw.crateDims
@@ -8271,9 +8278,10 @@ function getRawEntriesForListedEntry(entry) {
                 raw.crateDims.unit || ""
             ].join("|")
             : "";
-            const rawSafeText = raw.safeDetails
-    ? JSON.stringify(raw.safeDetails)
-    : "";
+
+        const rawSafeText = raw.safeDetails
+            ? JSON.stringify(raw.safeDetails)
+            : "";
 
         return (
             String(raw.sequenceId || "") === String(entry.sequenceId || "") &&
@@ -8283,17 +8291,17 @@ function getRawEntriesForListedEntry(entry) {
             String(raw.itemName || "") === String(entry.itemName || "") &&
             Number(raw.unitVolume || 0) === Number(entry.unitVolume || 0) &&
             !!raw.excluded === !!entry.excluded &&
-!!raw.dismantle === !!entry.dismantle &&
-!!raw.expWrap === !!entry.expWrap &&
-!!raw.disconnect === !!entry.disconnect &&
-!!raw.handyman === !!entry.handyman &&
-String(raw.note || "") === String(entry.note || "") &&
-String(raw.damage || "") === String(entry.damage || "") &&
-String(raw.bedType || "") === String(entry.bedType || "") &&
-String(Array.isArray(raw.wardrobeTypes) ? raw.wardrobeTypes.join("|") : "") === String(Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes.join("|") : "") &&
-!!raw.crated === !!entry.crated &&
+            !!raw.dismantle === !!entry.dismantle &&
+            !!raw.expWrap === !!entry.expWrap &&
+            !!raw.disconnect === !!entry.disconnect &&
+            !!raw.handyman === !!entry.handyman &&
+            String(raw.note || "") === String(entry.note || "") &&
+            String(raw.damage || "") === String(entry.damage || "") &&
+            String(raw.bedType || "") === String(entry.bedType || "") &&
+            String(Array.isArray(raw.wardrobeTypes) ? raw.wardrobeTypes.join("|") : "") === String(Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes.join("|") : "") &&
+            !!raw.crated === !!entry.crated &&
             rawCrateText === crateText &&
-rawSafeText === safeText
+            rawSafeText === safeText
         );
     });
 }
@@ -8317,22 +8325,22 @@ function deleteListedEntry(entryKey) {
         return !rawIdsToDelete.includes(raw.id);
     });
 
-   markScheduleAutoBuildUpdateNeeded(
-    "Inventory has changed since this schedule was calculated.",
-    false
-);
-markCustomerSignatureInventoryChanged();
+    markScheduleAutoBuildUpdateNeeded(
+        "Inventory has changed since this schedule was calculated.",
+        false
+    );
+    markCustomerSignatureInventoryChanged();
     saveToDevice();
 
-if (String(activeSeqId || "") === String(mergedEntry.sequenceId || "")) {
-    rebuildLiveInventoryFromSequence(activeSeqId);
-}
+    if (String(activeSeqId || "") === String(mergedEntry.sequenceId || "")) {
+        rebuildLiveInventoryFromSequence(activeSeqId);
+    }
 
-renderListedInventory();
-renderActionButtonStates();
-updateUndoButtonState();
-saveCalculatorFeedForActiveSequence();
-updateInventoryDisplay("LISTED LINE DELETED");
+    renderListedInventory();
+    renderActionButtonStates();
+    updateUndoButtonState();
+    saveCalculatorFeedForActiveSequence();
+    updateInventoryDisplay("LISTED LINE DELETED");
 }
 
 function editListedEntryQty(entryKey) {
@@ -8373,6 +8381,7 @@ function editListedEntryNote(entryKey) {
     });
 }
 
+// Listed flags modal
 function openListedFlagsModal(entry) {
     const overlay = document.getElementById("listed-flags-overlay");
     if (!overlay || !entry) return;
@@ -8453,44 +8462,47 @@ function saveListedFlagsModal() {
     }
 
     const wantsCrate = !!listedFlagsState.crated;
-const hadCrateBefore = !!mergedEntry.crated;
+    const hadCrateBefore = !!mergedEntry.crated;
 
-rawMatches.forEach(function(raw) {
-    raw.dismantle = !!listedFlagsState.dismantle;
-    raw.expWrap = !!listedFlagsState.expWrap;
-    raw.disconnect = !!listedFlagsState.disconnect;
-    raw.handyman = !!listedFlagsState.handyman;
-    raw.excluded = !!listedFlagsState.excluded;
+    rawMatches.forEach(function(raw) {
+        raw.dismantle = !!listedFlagsState.dismantle;
+        raw.expWrap = !!listedFlagsState.expWrap;
+        raw.disconnect = !!listedFlagsState.disconnect;
+        raw.handyman = !!listedFlagsState.handyman;
+        raw.excluded = !!listedFlagsState.excluded;
 
-    if (!wantsCrate) {
-        raw.crated = false;
-        raw.crateDims = null;
-    }
-});
-markInventoryChangedAfterSignatureAndSchedule(
-    "Inventory flags have changed since this schedule was calculated.",
-    false
-);
+        if (!wantsCrate) {
+            raw.crated = false;
+            raw.crateDims = null;
+        }
+    });
+
+    markInventoryChangedAfterSignatureAndSchedule(
+        "Inventory flags have changed since this schedule was calculated.",
+        false
+    );
     saveToDevice();
 
-if (wantsCrate && !hadCrateBefore) {
-    const entryKey = listedFlagsEntryKey;
+    if (wantsCrate && !hadCrateBefore) {
+        const entryKey = listedFlagsEntryKey;
+        closeListedFlagsModal();
+        openListedCrateModal(entryKey);
+        return;
+    }
+
+    if (String(activeSeqId || "") === String(mergedEntry.sequenceId || "")) {
+        rebuildLiveInventoryFromSequence(activeSeqId);
+    }
+
+    renderListedInventory();
+    renderActionButtonStates();
+    updateUndoButtonState();
+    saveCalculatorFeedForActiveSequence();
+    updateInventoryDisplay("LISTED FLAGS UPDATED");
     closeListedFlagsModal();
-    openListedCrateModal(entryKey);
-    return;
 }
 
-if (String(activeSeqId || "") === String(mergedEntry.sequenceId || "")) {
-    rebuildLiveInventoryFromSequence(activeSeqId);
-}
-
-renderListedInventory();
-renderActionButtonStates();
-updateUndoButtonState();
-saveCalculatorFeedForActiveSequence();
-updateInventoryDisplay("LISTED FLAGS UPDATED");
-closeListedFlagsModal();;
-}
+// Listed specialist tags
 function getPianoFloorDisplayLabel(value) {
     const labels = {
         basement: "BASEMENT",
@@ -8596,6 +8608,8 @@ function getSafeDetailsListedTag(safeDetails) {
 
     return text;
 }
+
+// Listed merge keys and photo refs
 function getInventoryEntryPhotoCount(entry) {
     if (!entry || !entry.photos || !Array.isArray(entry.photos.item)) {
         return 0;
@@ -8630,6 +8644,7 @@ function mergeInventoryEntryPhotoRefs(targetEntry, sourceEntry) {
         });
     }
 }
+
 function getListedEntryMergeKey(entry) {
     const crateText = entry.crated && entry.crateDims
         ? [
@@ -8652,16 +8667,17 @@ function getListedEntryMergeKey(entry) {
         !!entry.expWrap,
         !!entry.disconnect,
         !!entry.handyman,
-       entry.note || "",
-entry.damage || "",
-entry.bedType || "",
-Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes.join("|") : "",
-entry.pianoDetails ? JSON.stringify(entry.pianoDetails) : "",
-entry.safeDetails ? JSON.stringify(entry.safeDetails) : "",
-!!entry.crated,
+        entry.note || "",
+        entry.damage || "",
+        entry.bedType || "",
+        Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes.join("|") : "",
+        entry.pianoDetails ? JSON.stringify(entry.pianoDetails) : "",
+        entry.safeDetails ? JSON.stringify(entry.safeDetails) : "",
+        !!entry.crated,
         crateText
     ].join("||");
 }
+
 function mergeListedInventoryEntries(items) {
     const mergedMap = {};
 
@@ -8679,15 +8695,17 @@ function mergeListedInventoryEntries(items) {
 
         mergedMap[key].qty += Number(entry.qty || 0);
 
-mergeInventoryEntryPhotoRefs(mergedMap[key], entry);
+        mergeInventoryEntryPhotoRefs(mergedMap[key], entry);
 
-if (!entry.excluded) {
-    mergedMap[key].totalVolume += Number(entry.totalVolume || 0);
-}
+        if (!entry.excluded) {
+            mergedMap[key].totalVolume += Number(entry.totalVolume || 0);
+        }
     });
 
     return Object.values(mergedMap);
 }
+
+// Materials summary
 const INVENTORY_MATERIAL_LABELS = {
     TV_CARTON: "TV Carton",
     WINE_DIVIDERS: "Wine Dividers",
@@ -8757,6 +8775,7 @@ function addInventoryMaterial(materialCode) {
 
     updateUndoButtonState();
 }
+
 function buildMaterialsSummary(items) {
     const summary = {
         apBoxes: 0,
@@ -8856,6 +8875,8 @@ function buildMaterialsSummary(items) {
 
     return summary;
 }
+
+// Listed summaries and responsibility notes
 function buildListedSummary(items) {
     let includedVolume = 0;
     let excludedCount = 0;
