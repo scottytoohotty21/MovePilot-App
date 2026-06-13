@@ -8914,6 +8914,8 @@ function buildListedSummary(items) {
         exclusionNotes: exclusionNotes
     };
 }
+
+// Customer responsibility notes
 const DEFAULT_CUSTOMER_RESPONSIBILITY_NOTES = [
     "Customer to bring all loft effects down to an accessible area prior to crew arrival, unless loft handling has been specifically agreed.",
     "Customer to remove/unscrew wall-mounted items, fixtures and fittings prior to crew arrival, unless handyman service has been specifically agreed.",
@@ -8968,6 +8970,8 @@ function addCustomerResponsibilityNote() {
     saveToDevice();
     renderListedInventory();
 }
+
+// Crew instruction notes
 function ensureCrewInstructionNotes() {
     if (!currentJob) return [];
 
@@ -9033,58 +9037,59 @@ function buildResponsibilitiesSummary(summary, items) {
     const autoNotes = [];
 
     const handymanItems = [];
-const pianoItems = [];
-const safeItems = [];
+    const pianoItems = [];
+    const safeItems = [];
 
-if (Array.isArray(items)) {
-    items.forEach(function(entry) {
-    if (!entry || entry.excluded) return;
+    if (Array.isArray(items)) {
+        items.forEach(function(entry) {
+            if (!entry || entry.excluded) return;
 
-    const qty = Number(entry.qty || 0);
-    const itemName = String(entry.itemName || "Item").trim();
-    const itemUpper = itemName.toUpperCase();
+            const qty = Number(entry.qty || 0);
+            const itemName = String(entry.itemName || "Item").trim();
+            const itemUpper = itemName.toUpperCase();
 
-    const roomName =
-        entry.roomName ||
-        entry.room ||
-        entry.location ||
-        "";
+            const roomName =
+                entry.roomName ||
+                entry.room ||
+                entry.location ||
+                "";
 
-    const entryNote = String(entry.note || "").trim();
+            const entryNote = String(entry.note || "").trim();
 
-let modalDetail = "";
+            let modalDetail = "";
 
-if (entry.bedType) {
-    modalDetail = String(entry.bedType).trim();
-}
+            if (entry.bedType) {
+                modalDetail = String(entry.bedType).trim();
+            }
 
-if (isWardrobeInventoryItem(itemName)) {
-    const wardrobeDetail = String(formatWardrobeTypes(entry) || "").trim();
+            if (isWardrobeInventoryItem(itemName)) {
+                const wardrobeDetail = String(formatWardrobeTypes(entry) || "").trim();
 
-    if (wardrobeDetail && wardrobeDetail !== "Type not set") {
-        modalDetail = wardrobeDetail;
-    }
-}
+                if (wardrobeDetail && wardrobeDetail !== "Type not set") {
+                    modalDetail = wardrobeDetail;
+                }
+            }
 
-if (
-    itemUpper === "PIANO (UPRIGHT)" ||
-    itemUpper === "PIANO (ELECTRIC)" ||
-    itemUpper === "PIANO (BABY GRAND)" ||
-    itemUpper === "PIANO (GRAND)"
-) {
-    const pianoDetail = String(getPianoDetailsListedTag(entry.pianoDetails) || "").trim();
+            if (
+                itemUpper === "PIANO (UPRIGHT)" ||
+                itemUpper === "PIANO (ELECTRIC)" ||
+                itemUpper === "PIANO (BABY GRAND)" ||
+                itemUpper === "PIANO (GRAND)"
+            ) {
+                const pianoDetail = String(getPianoDetailsListedTag(entry.pianoDetails) || "").trim();
 
-    if (pianoDetail) {
-        modalDetail = pianoDetail;
-    }
-}
-if (itemUpper === "SAFE") {
-    const safeDetail = String(getSafeDetailsListedTag(entry.safeDetails) || "").trim();
+                if (pianoDetail) {
+                    modalDetail = pianoDetail;
+                }
+            }
 
-    if (safeDetail) {
-        modalDetail = safeDetail;
-    }
-}
+            if (itemUpper === "SAFE") {
+                const safeDetail = String(getSafeDetailsListedTag(entry.safeDetails) || "").trim();
+
+                if (safeDetail) {
+                    modalDetail = safeDetail;
+                }
+            }
 
 const line =
     (roomName ? roomName + ": " : "") +
@@ -9097,38 +9102,41 @@ const line =
         handymanItems.push(line);
     }
 
-    if (
-    (
-        itemUpper === "PIANO (UPRIGHT)" ||
-        itemUpper === "PIANO (ELECTRIC)" ||
-        itemUpper === "PIANO (BABY GRAND)" ||
-        itemUpper === "PIANO (GRAND)"
-    ) &&
-    entryRequiresPianoSpecialist(entry)
-) {
-    pianoItems.push(line);
-}
-if (
-    itemUpper === "SAFE" &&
-    entryRequiresSafeHeavyLiftReview(entry)
-) {
-    safeItems.push(line);
-}
-});
-}
+            if (
+                (
+                    itemUpper === "PIANO (UPRIGHT)" ||
+                    itemUpper === "PIANO (ELECTRIC)" ||
+                    itemUpper === "PIANO (BABY GRAND)" ||
+                    itemUpper === "PIANO (GRAND)"
+                ) &&
+                entryRequiresPianoSpecialist(entry)
+            ) {
+                pianoItems.push(line);
+            }
 
-if (handymanItems.length) {
-    autoNotes.push("Handyman required at additional cost, or client to arrange themselves prior to crew arrival.");
-    autoNotes.push("Handyman required for: " + handymanItems.join(", ") + ".");
-}
-if (pianoItems.length) {
-    autoNotes.push("Piano specialist required at additional cost, or client to arrange themselves prior to crew arrival.");
-    autoNotes.push("Piano specialist required for: " + pianoItems.join(", ") + ".");
-}
-if (safeItems.length) {
-    autoNotes.push("Heavy lifting team required at additional cost, or client to arrange themselves prior to crew arrival.");
-    autoNotes.push("Heavy lifting team required for: " + safeItems.join(", ") + ".");
-}
+            if (
+                itemUpper === "SAFE" &&
+                entryRequiresSafeHeavyLiftReview(entry)
+            ) {
+                safeItems.push(line);
+            }
+        });
+    }
+
+    if (handymanItems.length) {
+        autoNotes.push("Handyman required at additional cost, or client to arrange themselves prior to crew arrival.");
+        autoNotes.push("Handyman required for: " + handymanItems.join(", ") + ".");
+    }
+
+    if (pianoItems.length) {
+        autoNotes.push("Piano specialist required at additional cost, or client to arrange themselves prior to crew arrival.");
+        autoNotes.push("Piano specialist required for: " + pianoItems.join(", ") + ".");
+    }
+
+    if (safeItems.length) {
+        autoNotes.push("Heavy lifting team required at additional cost, or client to arrange themselves prior to crew arrival.");
+        autoNotes.push("Heavy lifting team required for: " + safeItems.join(", ") + ".");
+    }
 
     return {
         hasContent:
