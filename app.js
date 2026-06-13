@@ -2148,21 +2148,24 @@ saveBtn.setAttribute('aria-label', isSaved ? 'Unlock address' : 'Lock address');
 // -----------------------------------------------------------------------------
 // Inventory tab
 // -----------------------------------------------------------------------------
+
+// Inventory sequence and delivery controls
 function renderInventorySequenceDropdown() {
     const dropdown = document.getElementById('inv-seq-select');
     if (!dropdown || !currentJob) return;
 
-  const selectedSeqId = activeSeqId || getDefaultSequenceId();
+    const selectedSeqId = activeSeqId || getDefaultSequenceId();
 
-dropdown.innerHTML = currentJob.sequences.map((s, idx) => {
-    const moveLabel = s.moveType || 'New Sequence';
-    const packLabel = s.packOption || 'No Packing Set';
-    const label = `Seq #${idx + 1}: ${moveLabel} / ${packLabel}`;
-    return `<option value="${s.id}" ${s.id == selectedSeqId ? 'selected' : ''}>${label}</option>`;
-}).join('');
+    dropdown.innerHTML = currentJob.sequences.map((s, idx) => {
+        const moveLabel = s.moveType || 'New Sequence';
+        const packLabel = s.packOption || 'No Packing Set';
+        const label = `Seq #${idx + 1}: ${moveLabel} / ${packLabel}`;
 
+        return `<option value="${s.id}" ${s.id == selectedSeqId ? 'selected' : ''}>${label}</option>`;
+    }).join('');
 }
-       function getActiveInventorySequence() {
+
+function getActiveInventorySequence() {
     if (!currentJob || !Array.isArray(currentJob.sequences)) return null;
 
     return currentJob.sequences.find(function(seq) {
@@ -2228,8 +2231,11 @@ function handleInventoryDeliveryChange(value) {
     saveInventoryContext();
     saveToDevice();
 }
-       function ensureInventoryStore() {
+
+// Raw inventory store
+function ensureInventoryStore() {
     if (!currentJob.inventory) currentJob.inventory = {};
+
     if (!Array.isArray(currentJob.inventory.items)) {
         currentJob.inventory.items = [];
     }
@@ -2237,30 +2243,30 @@ function handleInventoryDeliveryChange(value) {
 
 function buildRawInventoryEntry(entryData) {
     return {
-    id: "raw_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
-    sequenceId: entryData.sequenceId || "",
-    deliveryId: entryData.deliveryId || "",
-    roomName: entryData.roomName || "",
-    floorName: entryData.floorName || "",
-    itemName: entryData.itemName || "",
-    qty: entryData.qty || 1,
-    unitVolume: entryData.unitVolume || 0,
-    totalVolume: entryData.totalVolume || 0,
-    kind: entryData.kind || "item",
-    dismantle: !!entryData.dismantle,
-    expWrap: !!entryData.expWrap,
-    disconnect: !!entryData.disconnect,
-    handyman: !!entryData.handyman,
-    excluded: !!entryData.excluded,
-    note: entryData.note || "",
-    crated: !!entryData.crated,
-    crateDims: entryData.crateDims || null,
+        id: "raw_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+        sequenceId: entryData.sequenceId || "",
+        deliveryId: entryData.deliveryId || "",
+        roomName: entryData.roomName || "",
+        floorName: entryData.floorName || "",
+        itemName: entryData.itemName || "",
+        qty: entryData.qty || 1,
+        unitVolume: entryData.unitVolume || 0,
+        totalVolume: entryData.totalVolume || 0,
+        kind: entryData.kind || "item",
+        dismantle: !!entryData.dismantle,
+        expWrap: !!entryData.expWrap,
+        disconnect: !!entryData.disconnect,
+        handyman: !!entryData.handyman,
+        excluded: !!entryData.excluded,
+        note: entryData.note || "",
+        crated: !!entryData.crated,
+        crateDims: entryData.crateDims || null,
         damage: entryData.damage || "",
-    bedType: entryData.bedType || "",
-    wardrobeTypes: Array.isArray(entryData.wardrobeTypes) ? entryData.wardrobeTypes : [],
-pianoDetails: entryData.pianoDetails || null,
-safeDetails: entryData.safeDetails || null
-};
+        bedType: entryData.bedType || "",
+        wardrobeTypes: Array.isArray(entryData.wardrobeTypes) ? entryData.wardrobeTypes : [],
+        pianoDetails: entryData.pianoDetails || null,
+        safeDetails: entryData.safeDetails || null
+    };
 }
 
 
@@ -2287,8 +2293,10 @@ function findRawInventoryEntry(rawEntryId) {
 
 function getLastRawInventoryEntry() {
     if (!lastAddedRawEntryId) return null;
+
     return findRawInventoryEntry(lastAddedRawEntryId);
 }
+
 function getRawInventoryEntryById(rawEntryId) {
     if (!currentJob || !currentJob.inventory || !Array.isArray(currentJob.inventory.items)) {
         return null;
@@ -2298,6 +2306,7 @@ function getRawInventoryEntryById(rawEntryId) {
         return String(entry.id) === String(rawEntryId);
     }) || null;
 }
+
 async function markLastInventoryItemPackedNoVolume() {
     const rawEntry = getLastRawInventoryEntry();
 
@@ -2374,6 +2383,8 @@ async function markLastInventoryItemPackedNoVolume() {
     renderActionButtonStates();
     updateUndoButtonState();
 }
+
+// Live inventory display and item actions
 function getLiveInventoryEntryForRaw(rawEntryId) {
     const rawEntry = findRawInventoryEntry(rawEntryId);
     if (!rawEntry) return null;
@@ -2417,10 +2428,10 @@ function renderActionButtonStates() {
     const handymanBtn = document.getElementById("tool-handyman");
     const excludeBtn = document.getElementById("tool-exclude");
     const crateBtn = document.getElementById("tool-crate");
-const damageBtn = document.getElementById("tool-damage");
-const photosBtn = document.getElementById("tool-photos");
-const packedZeroBtn = document.getElementById("tool-packed-zero");
-const rawEntry = getLastRawInventoryEntry();
+    const damageBtn = document.getElementById("tool-damage");
+    const photosBtn = document.getElementById("tool-photos");
+    const packedZeroBtn = document.getElementById("tool-packed-zero");
+    const rawEntry = getLastRawInventoryEntry();
 
     if (dismantleBtn) {
         dismantleBtn.classList.toggle("active", !!(rawEntry && rawEntry.dismantle));
@@ -2449,25 +2460,27 @@ const rawEntry = getLastRawInventoryEntry();
     if (damageBtn) {
         damageBtn.classList.toggle("active", !!(rawEntry && rawEntry.damage));
     }
-    if (packedZeroBtn) {
-    packedZeroBtn.disabled = !(rawEntry && rawEntry.kind !== "note");
-    packedZeroBtn.classList.toggle("active", !!(rawEntry && rawEntry.packedNoVolume));
-}
-    if (photosBtn) {
-    photosBtn.disabled = !(rawEntry && rawEntry.kind !== "note");
 
-    const itemPhotoCount = rawEntry &&
-        rawEntry.photos &&
-        Array.isArray(rawEntry.photos.item)
+    if (packedZeroBtn) {
+        packedZeroBtn.disabled = !(rawEntry && rawEntry.kind !== "note");
+        packedZeroBtn.classList.toggle("active", !!(rawEntry && rawEntry.packedNoVolume));
+    }
+
+    if (photosBtn) {
+        photosBtn.disabled = !(rawEntry && rawEntry.kind !== "note");
+
+        const itemPhotoCount = rawEntry &&
+            rawEntry.photos &&
+            Array.isArray(rawEntry.photos.item)
             ? rawEntry.photos.item.length
             : 0;
 
-    photosBtn.innerText = itemPhotoCount > 0
-        ? "Photos (" + itemPhotoCount + ")"
-        : "Photos";
+        photosBtn.innerText = itemPhotoCount > 0
+            ? "Photos (" + itemPhotoCount + ")"
+            : "Photos";
 
-    photosBtn.classList.toggle("active", itemPhotoCount > 0);
-}
+        photosBtn.classList.toggle("active", itemPhotoCount > 0);
+    }
 }
 
 function toggleItemAction(actionName) {
@@ -2549,7 +2562,8 @@ function removeRawInventoryEntry(rawEntryId) {
 
     saveToDevice();
 }
-    function getRawInventoryItemsForSequence(sequenceId) {
+
+function getRawInventoryItemsForSequence(sequenceId) {
     if (!currentJob || !currentJob.inventory || !Array.isArray(currentJob.inventory.items)) {
         return [];
     }
@@ -2558,6 +2572,7 @@ function removeRawInventoryEntry(rawEntryId) {
         return String(entry.sequenceId) === String(sequenceId);
     });
 }
+
 function getSequenceInventoryTotal(sequenceId) {
     const rawItems = getRawInventoryItemsForSequence(sequenceId);
 
@@ -2576,6 +2591,7 @@ function refreshInventoryVolumeDisplayForSequence(sequenceId) {
         totalVolBox.innerText = total;
     }
 }
+
 function syncInventoryDisplayFromSequence(sequenceId) {
     const rawItems = getRawInventoryItemsForSequence(sequenceId);
 
@@ -2600,14 +2616,15 @@ function syncInventoryDisplayFromSequence(sequenceId) {
     }, 0);
 
     const tags = [];
-if (lastRaw.bedType) tags.push("[BED: " + String(lastRaw.bedType).toUpperCase() + "]");
-if (Array.isArray(lastRaw.wardrobeTypes) && lastRaw.wardrobeTypes.length) {
-    tags.push("[WARDROBE: " + lastRaw.wardrobeTypes.join(", ").toUpperCase() + "]");
-}
-if (lastRaw.dismantle) tags.push("[DISMANTLE]");
-if (lastRaw.expWrap) tags.push("[EXP WRAP]");
-if (lastRaw.disconnect) tags.push("[DISCONNECT]");
-if (lastRaw.handyman) tags.push("[HANDYMAN]");
+
+    if (lastRaw.bedType) tags.push("[BED: " + String(lastRaw.bedType).toUpperCase() + "]");
+    if (Array.isArray(lastRaw.wardrobeTypes) && lastRaw.wardrobeTypes.length) {
+        tags.push("[WARDROBE: " + lastRaw.wardrobeTypes.join(", ").toUpperCase() + "]");
+    }
+    if (lastRaw.dismantle) tags.push("[DISMANTLE]");
+    if (lastRaw.expWrap) tags.push("[EXP WRAP]");
+    if (lastRaw.disconnect) tags.push("[DISCONNECT]");
+    if (lastRaw.handyman) tags.push("[HANDYMAN]");
     if (lastRaw.crated && lastRaw.crateDims) {
         tags.push(
             "[CRATE: " +
@@ -2658,6 +2675,8 @@ function handleInventorySequenceChange(sequenceId) {
     saveCalculatorFeedForActiveSequence();
     saveToDevice();
 }
+
+// Schedule calculator feed from inventory
 function getSequencePackOptionForCalculator(sequence) {
     const raw = String(sequence && sequence.packOption ? sequence.packOption : "").toLowerCase();
 
@@ -2702,12 +2721,12 @@ function buildCalculatorFeedForSequence(sequenceId) {
     let bunkBedCount = 0;
     let cotCount = 0;
     let diningTableCount = 0;
-let wardrobeCount = 0;
-let uprightPianoCount = 0;
-let grandPianoCount = 0;
-let grandfatherClockCount = 0;
+    let wardrobeCount = 0;
+    let uprightPianoCount = 0;
+    let grandPianoCount = 0;
+    let grandfatherClockCount = 0;
 
-const wardrobeItems = [];
+    const wardrobeItems = [];
 
     const qty = {
         ap: 0,
@@ -2770,22 +2789,23 @@ const wardrobeItems = [];
         }
 
         if (
-    itemName === "PIANO (UPRIGHT)" ||
-    itemName === "PIANO (ELECTRIC)"
-) {
-    uprightPianoCount += entryQty;
-}
+            itemName === "PIANO (UPRIGHT)" ||
+            itemName === "PIANO (ELECTRIC)"
+        ) {
+            uprightPianoCount += entryQty;
+        }
 
-if (
-    itemName === "PIANO (BABY GRAND)" ||
-    itemName === "PIANO (GRAND)"
-) {
-    grandPianoCount += entryQty;
-}
+        if (
+            itemName === "PIANO (BABY GRAND)" ||
+            itemName === "PIANO (GRAND)"
+        ) {
+            grandPianoCount += entryQty;
+        }
 
-if (itemName === "CLOCK (GRANDFATHER)") {
-    grandfatherClockCount += entryQty;
-}
+        if (itemName === "CLOCK (GRANDFATHER)") {
+            grandfatherClockCount += entryQty;
+        }
+
         if (entry.dismantle) {
             if (
                 itemName === "BED (SINGLE)" ||
@@ -2804,30 +2824,30 @@ if (itemName === "CLOCK (GRANDFATHER)") {
                 bunkBedCount += entryQty;
             }
 
-           if (
-    itemName === "COT / CHILDS BED" ||
-    itemName === "COT / CHILD'S BED" ||
-    itemName === "COT"
-) {
-    cotCount += entryQty;
-}
+            if (
+                itemName === "COT / CHILDS BED" ||
+                itemName === "COT / CHILD'S BED" ||
+                itemName === "COT"
+            ) {
+                cotCount += entryQty;
+            }
 
             if (itemName === "DINING TABLE") {
                 diningTableCount += entryQty;
             }
             if (
-    itemName === "WARDROBE (2-DOOR)" ||
-    itemName === "WARDROBE (3-DOOR)" ||
-    itemName === "WARDROBE (4-DOOR)"
-) {
-    wardrobeCount += entryQty;
+                itemName === "WARDROBE (2-DOOR)" ||
+                itemName === "WARDROBE (3-DOOR)" ||
+                itemName === "WARDROBE (4-DOOR)"
+            ) {
+                wardrobeCount += entryQty;
 
-    wardrobeItems.push({
-        itemName: entry.itemName || "",
-        qty: entryQty,
-        wardrobeTypes: Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes : []
-    });
-}
+                wardrobeItems.push({
+                    itemName: entry.itemName || "",
+                    qty: entryQty,
+                    wardrobeTypes: Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes : []
+                });
+            }
         }
 
         furnitureVol += totalVolume || (unitVolume * entryQty);
@@ -2848,21 +2868,21 @@ if (itemName === "CLOCK (GRANDFATHER)") {
         cratingItems: cratingItems,
         exportWrapVol: Math.round(exportWrapVol * 100) / 100,
         special: {
-    frameBeds: frameBedCount,
-    ottomanBeds: ottomanBedCount,
-    divanBeds: divanBedCount,
-    electricBeds: electricBedCount,
-    bunkBeds: bunkBedCount,
-    cots: cotCount,
-    diningTables: diningTableCount,
-    wardrobes: wardrobeCount,
-    wardrobeItems: wardrobeItems,
-    uprightPianos: uprightPianoCount,
-    grandPianos: grandPianoCount,
-    grandfatherClocks: grandfatherClockCount,
-    cratingItems: cratingItems,
-    exportWrapVol: Math.round(exportWrapVol * 100) / 100
-},
+            frameBeds: frameBedCount,
+            ottomanBeds: ottomanBedCount,
+            divanBeds: divanBedCount,
+            electricBeds: electricBedCount,
+            bunkBeds: bunkBedCount,
+            cots: cotCount,
+            diningTables: diningTableCount,
+            wardrobes: wardrobeCount,
+            wardrobeItems: wardrobeItems,
+            uprightPianos: uprightPianoCount,
+            grandPianos: grandPianoCount,
+            grandfatherClocks: grandfatherClockCount,
+            cratingItems: cratingItems,
+            exportWrapVol: Math.round(exportWrapVol * 100) / 100
+        },
         createdAt: new Date().toISOString()
     };
 }
@@ -2897,13 +2917,13 @@ function buildLiveInventoryKeyFromValues(data) {
         !!data.dismantle,
         !!data.expWrap,
         !!data.disconnect,
-!!data.handyman,
+        !!data.handyman,
         String(data.note || ""),
-String(data.damage || ""),
-String(data.bedType || ""),
-Array.isArray(data.wardrobeTypes) ? data.wardrobeTypes.join("|") : "",
-data.pianoDetails ? JSON.stringify(data.pianoDetails) : "",
-!!data.crated,
+        String(data.damage || ""),
+        String(data.bedType || ""),
+        Array.isArray(data.wardrobeTypes) ? data.wardrobeTypes.join("|") : "",
+        data.pianoDetails ? JSON.stringify(data.pianoDetails) : "",
+        !!data.crated,
         data.crateDims
             ? [
                 data.crateDims.l || "",
@@ -2914,6 +2934,7 @@ data.pianoDetails ? JSON.stringify(data.pianoDetails) : "",
             : ""
     ].join("||");
 }
+
 function getLiveInventoryGroupKey(entry) {
     return [
         String(entry.itemName || ""),
@@ -2927,11 +2948,11 @@ function getLiveInventoryGroupKey(entry) {
         !!entry.disconnect,
         !!entry.handyman,
         String(entry.note || ""),
-String(entry.damage || ""),
-String(entry.bedType || ""),
-Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes.join("|") : "",
-entry.pianoDetails ? JSON.stringify(entry.pianoDetails) : "",
-!!entry.crated,
+        String(entry.damage || ""),
+        String(entry.bedType || ""),
+        Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes.join("|") : "",
+        entry.pianoDetails ? JSON.stringify(entry.pianoDetails) : "",
+        !!entry.crated,
         entry.crateDims
             ? [
                 entry.crateDims.l || "",
@@ -2942,6 +2963,7 @@ entry.pianoDetails ? JSON.stringify(entry.pianoDetails) : "",
             : ""
     ].join("||");
 }
+
 function rebuildLiveInventoryFromSequence(sequenceId) {
     inventoryItems = [];
     currentItemVolume = 0;
@@ -2973,27 +2995,27 @@ function rebuildLiveInventoryFromSequence(sequenceId) {
             existing.qty += qty;
         } else {
             inventoryItems.push({ 
-    liveKey: liveKey,
-    item: entry.itemName,
-    displayName: entry.itemName,
-    volume: unitVolume,
-    qty: qty,
-    dismantle: !!entry.dismantle,
-    expWrap: !!entry.expWrap,
-    disconnect: !!entry.disconnect,
-    handyman: !!entry.handyman,
-    excluded: !!entry.excluded,
-    roomName: entry.roomName || "",
-    floorName: entry.floorName || "",
-    deliveryId: entry.deliveryId || "",
-    note: entry.note || "",
-    damage: entry.damage || "",
-    bedType: entry.bedType || "",
-    wardrobeTypes: Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes : [],
-    pianoDetails: entry.pianoDetails || null,
-    crated: !!entry.crated,
-    crateDims: entry.crateDims || null
-})
+                liveKey: liveKey,
+                item: entry.itemName,
+                displayName: entry.itemName,
+                volume: unitVolume,
+                qty: qty,
+                dismantle: !!entry.dismantle,
+                expWrap: !!entry.expWrap,
+                disconnect: !!entry.disconnect,
+                handyman: !!entry.handyman,
+                excluded: !!entry.excluded,
+                roomName: entry.roomName || "",
+                floorName: entry.floorName || "",
+                deliveryId: entry.deliveryId || "",
+                note: entry.note || "",
+                damage: entry.damage || "",
+                bedType: entry.bedType || "",
+                wardrobeTypes: Array.isArray(entry.wardrobeTypes) ? entry.wardrobeTypes : [],
+                pianoDetails: entry.pianoDetails || null,
+                crated: !!entry.crated,
+                crateDims: entry.crateDims || null
+            });
         }
     });
 
@@ -3014,7 +3036,9 @@ function rebuildLiveInventoryFromSequence(sequenceId) {
     updateUndoButtonState();
     renderActionButtonStates();
 }
-        function getRoomOptions() {
+
+// Room and floor controls
+function getRoomOptions() {
     if (!currentJob) return DEFAULT_ROOMS;
 
     if (!currentJob.inventory) currentJob.inventory = {};
@@ -3076,7 +3100,7 @@ function handleRoomChange(value) {
         return;
     }
 
-        currentJob.inventory.activeSequenceId = activeSeqId || null;
+    currentJob.inventory.activeSequenceId = activeSeqId || null;
     currentJob.inventory.activeRoomName = value;
     resetInventoryQtyInput();
     lastAddedItemName = null;
@@ -3085,7 +3109,8 @@ function handleRoomChange(value) {
     saveInventoryContext();
     saveToDevice();
 }
-        function getFloorOptions() {
+
+function getFloorOptions() {
     if (!currentJob) return DEFAULT_FLOORS;
 
     if (!currentJob.inventory) currentJob.inventory = {};
@@ -3179,12 +3204,14 @@ function handleFloorChange(value) {
         return;
     }
 
-       currentJob.inventory.activeSequenceId = activeSeqId || null;
+    currentJob.inventory.activeSequenceId = activeSeqId || null;
     currentJob.inventory.activeFloor = value;
 
     saveInventoryContext();
     saveToDevice();
 }
+
+// Inventory button order, search, and rendering
 let inventoryButtonReorderMode = false;
 
 function getInventoryButtonOrderKey(category) {
@@ -3346,6 +3373,7 @@ function updateInventoryHeaderReorderVisibility(activeTabName) {
         renderInventoryButtons();
     }
 }
+
 function updateInventoryReorderHeaderButton() {
     const btn = document.getElementById("inventory-reorder-header-btn");
     if (!btn) return;
@@ -3386,7 +3414,8 @@ async function resetInventoryButtonOrder() {
 
     updateInventoryDisplay("BUTTON ORDER RESET");
 }
-    function renderInventoryButtons() {
+
+function renderInventoryButtons() {
     const grid = document.getElementById('inventory-button-grid');
     const countEl = document.getElementById('inventory-search-count');
     if (!grid) return;
@@ -3399,7 +3428,8 @@ async function resetInventoryButtonOrder() {
         : itemsToShow.filter(function(itemName) {
             return itemName.toLowerCase().includes(search);
         });
-            const customInventoryItems = getCustomInventoryItems();
+
+    const customInventoryItems = getCustomInventoryItems();
 
     const filteredCustomItems = !search
         ? customInventoryItems
@@ -3408,15 +3438,15 @@ async function resetInventoryButtonOrder() {
         });
 
     if (countEl) {
-    const totalButtonCount = itemsToShow.length + customInventoryItems.length;
-    const filteredButtonCount = filteredItems.length + filteredCustomItems.length;
+        const totalButtonCount = itemsToShow.length + customInventoryItems.length;
+        const filteredButtonCount = filteredItems.length + filteredCustomItems.length;
 
-    if (!search) {
-        countEl.innerText = `Showing all items (${totalButtonCount})`;
-    } else {
-        countEl.innerText = `Showing ${filteredButtonCount} of ${totalButtonCount} items`;
+        if (!search) {
+            countEl.innerText = `Showing all items (${totalButtonCount})`;
+        } else {
+            countEl.innerText = `Showing ${filteredButtonCount} of ${totalButtonCount} items`;
+        }
     }
-}
 
     if (!filteredItems.length && !filteredCustomItems.length) {
         grid.innerHTML = `
@@ -3460,7 +3490,7 @@ async function resetInventoryButtonOrder() {
         `;
     }).join('');
 
-        const customButtonsHtml = filteredCustomItems.map(function(item) {
+    const customButtonsHtml = filteredCustomItems.map(function(item) {
         const safeCustomId = String(item.id || "").replace(/'/g, "\\'");
         const safeName = escapeHtml(String(item.name || "").trim());
         const safeVolume = escapeHtml(String(item.volume || 0));
@@ -3477,7 +3507,7 @@ async function resetInventoryButtonOrder() {
     }).join('');
 
     grid.innerHTML = customButtonsHtml + itemButtonsHtml;
-updateInventoryReorderHeaderButton();
+    updateInventoryReorderHeaderButton();
 }
 
 function setInventoryCategory(category, btn) {
@@ -3502,6 +3532,8 @@ function clearInventorySearch() {
 
     renderInventoryButtons();
 }
+
+// Shared modal helpers
 function openScheduleNumberModal(rowId, fieldName, currentValue) {
     scheduleNumberEditMeta = {
         rowId: rowId,
@@ -3521,6 +3553,7 @@ function openScheduleNumberModal(rowId, fieldName, currentValue) {
         inputMode: "numeric"
     });
 }
+
 function closeAllMovePilotModals(exceptId) {
     [
         "simple-input-overlay",
@@ -3546,6 +3579,7 @@ function closeAllMovePilotModals(exceptId) {
         el.classList.remove("show");
     });
 }
+
 function resetSimpleInputModalHard() {
     const overlay = document.getElementById("simple-input-overlay");
     const input = document.getElementById("simple-input-field");
@@ -3568,6 +3602,7 @@ function resetSimpleInputModalHard() {
     simpleInputMode = "";
     simpleInputMeta = null;
 }
+
 function openSimpleInputModal(config) {
     const overlay = document.getElementById("simple-input-overlay");
     const title = document.getElementById("simple-input-title");
@@ -3585,37 +3620,37 @@ function openSimpleInputModal(config) {
     subtitle.innerText = config.subtitle || "";
     label.innerText = config.label || "Value";
     input.value = config.value || "";
-input.placeholder = config.placeholder || "";
-input.type = config.inputType || "text";
-input.inputMode = config.inputMode || "text";
+    input.placeholder = config.placeholder || "";
+    input.type = config.inputType || "text";
+    input.inputMode = config.inputMode || "text";
 
-input.disabled = false;
-input.readOnly = false;
-input.removeAttribute("disabled");
-input.removeAttribute("readonly");
-input.style.pointerEvents = "auto";
-input.style.userSelect = "text";
+    input.disabled = false;
+    input.readOnly = false;
+    input.removeAttribute("disabled");
+    input.removeAttribute("readonly");
+    input.style.pointerEvents = "auto";
+    input.style.userSelect = "text";
 
-input.oninput = function () {
+    input.oninput = function () {
+        setModalErrorText("simple-input-error-text", "");
+    };
+
     setModalErrorText("simple-input-error-text", "");
-};
+    overlay.style.display = "flex";
 
-setModalErrorText("simple-input-error-text", "");
-overlay.style.display = "flex";
+    setTimeout(function () {
+        input.focus();
+        input.select();
+    }, 50);
 
-   setTimeout(function () {
-    input.focus();
-    input.select();
-}, 50);
+    setTimeout(function () {
+        input.focus();
+        input.click();
+    }, 250);
 
-setTimeout(function () {
-    input.focus();
-    input.click();
-}, 250);
-
-setTimeout(function () {
-    input.focus();
-}, 600);
+    setTimeout(function () {
+        input.focus();
+    }, 600);
 }
 
 function closeSimpleInputModal() {
@@ -3735,7 +3770,7 @@ function saveSimpleInputModal() {
         return;
     }
 
-           if (simpleInputMode === "volume-override") {
+    if (simpleInputMode === "volume-override") {
         if (!lastAddedRawEntryId) return;
 
         const rawEntry = findRawInventoryEntry(lastAddedRawEntryId);
@@ -3799,200 +3834,205 @@ function saveSimpleInputModal() {
     }
 
     if (simpleInputMode === "listed-edit-qty") {
-    const entryKey = simpleInputMeta && simpleInputMeta.entryKey;
-    const mergedEntry = window.__listedEntryMap && window.__listedEntryMap[entryKey];
-    if (!mergedEntry) return;
+        const entryKey = simpleInputMeta && simpleInputMeta.entryKey;
+        const mergedEntry = window.__listedEntryMap && window.__listedEntryMap[entryKey];
+        if (!mergedEntry) return;
 
-    const newQty = parseInt(rawValue, 10);
-    if (isNaN(newQty) || newQty < 1) {
-        setModalErrorText("simple-input-error-text", "Enter a valid quantity");
-        return;
-    }
-
-    const rawMatches = getRawEntriesForListedEntry(mergedEntry);
-    if (!rawMatches.length) return;
-
-    const currentTotalQty = rawMatches.reduce(function(sum, raw) {
-        return sum + Number(raw.qty || 0);
-    }, 0);
-
-    if (currentTotalQty < 1) return;
-
-    if (newQty === currentTotalQty) {
-    closeSimpleInputModal();
-    return;
-}
-
-if (newQty > currentTotalQty) {
-    const lastRaw = rawMatches[rawMatches.length - 1];
-    const extraQty = newQty - currentTotalQty;
-    lastRaw.qty = Number(lastRaw.qty || 0) + extraQty;
-    lastRaw.totalVolume = Number(lastRaw.unitVolume || 0) * Number(lastRaw.qty || 0);
-} else {
-    let qtyToRemove = currentTotalQty - newQty;
-
-    for (let i = rawMatches.length - 1; i >= 0; i--) {
-        const raw = rawMatches[i];
-        const rawQty = Number(raw.qty || 0);
-
-        if (qtyToRemove <= 0) break;
-
-        if (rawQty <= qtyToRemove) {
-            qtyToRemove -= rawQty;
-            currentJob.inventory.items = currentJob.inventory.items.filter(function(item) {
-                return item.id !== raw.id;
-            });
-        } else {
-            raw.qty = rawQty - qtyToRemove;
-            raw.totalVolume = Number(raw.unitVolume || 0) * raw.qty;
-            qtyToRemove = 0;
+        const newQty = parseInt(rawValue, 10);
+        if (isNaN(newQty) || newQty < 1) {
+            setModalErrorText("simple-input-error-text", "Enter a valid quantity");
+            return;
         }
-    }
-}
-markInventoryChangedAfterSignatureAndSchedule(
-    "Inventory quantity has changed since this schedule was calculated.",
-    false
-);
-   saveToDevice();
 
-if (String(activeSeqId || "") === String(mergedEntry.sequenceId || "")) {
-    rebuildLiveInventoryFromSequence(activeSeqId);
-}
+        const rawMatches = getRawEntriesForListedEntry(mergedEntry);
+        if (!rawMatches.length) return;
 
-renderListedInventory();
-renderActionButtonStates();
-updateUndoButtonState();
-saveCalculatorFeedForActiveSequence();
-closeSimpleInputModal();
-return;
-}
+        const currentTotalQty = rawMatches.reduce(function(sum, raw) {
+            return sum + Number(raw.qty || 0);
+        }, 0);
 
-if (simpleInputMode === "qty-override") {
-    if (!lastAddedRawEntryId) return;
+        if (currentTotalQty < 1) return;
 
-    const rawEntry = findRawInventoryEntry(lastAddedRawEntryId);
-    if (!rawEntry) return;
+        if (newQty === currentTotalQty) {
+            closeSimpleInputModal();
+            return;
+        }
 
-    if (!rawValue) {
-        setModalErrorText("simple-input-error-text", "Enter a valid quantity");
+        if (newQty > currentTotalQty) {
+            const lastRaw = rawMatches[rawMatches.length - 1];
+            const extraQty = newQty - currentTotalQty;
+            lastRaw.qty = Number(lastRaw.qty || 0) + extraQty;
+            lastRaw.totalVolume = Number(lastRaw.unitVolume || 0) * Number(lastRaw.qty || 0);
+        } else {
+            let qtyToRemove = currentTotalQty - newQty;
+
+            for (let i = rawMatches.length - 1; i >= 0; i--) {
+                const raw = rawMatches[i];
+                const rawQty = Number(raw.qty || 0);
+
+                if (qtyToRemove <= 0) break;
+
+                if (rawQty <= qtyToRemove) {
+                    qtyToRemove -= rawQty;
+                    currentJob.inventory.items = currentJob.inventory.items.filter(function(item) {
+                        return item.id !== raw.id;
+                    });
+                } else {
+                    raw.qty = rawQty - qtyToRemove;
+                    raw.totalVolume = Number(raw.unitVolume || 0) * raw.qty;
+                    qtyToRemove = 0;
+                }
+            }
+        }
+
+        markInventoryChangedAfterSignatureAndSchedule(
+            "Inventory quantity has changed since this schedule was calculated.",
+            false
+        );
+        saveToDevice();
+
+        if (String(activeSeqId || "") === String(mergedEntry.sequenceId || "")) {
+            rebuildLiveInventoryFromSequence(activeSeqId);
+        }
+
+        renderListedInventory();
+        renderActionButtonStates();
+        updateUndoButtonState();
+        saveCalculatorFeedForActiveSequence();
+        closeSimpleInputModal();
         return;
     }
 
-    const newQty = parseInt(rawValue, 10);
-    if (isNaN(newQty) || newQty < 1) {
-        setModalErrorText("simple-input-error-text", "Enter a valid quantity");
-        return;
-    }
+    if (simpleInputMode === "qty-override") {
+        if (!lastAddedRawEntryId) return;
 
-    setModalErrorText("simple-input-error-text", "");
+        const rawEntry = findRawInventoryEntry(lastAddedRawEntryId);
+        if (!rawEntry) return;
 
-    const previousRawQty = Number(rawEntry.qty || 1);
-    if (previousRawQty === newQty) {
+        if (!rawValue) {
+            setModalErrorText("simple-input-error-text", "Enter a valid quantity");
+            return;
+        }
+
+        const newQty = parseInt(rawValue, 10);
+        if (isNaN(newQty) || newQty < 1) {
+            setModalErrorText("simple-input-error-text", "Enter a valid quantity");
+            return;
+        }
+
+        setModalErrorText("simple-input-error-text", "");
+
+        const previousRawQty = Number(rawEntry.qty || 1);
+        if (previousRawQty === newQty) {
+            closeSimpleInputModal();
+            resetInventoryQtyInput();
+            return;
+        }
+
+        rawEntry.qty = newQty;
+        rawEntry.totalVolume = Number(rawEntry.unitVolume || 0) * newQty;
+
+        inventoryHistory.push({
+            type: "qty-edit",
+            itemName: rawEntry.itemName,
+            previousQty: previousRawQty,
+            newQty: newQty,
+            rawEntryId: rawEntry.id,
+            previousRawQty: previousRawQty
+        });
+
+        saveToDevice();
+        syncLiveInventoryFromRawForActiveSequence();
+        recalculateTotalVolume();
+        refreshCurrentInventorySelectionDisplay();
+
+        triggerInventoryPulse("current", "blue");
+        triggerInventoryPulse("total", "blue");
+        triggerHaptic("medium");
+        updateUndoButtonState();
+        saveCalculatorFeedForActiveSequence();
+
         closeSimpleInputModal();
         resetInventoryQtyInput();
         return;
     }
 
-    rawEntry.qty = newQty;
-    rawEntry.totalVolume = Number(rawEntry.unitVolume || 0) * newQty;
+    if (simpleInputMode === "schedule-number") {
+        if (!scheduleNumberEditMeta || !scheduleNumberEditMeta.rowId || !scheduleNumberEditMeta.fieldName) {
+            closeSimpleInputModal();
+            return;
+        }
 
-    inventoryHistory.push({
-        type: "qty-edit",
-        itemName: rawEntry.itemName,
-        previousQty: previousRawQty,
-        newQty: newQty,
-        rawEntryId: rawEntry.id,
-        previousRawQty: previousRawQty
-    });
+        if (!rawValue) {
+            setModalErrorText("simple-input-error-text", "Enter a valid number");
+            return;
+        }
 
-    saveToDevice();
-    syncLiveInventoryFromRawForActiveSequence();
-    recalculateTotalVolume();
-    refreshCurrentInventorySelectionDisplay();
+        const newValue = parseInt(rawValue, 10);
 
-    triggerInventoryPulse("current", "blue");
-    triggerInventoryPulse("total", "blue");
-    triggerHaptic("medium");
-    updateUndoButtonState();
-    saveCalculatorFeedForActiveSequence();
+        if (isNaN(newValue) || newValue < 0) {
+            setModalErrorText("simple-input-error-text", "Enter a valid number");
+            return;
+        }
 
-    closeSimpleInputModal();
-    resetInventoryQtyInput();
-    return;
-}
-if (simpleInputMode === "schedule-number") {
-    if (!scheduleNumberEditMeta || !scheduleNumberEditMeta.rowId || !scheduleNumberEditMeta.fieldName) {
+        if (scheduleNumberEditMeta.fieldName === "men" && newValue < 1) {
+            setModalErrorText("simple-input-error-text", "Crew must be at least 1");
+            return;
+        }
+
+        setModalErrorText("simple-input-error-text", "");
+
+        updateScheduleDay(
+            scheduleNumberEditMeta.rowId,
+            scheduleNumberEditMeta.fieldName,
+            newValue
+        );
+
         closeSimpleInputModal();
         return;
     }
 
-    if (!rawValue) {
-        setModalErrorText("simple-input-error-text", "Enter a valid number");
-        return;
-    }
-
-    const newValue = parseInt(rawValue, 10);
-
-    if (isNaN(newValue) || newValue < 0) {
-        setModalErrorText("simple-input-error-text", "Enter a valid number");
-        return;
-    }
-
-    if (scheduleNumberEditMeta.fieldName === "men" && newValue < 1) {
-        setModalErrorText("simple-input-error-text", "Crew must be at least 1");
-        return;
-    }
-
-    setModalErrorText("simple-input-error-text", "");
-
-    updateScheduleDay(
-        scheduleNumberEditMeta.rowId,
-        scheduleNumberEditMeta.fieldName,
-        newValue
-    );
-
-    closeSimpleInputModal();
-    return;
-}
     if (simpleInputMode === "listed-edit-note") {
-    const entryKey = simpleInputMeta && simpleInputMeta.entryKey;
-    const mergedEntry = window.__listedEntryMap && window.__listedEntryMap[entryKey];
+        const entryKey = simpleInputMeta && simpleInputMeta.entryKey;
+        const mergedEntry = window.__listedEntryMap && window.__listedEntryMap[entryKey];
 
-    if (!entryKey || !mergedEntry) {
-        setModalErrorText("simple-input-error-text", "Could not find this inventory line. Close and try again.");
+        if (!entryKey || !mergedEntry) {
+            setModalErrorText("simple-input-error-text", "Could not find this inventory line. Close and try again.");
+            return;
+        }
+
+        const rawMatches = getRawEntriesForListedEntry(mergedEntry);
+
+        if (!rawMatches.length) {
+            setModalErrorText("simple-input-error-text", "Could not find the original item. Close and try again.");
+            return;
+        }
+
+        rawMatches.forEach(function(raw) {
+            raw.note = rawValue;
+        });
+
+        markInventoryChangedAfterSignatureAndSchedule(
+            "Inventory notes have changed since this schedule was calculated.",
+            false
+        );
+        saveToDevice();
+
+        if (String(activeSeqId || "") === String(mergedEntry.sequenceId || "")) {
+            rebuildLiveInventoryFromSequence(activeSeqId);
+        }
+
+        renderListedInventory();
+        renderActionButtonStates();
+        updateUndoButtonState();
+        saveCalculatorFeedForActiveSequence();
+
+        closeSimpleInputModal();
         return;
     }
-
-    const rawMatches = getRawEntriesForListedEntry(mergedEntry);
-
-    if (!rawMatches.length) {
-        setModalErrorText("simple-input-error-text", "Could not find the original item. Close and try again.");
-        return;
-    }
-
-    rawMatches.forEach(function(raw) {
-        raw.note = rawValue;
-    });
-markInventoryChangedAfterSignatureAndSchedule(
-    "Inventory notes have changed since this schedule was calculated.",
-    false
-);
-    saveToDevice();
-
-    if (String(activeSeqId || "") === String(mergedEntry.sequenceId || "")) {
-        rebuildLiveInventoryFromSequence(activeSeqId);
-    }
-
-    renderListedInventory();
-    renderActionButtonStates();
-    updateUndoButtonState();
-    saveCalculatorFeedForActiveSequence();
-
-    closeSimpleInputModal();
-    return;
-}
 }
 
+// Mileage and route helpers
 function getMileageRouteMissingStops(routeData) {
     if (!routeData || !Array.isArray(routeData.stops)) return [];
 
@@ -4419,9 +4459,9 @@ async function openScheduleLegInGoogleMaps(dayId, legId) {
     });
 
     if (!day) {
-    await appAlert("Could not find this schedule row.", "Schedule Row Missing");
-    return;
-}
+        await appAlert("Could not find this schedule row.", "Schedule Row Missing");
+        return;
+    }
 
     ensureScheduleRowShape(day);
 
@@ -4430,37 +4470,37 @@ async function openScheduleLegInGoogleMaps(dayId, legId) {
     });
 
     if (!leg) {
-    await appAlert("Could not find this travel leg.", "Travel Leg Missing");
-    return;
-}
+        await appAlert("Could not find this travel leg.", "Travel Leg Missing");
+        return;
+    }
 
     const branch = String(day.operatingBranch || "").trim();
 
-if (!branch) {
-    await appAlert(
-        "Select an Operating Branch on this schedule row before opening Google Maps.",
-        "Operating Branch Required"
-    );
-    return;
-}
+    if (!branch) {
+        await appAlert(
+            "Select an Operating Branch on this schedule row before opening Google Maps.",
+            "Operating Branch Required"
+        );
+        return;
+    }
 
     const fromAddress = getScheduleLocationAddress(leg.from, branch);
     const toAddress = getScheduleLocationAddress(leg.to, branch);
 
-   if (!fromAddress || !toAddress) {
-    await appAlert(
-        "Add both From and To addresses before opening Google Maps.",
-        "Route Addresses Required"
-    );
-    return;
-}
+    if (!fromAddress || !toAddress) {
+        await appAlert(
+            "Add both From and To addresses before opening Google Maps.",
+            "Route Addresses Required"
+        );
+        return;
+    }
 
     const url = buildGoogleMapsLegUrl(fromAddress, toAddress);
 
     if (!url) {
-    await appAlert("Could not build Google Maps route.", "Route Error");
-    return;
-}
+        await appAlert("Could not build Google Maps route.", "Route Error");
+        return;
+    }
 
     window.open(url, "_blank");
 }
@@ -4519,7 +4559,9 @@ function openMileageRouteInGoogleMaps() {
 
     window.open(url, "_blank");
 }
-        function renderSequenceUI() {
+
+// Sequence tab rendering
+function renderSequenceUI() {
     const seq = currentJob.sequences.find(s => s.id == activeSeqId); 
             const isSaved = seq.isSaved;
             const status = isSaved ? 'disabled' : '';
