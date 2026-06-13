@@ -10935,6 +10935,112 @@ function getHtml2CanvasScale() {
     return isOldTablet() ? 1.0 : 1.35;
 }
 
+function buildListedInventoryPdfContext(filteredItems) {
+    const listedSummary = buildListedSummary(filteredItems);
+    const materialsSummary = buildMaterialsSummary(filteredItems);
+    const crewSummaryHtml = getPrintableCrewInstructionsHtml(filteredItems);
+    const sectionsHtml = getPrintableListedSections(filteredItems);
+
+    const customerName =
+        (currentJob.customer && currentJob.customer.displayName) ||
+        currentJob.name ||
+        "---";
+
+    const reference = currentJob.ref || "---";
+
+    const signedAt =
+        currentJob.signature && currentJob.signature.signedAt
+            ? new Date(currentJob.signature.signedAt).toLocaleString("en-GB")
+            : "Not signed";
+
+    const signatureHtml =
+        currentJob.signature && currentJob.signature.image
+            ? `<img src="${currentJob.signature.image}" class="pdf-signature-image" alt="Signature">`
+            : `<div class="pdf-signature-empty">No signature saved</div>`;
+
+    const fileName =
+        "MovePilot_Listed_Inventory_" +
+        makeSafePdfFilenamePart(customerName) +
+        "_" +
+        makeSafePdfFilenamePart(reference) +
+        ".pdf";
+
+    return {
+        filteredItems,
+        listedSummary,
+        materialsSummary,
+        crewSummaryHtml,
+        sectionsHtml,
+        customerName,
+        reference,
+        signedAt,
+        signatureHtml,
+        fileName
+    };
+}
+
+function createListedInventoryPdfWrapper(pdfContext) {
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "fixed";
+    wrapper.style.left = "-10000px";
+    wrapper.style.top = "0";
+    wrapper.style.background = "#ffffff";
+    wrapper.style.zIndex = "-1";
+
+    wrapper.innerHTML = `
+        <style>${getListedInventoryDownloadCss()}</style>
+
+        <div class="pdf-download-doc">
+            <div class="pdf-topbar">
+                <div>
+                    <div class="pdf-title">MovePilot Listed Inventory</div>
+                    <div class="pdf-sub">Customer: ${escapeHtml(pdfContext.customerName)}</div>
+                    <div class="pdf-sub">Ref: ${escapeHtml(pdfContext.reference)}</div>
+                </div>
+
+                <div>
+                    <div class="pdf-sub">Exported: ${new Date().toLocaleString("en-GB")}</div>
+                </div>
+            </div>
+
+            ${pdfContext.sectionsHtml}
+
+            <div class="pdf-footer-grid">
+                <div class="pdf-card">
+                    <div class="pdf-card-title">Customer Signature</div>
+                    ${pdfContext.signatureHtml}
+                    <div class="pdf-small-note" style="margin-top: 8px;">Signed: ${escapeHtml(pdfContext.signedAt)}</div>
+                    ${getPrintableSurveyorNameHtml()}
+                    ${getPrintableSurveyorSignatureHtml()}
+                </div>
+
+                <div class="pdf-card">
+                    <div class="pdf-card-title">Included Volume & Materials Summary</div>
+                    <div class="pdf-big-stat pdf-volume-display">${formatListedSummaryVolumeDisplay(pdfContext.listedSummary.includedVolume)}</div>
+                    <div class="pdf-small-note">Included volume counted</div>
+                    <div style="margin-top:12px;">
+                        ${getPrintableMaterialsHtml(pdfContext.materialsSummary)}
+                    </div>
+                </div>
+            </div>
+
+            <div class="pdf-responsibilities-grid">
+                <div class="pdf-card pdf-card-full">
+                    <div class="pdf-card-title">Crew Instructions / Responsibilities</div>
+                    ${pdfContext.crewSummaryHtml}
+                </div>
+
+                <div class="pdf-card pdf-card-full">
+                    <div class="pdf-card-title">Exclusions & Customer Responsibilities</div>
+                    ${getPrintableResponsibilitiesHtml(pdfContext.listedSummary, pdfContext.filteredItems)}
+                </div>
+            </div>
+        </div>
+    `;
+
+    return wrapper;
+}
+
 async function shareListedInventoryPdf() {
     listedInventoryPreparedSharePayload = null;
     listedInventoryPreparedShareFileName = "";
@@ -10963,92 +11069,8 @@ async function shareListedInventoryPdf() {
     let wrapper = null;
 
     try {
-        const listedSummary = buildListedSummary(filteredItems);
-        const materialsSummary = buildMaterialsSummary(filteredItems);
-        const crewSummaryHtml = getPrintableCrewInstructionsHtml(filteredItems);
-        const sectionsHtml = getPrintableListedSections(filteredItems);
-
-        const customerName =
-            (currentJob.customer && currentJob.customer.displayName) ||
-            currentJob.name ||
-            "---";
-
-        const reference = currentJob.ref || "---";
-
-        const signedAt =
-            currentJob.signature && currentJob.signature.signedAt
-                ? new Date(currentJob.signature.signedAt).toLocaleString("en-GB")
-                : "Not signed";
-
-        const signatureHtml =
-            currentJob.signature && currentJob.signature.image
-                ? `<img src="${currentJob.signature.image}" class="pdf-signature-image" alt="Signature">`
-                : `<div class="pdf-signature-empty">No signature saved</div>`;
-
-        const fileName =
-            "MovePilot_Listed_Inventory_" +
-            makeSafePdfFilenamePart(customerName) +
-            "_" +
-            makeSafePdfFilenamePart(reference) +
-            ".pdf";
-
-        wrapper = document.createElement("div");
-        wrapper.style.position = "fixed";
-        wrapper.style.left = "-10000px";
-        wrapper.style.top = "0";
-        wrapper.style.background = "#ffffff";
-        wrapper.style.zIndex = "-1";
-
-        wrapper.innerHTML = `
-            <style>${getListedInventoryDownloadCss()}</style>
-
-            <div class="pdf-download-doc">
-                <div class="pdf-topbar">
-                    <div>
-                        <div class="pdf-title">MovePilot Listed Inventory</div>
-                        <div class="pdf-sub">Customer: ${escapeHtml(customerName)}</div>
-                        <div class="pdf-sub">Ref: ${escapeHtml(reference)}</div>
-                    </div>
-
-                    <div>
-                        <div class="pdf-sub">Exported: ${new Date().toLocaleString("en-GB")}</div>
-                    </div>
-                </div>
-
-                ${sectionsHtml}
-
-                <div class="pdf-footer-grid">
-                    <div class="pdf-card">
-                        <div class="pdf-card-title">Customer Signature</div>
-                        ${signatureHtml}
-                        <div class="pdf-small-note" style="margin-top: 8px;">Signed: ${escapeHtml(signedAt)}</div>
-                        ${getPrintableSurveyorNameHtml()}
-                        ${getPrintableSurveyorSignatureHtml()}
-                    </div>
-
-                    <div class="pdf-card">
-                        <div class="pdf-card-title">Included Volume & Materials Summary</div>
-                        <div class="pdf-big-stat pdf-volume-display">${formatListedSummaryVolumeDisplay(listedSummary.includedVolume)}</div>
-                        <div class="pdf-small-note">Included volume counted</div>
-                        <div style="margin-top:12px;">
-                            ${getPrintableMaterialsHtml(materialsSummary)}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pdf-responsibilities-grid">
-                    <div class="pdf-card pdf-card-full">
-                        <div class="pdf-card-title">Crew Instructions / Responsibilities</div>
-                        ${crewSummaryHtml}
-                    </div>
-
-                    <div class="pdf-card pdf-card-full">
-                        <div class="pdf-card-title">Exclusions & Customer Responsibilities</div>
-                        ${getPrintableResponsibilitiesHtml(listedSummary, filteredItems)}
-                    </div>
-                </div>
-            </div>
-        `;
+        const pdfContext = buildListedInventoryPdfContext(filteredItems);
+        wrapper = createListedInventoryPdfWrapper(pdfContext);
 
         document.body.appendChild(wrapper);
 
@@ -11064,7 +11086,7 @@ async function shareListedInventoryPdf() {
         const pdfBlob = await html2pdf()
             .set({
                 margin: [8, 8, 8, 8],
-                filename: fileName,
+                filename: pdfContext.fileName,
                 image: {
                     type: "jpeg",
                     quality: 0.84
@@ -11089,15 +11111,15 @@ async function shareListedInventoryPdf() {
 
         const pdfFile = new File(
             [pdfBlob],
-            fileName,
+            pdfContext.fileName,
             { type: "application/pdf" }
         );
                 listedInventoryPreparedSharePayload = {
             files: [pdfFile],
-            title: fileName,
+            title: pdfContext.fileName,
             text: "MovePilot listed inventory PDF"
         };
-        listedInventoryPreparedShareFileName = fileName;
+        listedInventoryPreparedShareFileName = pdfContext.fileName;
 
 
        // Show PDF Ready modal and bind share button
@@ -11187,93 +11209,8 @@ async function saveListedInventoryPdfToDevice() {
         return;
     }
 
-    const listedSummary = buildListedSummary(filteredItems);
-    const materialsSummary = buildMaterialsSummary(filteredItems);
-    const crewSummaryHtml = getPrintableCrewInstructionsHtml(filteredItems);
-    const sectionsHtml = getPrintableListedSections(filteredItems);
-
-    const customerName =
-        (currentJob.customer && currentJob.customer.displayName) ||
-        currentJob.name ||
-        "---";
-
-    const reference = currentJob.ref || "---";
-
-    const signedAt =
-        currentJob.signature && currentJob.signature.signedAt
-            ? new Date(currentJob.signature.signedAt).toLocaleString("en-GB")
-            : "Not signed";
-
-    const signatureHtml =
-        currentJob.signature && currentJob.signature.image
-            ? `<img src="${currentJob.signature.image}" class="pdf-signature-image" alt="Signature">`
-            : `<div class="pdf-signature-empty">No signature saved</div>`;
-
-    const fileName =
-        "MovePilot_Listed_Inventory_" +
-        makeSafePdfFilenamePart(customerName) +
-        "_" +
-        makeSafePdfFilenamePart(reference) +
-        ".pdf";
-
-    const wrapper = document.createElement("div");
-    wrapper.style.position = "fixed";
-    wrapper.style.left = "-10000px";
-    wrapper.style.top = "0";
-    wrapper.style.background = "#ffffff";
-    wrapper.style.zIndex = "-1";
-
-    wrapper.innerHTML = `
-        <style>${getListedInventoryDownloadCss()}</style>
-
-        <div class="pdf-download-doc">
-            <div class="pdf-topbar">
-                <div>
-                    <div class="pdf-title">MovePilot Listed Inventory</div>
-                    <div class="pdf-sub">Customer: ${escapeHtml(customerName)}</div>
-                    <div class="pdf-sub">Ref: ${escapeHtml(reference)}</div>
-                </div>
-
-                <div>
-                    <div class="pdf-sub">Exported: ${new Date().toLocaleString("en-GB")}</div>
-                </div>
-            </div>
-
-            ${sectionsHtml}
-
-            <div class="pdf-footer-grid">
-                
-<div class="pdf-card">
-<div class="pdf-card-title">Customer Signature</div>
-${signatureHtml}
-<div class="pdf-small-note" style="margin-top: 8px;">Signed: ${escapeHtml(signedAt)}</div>
-${getPrintableSurveyorNameHtml()}
-${getPrintableSurveyorSignatureHtml()}
-</div>
-
-                <div class="pdf-card">
-                    <div class="pdf-card-title">Included Volume & Materials Summary</div>
-                    <div class="pdf-big-stat pdf-volume-display">${formatListedSummaryVolumeDisplay(listedSummary.includedVolume)}</div>
-<div class="pdf-small-note">Included volume counted</div>
-                    <div style="margin-top:12px;">
-                        ${getPrintableMaterialsHtml(materialsSummary)}
-                    </div>
-                </div>
-            </div>
-
-            <div class="pdf-responsibilities-grid">
-                <div class="pdf-card pdf-card-full">
-                    <div class="pdf-card-title">Crew Instructions / Responsibilities</div>
-                    ${crewSummaryHtml}
-                </div>
-
-                <div class="pdf-card pdf-card-full">
-                    <div class="pdf-card-title">Exclusions & Customer Responsibilities</div>
-                    ${getPrintableResponsibilitiesHtml(listedSummary, filteredItems)}
-                </div>
-            </div>
-        </div>
-    `;
+    const pdfContext = buildListedInventoryPdfContext(filteredItems);
+    const wrapper = createListedInventoryPdfWrapper(pdfContext);
 
     document.body.appendChild(wrapper);
 
@@ -11285,7 +11222,7 @@ ${getPrintableSurveyorSignatureHtml()}
         const pdfBlob = await html2pdf()
             .set({
                 margin: [8, 8, 8, 8],
-                filename: fileName,
+                filename: pdfContext.fileName,
                 image: {
                     type: "jpeg",
                     quality: 0.84
@@ -11312,7 +11249,7 @@ ${getPrintableSurveyorSignatureHtml()}
 
         const downloadLink = document.createElement("a");
         downloadLink.href = pdfUrl;
-        downloadLink.download = fileName;
+        downloadLink.download = pdfContext.fileName;
         downloadLink.style.display = "none";
 
         document.body.appendChild(downloadLink);
