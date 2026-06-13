@@ -211,3 +211,28 @@ Compare the duplicate share/save functions line by line, then remove only the tr
 ## Principle For The Next Pass
 
 Keep all existing function names in global scope for now. The HTML still uses inline handlers such as `onclick="..."`, so renaming or wrapping functions too early could break buttons.
+
+## Pass 10 PDF Duplicate Quarantine
+
+- Renamed the older overridden `sharePreparedListedInventoryPdf()` copy to `supersededSharePreparedListedInventoryPdf()`.
+- Renamed the older overridden `saveListedInventoryPdfToDevice()` copy to `supersededSaveListedInventoryPdfToDevice()`.
+- Left the newer active PDF share/save functions unchanged.
+- This means the browser now has only one live function with each button-facing PDF name:
+  - `sharePreparedListedInventoryPdf(event)`
+  - `saveListedInventoryPdfToDevice()`
+- The superseded versions are still kept in the file temporarily so their Android/tablet fallback logic can be compared before final deletion.
+- Verified `js/app.js` still passes JavaScript syntax checking after the duplicate quarantine.
+
+## Pass 11 PDF Duplicate Removal
+
+- Removed the previously quarantined `supersededSharePreparedListedInventoryPdf()` function.
+- Removed the previously quarantined `supersededSaveListedInventoryPdfToDevice()` function.
+- Left the active PDF flow untouched:
+  - `shareListedInventoryPdf()`
+  - `sharePreparedListedInventoryPdf(event)`
+  - `saveListedInventoryPdfToDevice()`
+  - `printListedInventoryPdf()`
+  - `bindPdfShareButton(...)`
+  - `tryShareListedInventoryPdfFromGesture(...)`
+- Verified there are no remaining references to the superseded function names.
+- Verified `js/app.js` still passes JavaScript syntax checking after removing the duplicate PDF code.
