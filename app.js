@@ -10935,6 +10935,31 @@ function getHtml2CanvasScale() {
     return isOldTablet() ? 1.0 : 1.35;
 }
 
+function getListedInventoryPdfOptions(fileName) {
+    return {
+        margin: [8, 8, 8, 8],
+        filename: fileName,
+        image: {
+            type: "jpeg",
+            quality: 0.84
+        },
+        html2canvas: {
+            scale: getHtml2CanvasScale(),
+            useCORS: true,
+            backgroundColor: "#ffffff"
+        },
+        jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "portrait"
+        },
+        pagebreak: {
+            mode: ["css", "legacy"],
+            avoid: [".pdf-room-block"]
+        }
+    };
+}
+
 function buildListedInventoryPdfContext(filteredItems) {
     const listedSummary = buildListedSummary(filteredItems);
     const materialsSummary = buildMaterialsSummary(filteredItems);
@@ -11084,28 +11109,7 @@ async function shareListedInventoryPdf() {
         await appAlert("Creating PDF now. This may take a few seconds on older tablets.", "PDF Share");
 
         const pdfBlob = await html2pdf()
-            .set({
-                margin: [8, 8, 8, 8],
-                filename: pdfContext.fileName,
-                image: {
-                    type: "jpeg",
-                    quality: 0.84
-                },
-                html2canvas: {
-    scale: getHtml2CanvasScale(),
-    useCORS: true,
-    backgroundColor: "#ffffff"
-},
-                jsPDF: {
-                    unit: "mm",
-                    format: "a4",
-                    orientation: "portrait"
-                },
-                pagebreak: {
-                    mode: ["css", "legacy"],
-                    avoid: [".pdf-room-block"]
-                }
-            })
+            .set(getListedInventoryPdfOptions(pdfContext.fileName))
             .from(pdfElement)
             .outputPdf("blob");
 
@@ -11220,28 +11224,7 @@ async function saveListedInventoryPdfToDevice() {
         await appAlert("Creating PDF now. This may take a few seconds on older tablets.", "PDF Save");
 
         const pdfBlob = await html2pdf()
-            .set({
-                margin: [8, 8, 8, 8],
-                filename: pdfContext.fileName,
-                image: {
-                    type: "jpeg",
-                    quality: 0.84
-                },
-                html2canvas: {
-    scale: getHtml2CanvasScale(),
-    useCORS: true,
-    backgroundColor: "#ffffff"
-},
-                jsPDF: {
-                    unit: "mm",
-                    format: "a4",
-                    orientation: "portrait"
-                },
-                pagebreak: {
-                    mode: ["css", "legacy"],
-                    avoid: [".pdf-room-block"]
-                }
-            })
+            .set(getListedInventoryPdfOptions(pdfContext.fileName))
             .from(pdfElement)
             .outputPdf("blob");
 
