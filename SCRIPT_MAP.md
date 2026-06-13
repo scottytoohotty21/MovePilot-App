@@ -162,6 +162,52 @@ This is the working map for `js/app.js`. It is meant to make the next cleanup pa
   5. Keep PDF wording and layout unchanged until the duplicate flow is stable.
 - Verified `js/app.js` still passes JavaScript syntax checking after adding PDF/export labels.
 
+## Pass 9 PDF Audit
+
+No PDF behaviour was changed in this pass. The goal was to identify the moving parts before touching the fragile tablet-compatible export flow.
+
+### Active buttons in `index.html`
+
+- `Review / Print PDF` calls `printListedInventoryPdf()`.
+- `Share PDF` calls `shareListedInventoryPdf()`.
+- `Save PDF to Device` is currently commented out in the HTML, so the button is not visible.
+- `pdf-ready-overlay` is the active PDF-ready pop-up used by the current share flow.
+- `listed-pdf-ready-overlay` still exists in the HTML and calls the same close/share names, but the current code opens `pdf-ready-overlay`, not this older/alternate modal.
+
+### Active PDF content helpers
+
+- `getPrintableListedSections(items)` builds the listed inventory room/section tables.
+- `getPrintableMaterialsHtml(materials)` builds the materials block.
+- `getPrintableResponsibilitiesHtml(summary, items)` builds exclusions and customer responsibility PDF content.
+- `getPrintableCrewInstructionsHtml(items)` builds crew instruction PDF content.
+- `getListedInventoryDownloadCss()` supplies the PDF-only styling used by the generated download/share document.
+- `makeSafePdfFilenamePart(value)` cleans customer/reference text for PDF filenames.
+- `isOldTablet()` and `getHtml2CanvasScale()` are still part of the Android/tablet compatibility path.
+
+### Active PDF flows
+
+- `shareListedInventoryPdf()` creates the PDF blob for sharing, stores it in `listedInventoryPreparedSharePayload`, opens `pdf-ready-overlay`, and calls `bindPdfShareButton(pdfFile)`.
+- The later `sharePreparedListedInventoryPdf(event)` is the active version because it appears after the older function with the same name. It hands off to `tryShareListedInventoryPdfFromGesture(...)`.
+- The later `saveListedInventoryPdfToDevice()` is the active version because it appears after the older function with the same name. The visible save button is currently commented out, but this function still exists.
+- `printListedInventoryPdf()` is the review/print fallback. It uses a browser print window instead of the html2pdf download path.
+- `tryShareListedInventoryPdfFromGesture(...)`, `bindPdfShareButton(...)`, `triggerListedInventoryDownload(...)`, `preparePdfDownloadLink(...)`, and the share-toast helpers are active support code for the newer share/download fallback.
+
+### Duplicate/superseded areas to handle carefully
+
+- `sharePreparedListedInventoryPdf()` is defined twice. The first version is labelled "Safe Share Function", but the later version overrides it in the browser.
+- `saveListedInventoryPdfToDevice()` is defined twice. The later version overrides the first version in the browser.
+- The older duplicate share/save functions should not be deleted yet. First compare them against the active later versions and confirm nothing useful was lost, especially older Android download fallback behaviour.
+- There are two PDF-ready overlays in the HTML. Before removing either one, confirm which overlay appears during real tablet testing.
+
+### Recommended next PDF cleanup step
+
+Compare the duplicate share/save functions line by line, then remove only the truly superseded copies. After that, test:
+
+1. Share PDF on desktop/browser.
+2. Download PDF from the ready modal.
+3. Review / Print PDF.
+4. Same flow on the older Android tablet.
+
 ## Principle For The Next Pass
 
 Keep all existing function names in global scope for now. The HTML still uses inline handlers such as `onclick="..."`, so renaming or wrapping functions too early could break buttons.
