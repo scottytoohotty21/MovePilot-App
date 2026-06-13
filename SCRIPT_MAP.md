@@ -101,6 +101,24 @@ This is the working map for `js/app.js`. It is meant to make the next cleanup pa
 - Added a clear boundary where inventory-related helpers move into sequence-tab rendering and then dashboard rendering.
 - Verified `js/app.js` still passes JavaScript syntax checking after the inventory map/readability pass.
 
+## Pass 5 Changes
+
+- Added internal listed-inventory landmarks:
+  - Listed filters and display options
+  - Listed item editing and raw-entry matching
+  - Listed flags modal
+  - Listed specialist tags
+  - Listed merge keys and photo refs
+  - Materials summary
+  - Listed summaries and responsibility notes
+- Reformatted the listed photo review markup.
+- Reformatted listed filters and CBM display option handling.
+- Reformatted raw-entry matching comparisons for listed inventory lines.
+- Reformatted listed delete and flags-save flows.
+- Reformatted listed merge key/photo-ref handling.
+- Left the larger responsibility and crew-instruction summary logic intact for a later focused pass.
+- Verified `js/app.js` still passes JavaScript syntax checking after the listed-inventory readability pass.
+
 ## Principle For The Next Pass
 
 Keep all existing function names in global scope for now. The HTML still uses inline handlers such as `onclick="..."`, so renaming or wrapping functions too early could break buttons.
