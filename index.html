@@ -756,8 +756,8 @@ Enter as: Surname, First Name
     </div>
 </section>    </main>
 
-        <script src="html2pdf.bundle.min.js"></script>
-<script src="app.js"></script>
+        <script src="js/html2pdf.bundle.min.js"></script>
+        <script src="js/app.js"></script>
 <!-- WARDROBE MODAL -->
 <div id="wardrobe-overlay" class="wardrobe-overlay" onclick="closeWardrobeModal()">
     <div class="wardrobe-panel" onclick="event.stopPropagation()">
@@ -1100,22 +1100,6 @@ Enter as: Surname, First Name
 
         <div class="misc-actions">
             <button type="button" class="misc-cancel-btn" onclick="closeDeleteCustomInventoryItemModal()">Close</button>
-        </div>
-    </div>
-</div>
-<!-- LISTED INVENTORY PDF READY MODAL -->
-<div id="listed-pdf-ready-overlay" class="misc-overlay" onclick="closeListedPdfReadyModal()">
-    <div class="misc-panel" onclick="event.stopPropagation()">
-        <div class="misc-title">PDF Ready</div>
-        <div class="misc-subtitle">
-            Your listed inventory PDF has been created. Tap Share Now to open the tablet share options.
-        </div>
-
-        <div id="listed-pdf-ready-name" class="listed-pdf-ready-name"></div>
-
-        <div class="misc-actions">
-            <button type="button" class="misc-cancel-btn" onclick="closeListedPdfReadyModal()">Close</button>
-            <button type="button" class="misc-save-btn" onclick="sharePreparedListedInventoryPdf()">Share Now</button>
         </div>
     </div>
 </div>
