@@ -11282,63 +11282,34 @@ async function printListedInventoryPdf() {
     const filteredItems = filterListedInventoryItems(allItems);
 
     if (!filteredItems.length) {
-    await appAlert("No listed inventory to export.", "Export Unavailable");
-    return;
-}
+        await appAlert("No listed inventory to export.", "Export Unavailable");
+        return;
+    }
 
-    const listedSummary = buildListedSummary(filteredItems);
-    const materialsSummary = buildMaterialsSummary(filteredItems);
-    const crewSummaryHtml = getPrintableCrewInstructionsHtml(filteredItems);
-    const sectionsHtml = getPrintableListedSections(filteredItems);
-
-    const customerName =
-        (currentJob.customer && currentJob.customer.displayName) ||
-        currentJob.name ||
-        "---";
-
-    const reference = currentJob.ref || "---";
-
-    const seqLabel =
-        listedSequenceFilter === "__all__"
-            ? "All Sequences"
-            : getSequenceLabelById(listedSequenceFilter);
-
-    const deliveryLabel =
-        listedDeliveryFilter === "__all__"
-            ? "All Deliveries"
-            : getPropertyLabelById(listedDeliveryFilter);
-
-    const signedAt =
-        currentJob.signature && currentJob.signature.signedAt
-            ? new Date(currentJob.signature.signedAt).toLocaleString("en-GB")
-            : "Not signed";
-
-    const signatureHtml =
-        currentJob.signature && currentJob.signature.image
-            ? `<img src="${currentJob.signature.image}" class="pdf-signature-image" alt="Signature">`
-            : `<div class="pdf-signature-empty">No signature saved</div>`;
+    const pdfContext = buildListedInventoryPdfContext(filteredItems);
 
     const printWindow = window.open("", "_blank");
 
     if (!printWindow) {
-    await appAlert(
-        "The print window could not be opened. Please allow pop-ups for this app and try again.",
-        "Print Window Blocked"
-    );
-    return;
-}
-if (movePilotPrintWindowWatcher) {
-    clearInterval(movePilotPrintWindowWatcher);
-    movePilotPrintWindowWatcher = null;
-}
+        await appAlert(
+            "The print window could not be opened. Please allow pop-ups for this app and try again.",
+            "Print Window Blocked"
+        );
+        return;
+    }
 
-movePilotPrintWindowWatcher = setInterval(function() {
-    if (printWindow.closed) {
+    if (movePilotPrintWindowWatcher) {
         clearInterval(movePilotPrintWindowWatcher);
         movePilotPrintWindowWatcher = null;
-        runPostPrintCleanup();
     }
-}, 500);
+
+    movePilotPrintWindowWatcher = setInterval(function() {
+        if (printWindow.closed) {
+            clearInterval(movePilotPrintWindowWatcher);
+            movePilotPrintWindowWatcher = null;
+            runPostPrintCleanup();
+        }
+    }, 500);
 
     printWindow.document.write(`
         <!DOCTYPE html>
@@ -11749,8 +11720,8 @@ movePilotPrintWindowWatcher = setInterval(function() {
             <div class="pdf-topbar">
                 <div>
                     <div class="pdf-title">MovePilot Listed Inventory</div>
-                    <div class="pdf-sub">Customer: ${escapeHtml(customerName)}</div>
-                    <div class="pdf-sub">Ref: ${escapeHtml(reference)}</div>
+                    <div class="pdf-sub">Customer: ${escapeHtml(pdfContext.customerName)}</div>
+                    <div class="pdf-sub">Ref: ${escapeHtml(pdfContext.reference)}</div>
                 </div>
 
                 <div>
@@ -11768,23 +11739,23 @@ movePilotPrintWindowWatcher = setInterval(function() {
     </div>
 </div>
 
-                    ${sectionsHtml}
+                    ${pdfContext.sectionsHtml}
 
             <div class="pdf-footer-grid">
     <div class="pdf-card">
     <div class="pdf-card-title">Customer Signature</div>
-    ${signatureHtml}
-    <div class="pdf-small-note" style="margin-top: 8px;">Signed: ${escapeHtml(signedAt)}</div>
+    ${pdfContext.signatureHtml}
+    <div class="pdf-small-note" style="margin-top: 8px;">Signed: ${escapeHtml(pdfContext.signedAt)}</div>
     ${getPrintableSurveyorNameHtml()}
     ${getPrintableSurveyorSignatureHtml()}
 </div>
 
     <div class="pdf-card">
         <div class="pdf-card-title">Included Volume & Materials Summary</div>
-        <div class="pdf-big-stat pdf-volume-display">${formatListedSummaryVolumeDisplay(listedSummary.includedVolume)}</div>
+        <div class="pdf-big-stat pdf-volume-display">${formatListedSummaryVolumeDisplay(pdfContext.listedSummary.includedVolume)}</div>
 <div class="pdf-small-note">Included volume counted</div>
         <div style="margin-top:12px;">
-            ${getPrintableMaterialsHtml(materialsSummary)}
+            ${getPrintableMaterialsHtml(pdfContext.materialsSummary)}
         </div>
     </div>
 </div>
@@ -11792,12 +11763,12 @@ movePilotPrintWindowWatcher = setInterval(function() {
 <div class="pdf-responsibilities-grid">
     <div class="pdf-card pdf-card-full">
         <div class="pdf-card-title">Crew Instructions / Responsibilities</div>
-        ${crewSummaryHtml}
+        ${pdfContext.crewSummaryHtml}
     </div>
 
     <div class="pdf-card pdf-card-full">
         <div class="pdf-card-title">Exclusions & Customer Responsibilities</div>
-        ${getPrintableResponsibilitiesHtml(listedSummary, filteredItems)}
+        ${getPrintableResponsibilitiesHtml(pdfContext.listedSummary, pdfContext.filteredItems)}
     </div>
 </div>
         </body>
