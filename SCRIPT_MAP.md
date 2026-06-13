@@ -119,6 +119,14 @@ This is the working map for `js/app.js`. It is meant to make the next cleanup pa
 - Left the larger responsibility and crew-instruction summary logic intact for a later focused pass.
 - Verified `js/app.js` still passes JavaScript syntax checking after the listed-inventory readability pass.
 
+## Pass 6 Changes
+
+- Added explicit labels for `Customer responsibility notes` and `Crew instruction notes`.
+- Reformatted the customer-responsibility auto-note builder inside `buildResponsibilitiesSummary()`.
+- Made the handyman, piano specialist, and safe/heavy-lift responsibility rules easier to scan.
+- Left crew-instruction summary logic for the next pass.
+- Verified `js/app.js` still passes JavaScript syntax checking after the customer-responsibility pass.
+
 ## Principle For The Next Pass
 
 Keep all existing function names in global scope for now. The HTML still uses inline handlers such as `onclick="..."`, so renaming or wrapping functions too early could break buttons.
