@@ -10935,8 +10935,8 @@ function getHtml2CanvasScale() {
     return isOldTablet() ? 1.0 : 1.35;
 }
 
-// --- Safe Share Function ---
-async function sharePreparedListedInventoryPdf() {
+// Superseded PDF share fallback kept temporarily for comparison.
+async function supersededSharePreparedListedInventoryPdf() {
     if (!listedInventoryPreparedSharePayload) {
         await appAlert("No prepared PDF was found. Please create the PDF again.", "Share PDF");
         closeListedPdfReadyModal();
@@ -10994,8 +10994,8 @@ async function sharePreparedListedInventoryPdf() {
     }
 }
 
-// --- Safe Save Function ---
-async function saveListedInventoryPdfToDevice() {
+// Superseded PDF save fallback kept temporarily for comparison.
+async function supersededSaveListedInventoryPdfToDevice() {
     try {
         if (typeof closeAllMovePilotModals === "function") {
             closeAllMovePilotModals();
