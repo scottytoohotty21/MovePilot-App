@@ -248,3 +248,53 @@ Keep all existing function names in global scope for now. The HTML still uses in
   - `pdf-download-link`
 - Verified there are no remaining references to `listed-pdf-ready-overlay` or `listed-pdf-ready-name`.
 - Verified `js/app.js` still passes JavaScript syntax checking after the modal cleanup.
+
+## Packaging Hotfix
+
+- Updated `index.html` to load top-level scripts:
+  - `html2pdf.bundle.min.js`
+  - `app.js`
+- This matches the GitHub upload layout where `app.js` and `html2pdf.bundle.min.js` sit beside `index.html`.
+- Added top-level copies of `app.js` and `html2pdf.bundle.min.js` in the output folder to reduce upload/path confusion.
+- Verified the top-level `app.js` copy still passes JavaScript syntax checking.
+
+## Pass 13 PDF Preview Popup Cleanup
+
+- Removed a hidden, unused `pdf-ready-overlay` popup from the Review / Print preview HTML generated inside `printListedInventoryPdf()`.
+- Left the real app-level `pdf-ready-overlay` in `index.html` untouched.
+- Confirmed the only remaining `pdf-ready-overlay` markup is the live PDF-ready popup with:
+  - `pdf-share-now-btn`
+  - `pdf-download-link`
+  - `closeListedPdfReadyModal()`
+- Kept the top-level `app.js` and backup `js/app.js` copies in sync.
+- Verified both app script copies still pass JavaScript syntax checking.
+
+## Pass 14 PDF Shared Document Builder
+
+- Added `buildListedInventoryPdfContext(filteredItems)` to prepare the shared PDF data once:
+  - listed summary
+  - materials summary
+  - crew instructions HTML
+  - listed inventory sections HTML
+  - customer/reference/signature details
+  - PDF filename
+- Added `createListedInventoryPdfWrapper(pdfContext)` to build the hidden html2pdf document wrapper in one place.
+- Updated `shareListedInventoryPdf()` to use the shared context/wrapper.
+- Updated `saveListedInventoryPdfToDevice()` to use the shared context/wrapper.
+- Left the actual share, download, and older-tablet fallback behaviours unchanged.
+- Kept the top-level `app.js` and backup `js/app.js` copies in sync.
+- Verified both app script copies still pass JavaScript syntax checking.
+
+## Pass 15 PDF Options Helper
+
+- Added `getListedInventoryPdfOptions(fileName)` so html2pdf settings live in one place.
+- Updated both `shareListedInventoryPdf()` and `saveListedInventoryPdfToDevice()` to use the shared options helper.
+- Kept the existing PDF settings unchanged:
+  - A4 portrait
+  - JPEG quality `0.84`
+  - old-tablet scale from `getHtml2CanvasScale()`
+  - CSS/legacy page breaks
+  - avoid breaking inside `.pdf-room-block`
+- Left the share/download/save behaviours unchanged.
+- Kept the top-level `app.js` and backup `js/app.js` copies in sync.
+- Verified both app script copies still pass JavaScript syntax checking.
