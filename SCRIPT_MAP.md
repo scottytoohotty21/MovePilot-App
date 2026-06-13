@@ -298,3 +298,37 @@ Keep all existing function names in global scope for now. The HTML still uses in
 - Left the share/download/save behaviours unchanged.
 - Kept the top-level `app.js` and backup `js/app.js` copies in sync.
 - Verified both app script copies still pass JavaScript syntax checking.
+
+## Pass 16 PDF Share Modal Tidying
+
+- Added `clearListedInventoryPreparedShare()` to reset prepared PDF share state in one place.
+- Updated `shareListedInventoryPdf()` to use the state reset helper.
+- Tidied indentation in the prepared-share payload and PDF-ready modal binding.
+- Tidied guard clauses in `preparePdfDownloadLink(...)` and `bindPdfShareButton(...)`.
+- Left share/download behaviour, toast messages, and tablet fallbacks unchanged.
+- Kept the top-level `app.js` and backup `js/app.js` copies in sync.
+- Verified both app script copies still pass JavaScript syntax checking.
+
+## Pass 17 PDF Print Context Reuse
+
+- Updated `printListedInventoryPdf()` to use `buildListedInventoryPdfContext(filteredItems)`.
+- Removed repeated print-only preparation for:
+  - listed summary
+  - materials summary
+  - crew instructions HTML
+  - listed inventory sections HTML
+  - customer/reference/signature details
+- Tidied the no-items and pop-up-blocked branches in the print flow.
+- Left the print-preview CSS, window handling, and Print / Save PDF buttons unchanged.
+- Kept the top-level `app.js` and backup `js/app.js` copies in sync.
+- Verified both app script copies still pass JavaScript syntax checking.
+
+## Pass 18 PDF Print Preview Markup Tidy
+
+- Tidied the generated Review / Print preview markup inside `printListedInventoryPdf()`.
+- Reformatted the preview action bar, footer cards, and responsibility cards.
+- Tidied the `onafterprint` cleanup/close callback and preview-window focus timer.
+- Left the print-preview CSS block in place to avoid a larger behavioural risk before older-tablet testing.
+- Left the actual Print / Save PDF and Close Preview behaviour unchanged.
+- Kept the top-level `app.js` and backup `js/app.js` copies in sync.
+- Verified both app script copies still pass JavaScript syntax checking.
