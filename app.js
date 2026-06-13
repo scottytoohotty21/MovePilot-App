@@ -15693,7 +15693,7 @@ let listedInventoryShareLastTapAt = 0;
 let listedInventoryDownloadObjectUrl = "";
 
 function closeAllListedPdfShareOverlays() {
-    var overlayIds = ["pdf-ready-overlay", "listed-pdf-ready-overlay"];
+    var overlayIds = ["pdf-ready-overlay"];
     var i;
     var overlay;
 
