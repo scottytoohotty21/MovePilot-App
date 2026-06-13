@@ -9186,22 +9186,23 @@ function formatListedItemRoomLine(entry, baseLine) {
 
     return cleanBaseLine + " (" + roomLabel + ")";
 }
+// Crew instruction summary
 function buildCrewInstructionsSummary(items) {
     const summary = {
-    dismantle: [],
-    exportWrap: [],
-    crate: [],
-    disconnect: [],
-    handyman: [],
-    damage: [],
-    notes: [],
-    specialHandling: [],
-    beds: [],
-    wardrobes: [],
-    pianos: []
-};
+        dismantle: [],
+        exportWrap: [],
+        crate: [],
+        disconnect: [],
+        handyman: [],
+        damage: [],
+        notes: [],
+        specialHandling: [],
+        beds: [],
+        wardrobes: [],
+        pianos: []
+    };
 
-const condenseExportWrapSummary = activeSequenceShouldCondenseExportWrapSummary();
+    const condenseExportWrapSummary = activeSequenceShouldCondenseExportWrapSummary();
     const manualCrewNotes = ensureCrewInstructionNotes().filter(function(note) {
         return String(note || "").trim();
     });
@@ -9225,29 +9226,29 @@ const condenseExportWrapSummary = activeSequenceShouldCondenseExportWrapSummary(
         const baseLine = `${qty} x ${itemName}${bedSuffix}`;
         const roomLine = formatListedItemRoomLine(entry, baseLine);
         const isPianoItem =
-    itemName === "PIANO (UPRIGHT)" ||
-    itemName === "PIANO (ELECTRIC)" ||
-    itemName === "PIANO (BABY GRAND)" ||
-    itemName === "PIANO (GRAND)";
+            itemName === "PIANO (UPRIGHT)" ||
+            itemName === "PIANO (ELECTRIC)" ||
+            itemName === "PIANO (BABY GRAND)" ||
+            itemName === "PIANO (GRAND)";
 
-if (isPianoItem) {
-    const pianoListedTag = getPianoDetailsListedTag(entry.pianoDetails);
+        if (isPianoItem) {
+            const pianoListedTag = getPianoDetailsListedTag(entry.pianoDetails);
     summary.specialHandling.push(
         pianoListedTag
             ? `${roomLine} — ${pianoListedTag}`
             : roomLine
     );
-}
+        }
 
-if (itemName === "SAFE") {
-    const safeListedTag = getSafeDetailsListedTag(entry.safeDetails);
+        if (itemName === "SAFE") {
+            const safeListedTag = getSafeDetailsListedTag(entry.safeDetails);
 
     summary.specialHandling.push(
         safeListedTag
             ? `${roomLine} — ${safeListedTag}`
             : roomLine
     );
-}
+        }
 
         if (entry.dismantle) {
     if (isWardrobeInventoryItem(entry.itemName)) {
@@ -9282,29 +9283,29 @@ if (itemName === "SAFE") {
 }
 
         const noteBelongsToCustomerResponsibilities =
-    entry.handyman ||
-    entryRequiresPianoSpecialist(entry);
+            entry.handyman ||
+            entryRequiresPianoSpecialist(entry);
 
-if (
-    entry.note &&
-    String(entry.note).trim() &&
-    !noteBelongsToCustomerResponsibilities
-) {
+        if (
+            entry.note &&
+            String(entry.note).trim() &&
+            !noteBelongsToCustomerResponsibilities
+        ) {
     summary.notes.push(`${roomLine} — ${String(entry.note).trim()}`);
-}
+        }
     });
 
     if (condenseExportWrapSummary) {
-    const hasExportWrappedItems = items.some(function(entry) {
-        return entry && !entry.excluded && entry.expWrap;
-    });
+        const hasExportWrappedItems = items.some(function(entry) {
+            return entry && !entry.excluded && entry.expWrap;
+        });
 
-    if (hasExportWrappedItems) {
-        summary.exportWrap = [
+        if (hasExportWrappedItems) {
+            summary.exportWrap = [
             "Full export pack and wrap selected — all furniture items to be export wrapped."
-        ];
+            ];
+        }
     }
-}
     return summary;
 }
 
