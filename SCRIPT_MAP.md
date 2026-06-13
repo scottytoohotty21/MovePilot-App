@@ -18,9 +18,9 @@ This is the working map for `js/app.js`. It is meant to make the next cleanup pa
 | Address tab | 1987-2082 | Main address UI renderer | Surprisingly small section, but tied into helpers around it. |
 | Inventory tab | 2083-4583 | Inventory dropdowns, raw/live inventory entries, item flags, custom items, button ordering | Large section. Needs subdivision before deeper edits. |
 | Dashboard rendering | 4584-7712 | Dashboard list, job/sequence/property actions, settings modal, manual/CRM entry flows | Very large mixed section. Needs splitting into dashboard, sequence, settings, and modal helpers. |
-| Schedule tab / listed inventory crossover | 7713-7961 | Schedule location option helpers plus listed-inventory photo/list helpers | Heading is misleading. This should be renamed or split. |
+| Schedule and listed-inventory shared helpers | 7713-7961 | Schedule location option helpers plus listed-inventory photo/list helpers | Renamed to make the mixed purpose clearer. |
 | Listed inventory tab | 7962-9757 | Listed inventory filtering, editing, flags, summaries, download/export views | Medium-large section. Good after inventory is subdivided. |
-| Signature pads / quote availability crossover | 9758-13183 | Signature drawing plus availability/pricing helpers | Heading is misleading. Signature code and quote availability should be separated. |
+| Signature, export, and sharing helpers | 9758-13183 | Signature drawing, app alerts, listed inventory export, PDF save/share helpers | Renamed to better match the current contents. |
 | Costing and quote tab | 13184-19180 | Quote panel, pricing grids, availability, schedule calculator, planner, validation, fringe warnings | Biggest and riskiest section. Needs a map before edits. |
 | Activation flow | 19181-19305 | Activation code storage/checks and app boot display | Small and isolated, but currently dev-skip is enabled. |
 | Startup | 19306-19322 | DOMContentLoaded boot logic | Small. Should remain simple. |
@@ -39,9 +39,9 @@ This is the working map for `js/app.js`. It is meant to make the next cleanup pa
 - Done: `jobs = JSON.parse(localStorage.getItem('photon_jobs')) || [...]` has been replaced with safe JSON loading.
 - Done: `saveToDevice()` now catches failed saves and records storage health instead of throwing.
 - `getAppSettings()` already catches bad settings data, but the main jobs store should do the same.
-- Line 1285 currently has two variables on one line: `let surveyorSignatureLastY = 0;let signatureLastX = 0;`.
-- The section called `Schedule tab` includes listed-inventory helper functions.
-- The section called `Signature pads` includes quote/availability functionality as well as signature pad logic.
+- Done: line 1285 had two variables on one line and has been split.
+- Done: the section called `Schedule tab` included listed-inventory helper functions and has been renamed.
+- Done: the section called `Signature pads` included export/sharing functionality and has been renamed.
 
 ## Pass 1 Changes
 
@@ -51,6 +51,34 @@ This is the working map for `js/app.js`. It is meant to make the next cleanup pa
 - Updated `saveToDevice()` to return whether the save worked.
 - Updated activation read/write/remove paths to use the safer helpers where possible.
 - Split a few jammed state declarations onto separate lines while touching the same area.
+
+## Pass 2 Changes
+
+- Cleaned indentation in the top reference-data constants.
+- Cleaned indentation in `createEmptyJob()` for the inventory, costing, signature, and sync blocks.
+- Reformatted `ensureScheduleDataShape()` so its cleanup/defaulting lines are readable.
+- Expanded `toTitleCase()` from a one-line function into a normal function block.
+- Reformatted `createDefaultProperties()` and `toggleSaveState()` without changing their behaviour.
+- Removed a redundant no-op line in `openJob()` that was immediately overwritten.
+- Renamed misleading section headers:
+  - `Schedule tab` -> `Schedule and listed-inventory shared helpers`
+  - `Signature pads` -> `Signature, export, and sharing helpers`
+
+## Pass 3 Changes
+
+- Added internal dashboard landmarks:
+  - Dashboard list
+  - Dashboard job actions
+  - Sequence actions
+  - Property actions
+  - Editor navigation
+  - Manual job entry
+  - Simple costing helper
+- Reformatted `renderDashboard()` sequence breakdown markup for readability.
+- Reformatted sequence copy/delete helpers without changing their behaviour.
+- Reformatted property and stop helpers from one-line functions into normal blocks.
+- Reformatted `loadSequence()`, `triggerPulse()`, `switchTab()`, `toggleManualArea()`, `exitToDashboard()`, and `calculateMoveCost()`.
+- Verified `js/app.js` still passes JavaScript syntax checking after the dashboard readability pass.
 
 ## Principle For The Next Pass
 
