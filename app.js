@@ -11729,48 +11729,48 @@ async function printListedInventoryPdf() {
                 </div>
             </div>
             <div class="pdf-screen-actions">
-    <div class="pdf-screen-actions-text">
-        <strong>Review Copy:</strong> Check this with the customer. Use Print / Save PDF when ready.
-    </div>
+                <div class="pdf-screen-actions-text">
+                    <strong>Review Copy:</strong> Check this with the customer. Use Print / Save PDF when ready.
+                </div>
 
-    <div class="pdf-screen-actions-buttons">
-        <button type="button" class="pdf-screen-btn" onclick="window.print()">Print / Save PDF</button>
-        <button type="button" class="pdf-screen-btn secondary" onclick="window.close()">Close Preview</button>
-    </div>
-</div>
+                <div class="pdf-screen-actions-buttons">
+                    <button type="button" class="pdf-screen-btn" onclick="window.print()">Print / Save PDF</button>
+                    <button type="button" class="pdf-screen-btn secondary" onclick="window.close()">Close Preview</button>
+                </div>
+            </div>
 
-                    ${pdfContext.sectionsHtml}
+            ${pdfContext.sectionsHtml}
 
             <div class="pdf-footer-grid">
-    <div class="pdf-card">
-    <div class="pdf-card-title">Customer Signature</div>
-    ${pdfContext.signatureHtml}
-    <div class="pdf-small-note" style="margin-top: 8px;">Signed: ${escapeHtml(pdfContext.signedAt)}</div>
-    ${getPrintableSurveyorNameHtml()}
-    ${getPrintableSurveyorSignatureHtml()}
-</div>
+                <div class="pdf-card">
+                    <div class="pdf-card-title">Customer Signature</div>
+                    ${pdfContext.signatureHtml}
+                    <div class="pdf-small-note" style="margin-top: 8px;">Signed: ${escapeHtml(pdfContext.signedAt)}</div>
+                    ${getPrintableSurveyorNameHtml()}
+                    ${getPrintableSurveyorSignatureHtml()}
+                </div>
 
-    <div class="pdf-card">
-        <div class="pdf-card-title">Included Volume & Materials Summary</div>
-        <div class="pdf-big-stat pdf-volume-display">${formatListedSummaryVolumeDisplay(pdfContext.listedSummary.includedVolume)}</div>
-<div class="pdf-small-note">Included volume counted</div>
-        <div style="margin-top:12px;">
-            ${getPrintableMaterialsHtml(pdfContext.materialsSummary)}
-        </div>
-    </div>
-</div>
+                <div class="pdf-card">
+                    <div class="pdf-card-title">Included Volume & Materials Summary</div>
+                    <div class="pdf-big-stat pdf-volume-display">${formatListedSummaryVolumeDisplay(pdfContext.listedSummary.includedVolume)}</div>
+                    <div class="pdf-small-note">Included volume counted</div>
+                    <div style="margin-top:12px;">
+                        ${getPrintableMaterialsHtml(pdfContext.materialsSummary)}
+                    </div>
+                </div>
+            </div>
 
-<div class="pdf-responsibilities-grid">
-    <div class="pdf-card pdf-card-full">
-        <div class="pdf-card-title">Crew Instructions / Responsibilities</div>
-        ${pdfContext.crewSummaryHtml}
-    </div>
+            <div class="pdf-responsibilities-grid">
+                <div class="pdf-card pdf-card-full">
+                    <div class="pdf-card-title">Crew Instructions / Responsibilities</div>
+                    ${pdfContext.crewSummaryHtml}
+                </div>
 
-    <div class="pdf-card pdf-card-full">
-        <div class="pdf-card-title">Exclusions & Customer Responsibilities</div>
-        ${getPrintableResponsibilitiesHtml(pdfContext.listedSummary, pdfContext.filteredItems)}
-    </div>
-</div>
+                <div class="pdf-card pdf-card-full">
+                    <div class="pdf-card-title">Exclusions & Customer Responsibilities</div>
+                    ${getPrintableResponsibilitiesHtml(pdfContext.listedSummary, pdfContext.filteredItems)}
+                </div>
+            </div>
         </body>
         </html>
     `);
@@ -11778,18 +11778,18 @@ async function printListedInventoryPdf() {
     printWindow.document.close();
 
     printWindow.onafterprint = function() {
-    runPostPrintCleanup();
+        runPostPrintCleanup();
 
-    try {
-        printWindow.close();
-    } catch (err) {
-        // Some browsers may block this.
-    }
-};
+        try {
+            printWindow.close();
+        } catch (err) {
+            // Some browsers may block this.
+        }
+    };
 
-setTimeout(function() {
-    printWindow.focus();
-}, 400);
+    setTimeout(function() {
+        printWindow.focus();
+    }, 400);
 }
 /* =========================
    COSTING & QUOTING STATE
@@ -12250,7 +12250,7 @@ function setQuoteSelectedSequenceId(sequenceId) {
     saveToDevice();
 }
 
-function getScheduleRowDateValue(row) {
+function supersededQuoteScheduleRowDateValue(row) {
     if (!row || typeof row !== "object") return "";
 
     return String(
@@ -12742,7 +12742,7 @@ function getAvailabilityBandById(bandId) {
     }) || QUOTE_AVAILABILITY_BANDS[0];
 }
 
-function getAvailabilityPricingState(sequenceId) {
+function supersededAvailabilityPricingState(sequenceId) {
     const state = ensureQuoteSequenceState(sequenceId);
     if (!state) return null;
 
@@ -12849,7 +12849,7 @@ async function refreshQuoteAvailabilityFromLocalTable(sequenceId) {
 }
 }
 
-function getHighestAvailabilityBand(dates) {
+function supersededHighestAvailabilityBand(dates) {
     const validBands = dates
         .map(function(row) {
             return getAvailabilityBandById(row.band);
