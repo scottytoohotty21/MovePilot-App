@@ -12250,17 +12250,6 @@ function setQuoteSelectedSequenceId(sequenceId) {
     saveToDevice();
 }
 
-function supersededQuoteScheduleRowDateValue(row) {
-    if (!row || typeof row !== "object") return "";
-
-    return String(
-        row.moveDate ||
-        row.scheduleDate ||
-        row.date ||
-        ""
-    ).trim();
-}
-
 function getPricingDateFromSchedule(sequenceId) {
     if (!currentJob || !Array.isArray(currentJob.sequences)) {
         return {
@@ -12742,17 +12731,6 @@ function getAvailabilityBandById(bandId) {
     }) || QUOTE_AVAILABILITY_BANDS[0];
 }
 
-function supersededAvailabilityPricingState(sequenceId) {
-    const state = ensureQuoteSequenceState(sequenceId);
-    if (!state) return null;
-
-    if (!state.availabilityPricing) {
-        state.availabilityPricing = createEmptyQuoteSequenceState().availabilityPricing;
-    }
-
-    return state.availabilityPricing;
-}
-
 function getQuoteAvailabilityBranch(sequenceId) {
     const branch = getOperatingBranchForSequence(sequenceId);
     return branch || "";
@@ -12847,24 +12825,6 @@ async function refreshQuoteAvailabilityFromLocalTable(sequenceId) {
         "Availability Refreshed"
     );
 }
-}
-
-function supersededHighestAvailabilityBand(dates) {
-    const validBands = dates
-        .map(function(row) {
-            return getAvailabilityBandById(row.band);
-        })
-        .filter(function(band) {
-            return !!band.id;
-        });
-
-    if (!validBands.length) {
-        return getAvailabilityBandById("");
-    }
-
-    return validBands.sort(function(a, b) {
-        return b.maxMargin - a.maxMargin;
-    })[0];
 }
 
 function calculateAvailabilityMargin(band, faderValue) {
