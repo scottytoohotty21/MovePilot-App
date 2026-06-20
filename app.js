@@ -14733,6 +14733,28 @@ function copyManualScheduleLeg(leg) {
     };
 }
 
+function copyManualScheduleRow(day, legs) {
+    const safeDayPart = day.dayPart || "Full Day";
+    const safeLegs = Array.isArray(legs) ? legs : [];
+
+    return {
+        id: day.id || createId(),
+        groupId: day.groupId || createId(),
+        dayPart: safeDayPart,
+        task: day.task || "Load and Deliver",
+        travelPattern: day.travelPattern || "None",
+        completionWindow: day.completionWindow || "None",
+        date: day.date || "",
+        men: Math.max(0, Number(day.men) || 0),
+        vans: Math.max(0, Number(day.vans) || 0),
+        hours: safeDayPart === "Full Day" ? 8 : 4,
+        nightsOut: !!day.nightsOut,
+        overtimeHours: Math.max(0, Number(day.overtimeHours || 0)),
+        operatingBranch: day.operatingBranch || "",
+        legs: safeLegs.map(copyManualScheduleLeg)
+    };
+}
+
 function loadManualScheduleFromActiveSequence() {
     const seq = getActiveSequenceRecord();
     if (!seq) {
@@ -14747,7 +14769,6 @@ function loadManualScheduleFromActiveSequence() {
     }
 
     manualSchedule = schedule.manualDays.map(function(day) {
-        const safeDayPart = day.dayPart || "Full Day";
         ensureScheduleRowShape(day);
 
         let safeLegs = Array.isArray(day.legs) ? day.legs : [];
@@ -14756,22 +14777,7 @@ function loadManualScheduleFromActiveSequence() {
             safeLegs = convertTravelPatternToLegs(day, schedule);
         }
 
-        return {
-            id: day.id || createId(),
-            groupId: day.groupId || createId(),
-            dayPart: safeDayPart,
-            task: day.task || "Load and Deliver",
-            travelPattern: day.travelPattern || "None",
-            completionWindow: day.completionWindow || "None",
-            date: day.date || "",
-            men: Math.max(0, Number(day.men) || 0),
-            vans: Math.max(0, Number(day.vans) || 0),
-            hours: safeDayPart === "Full Day" ? 8 : 4,
-            nightsOut: !!day.nightsOut,
-            overtimeHours: Math.max(0, Number(day.overtimeHours || 0)),
-            operatingBranch: day.operatingBranch || "",
-            legs: safeLegs.map(copyManualScheduleLeg)
-        };
+        return copyManualScheduleRow(day, safeLegs);
     });
 }
 
@@ -14782,28 +14788,11 @@ function saveManualScheduleToActiveSequence() {
     const schedule = ensureSequenceScheduleShape(seq);
 
     schedule.manualDays = manualSchedule.map(function(day) {
-        const safeDayPart = day.dayPart || "Full Day";
         ensureScheduleRowShape(day);
-
-        return {
-            id: day.id || createId(),
-            groupId: day.groupId || createId(),
-            dayPart: safeDayPart,
-            task: day.task || "Load and Deliver",
-            travelPattern: day.travelPattern || "None",
-            completionWindow: day.completionWindow || "None",
-            date: day.date || "",
-            men: Math.max(0, Number(day.men) || 0),
-            vans: Math.max(0, Number(day.vans) || 0),
-            hours: safeDayPart === "Full Day" ? 8 : 4,
-            nightsOut: !!day.nightsOut,
-            operatingBranch: day.operatingBranch || "",
-            overtimeHours: Math.max(0, Number(day.overtimeHours || 0)),
-            legs: (Array.isArray(day.legs) ? day.legs : []).map(copyManualScheduleLeg)
-        };
+        return copyManualScheduleRow(day, day.legs);
     });
 
-       syncPlannerMileageToCosting(seq.id);
+    syncPlannerMileageToCosting(seq.id);
 
     saveToDevice();
 }
