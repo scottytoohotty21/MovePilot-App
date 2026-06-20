@@ -12892,7 +12892,7 @@ function renderQuoteAvailabilityPricingPanel(sequenceId) {
         : "";
 
     const branchUsed = getOperatingBranchForSequence(sequenceId);
-const dateAvailability = getTestAvailabilityForBranchDate(branchUsed, dateUsed);
+    const dateAvailability = getTestAvailabilityForBranchDate(branchUsed, dateUsed);
 
     /*
         Manual band remains as fallback only.
@@ -12957,37 +12957,37 @@ const dateAvailability = getTestAvailabilityForBranchDate(branchUsed, dateUsed);
                     id="quote-availabilityRefreshStatus"
                     class="availability-refresh-status"
                 >
-                    Using local fallback availability
+                    ${escapeHtml(getAvailabilityRefreshText())}
                 </div>
             </div>
 
             ${
                 dateUsed
-        ? `
-            <div class="quote-date-confirm-line">
-                Using schedule date: ${dateLabel}
-            </div>
-        `
-        : `
-            <div class="quote-date-confirm-line warn">
-                No schedule date entered yet
-            </div>
-        `
-}
+                    ? `
+                        <div class="quote-date-confirm-line">
+                            Using schedule date: ${dateLabel}
+                        </div>
+                    `
+                    : `
+                        <div class="quote-date-confirm-line warn">
+                            No schedule date entered yet
+                        </div>
+                    `
+            }
 
-${
-    branchUsed
-        ? `
-            <div class="quote-date-confirm-line">
-                Using operating branch: ${escapeHtml(branchUsed)}
-            </div>
-        `
-        : `
-            <div class="quote-date-confirm-line warn">
-                No operating branch selected yet
-            </div>
-        `
-}
+            ${
+                branchUsed
+                    ? `
+                        <div class="quote-date-confirm-line">
+                            Using operating branch: ${escapeHtml(branchUsed)}
+                        </div>
+                    `
+                    : `
+                        <div class="quote-date-confirm-line warn">
+                            No operating branch selected yet
+                        </div>
+                    `
+            }
 
             ${
                 dateAvailability
@@ -13060,12 +13060,12 @@ ${
             </div>
 
             <button
-    type="button"
-    class="availability-apply-btn quote-action-pulse-btn"
-    onclick="applyAvailabilitySuggestedPrice('${sequenceId}', ${Number(suggestedSellPrice || 0)}, this)"
->
-    Apply Suggested Price
-</button>
+                type="button"
+                class="availability-apply-btn quote-action-pulse-btn"
+                onclick="applyAvailabilitySuggestedPrice('${sequenceId}', ${Number(suggestedSellPrice || 0)}, this)"
+            >
+                Apply Suggested Price
+            </button>
         </div>
     `;
 }
