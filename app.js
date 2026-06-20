@@ -12746,26 +12746,6 @@ function calculateSellPriceFromMargin(costBase, marginPct) {
     return Math.round((cost / (1 - (margin / 100))) * 100) / 100;
 }
 
-function supersededUpdateQuoteAvailabilityFader(sequenceId, value) {
-    const pricing = getAvailabilityPricingState(sequenceId);
-    if (!pricing) return;
-
-    pricing.faderValue = Number(value || 0);
-
-    quotePricingSaved = false;
-    saveToDevice();
-    renderQuoteAvailabilityPricingPanel(sequenceId);
-    updateQuoteCommercialDisplays(sequenceId);
-}
-
-
-function supersededRenderAvailabilityBandOptions(selectedBand) {
-    return QUOTE_AVAILABILITY_BANDS.map(function(band) {
-        const selected = band.id === selectedBand ? "selected" : "";
-        return `<option value="${band.id}" ${selected}>${band.label}</option>`;
-    }).join("");
-}
-
 function getAvailabilityDateUsedForSequence(sequenceId) {
     if (!currentJob || !Array.isArray(currentJob.sequences)) return "";
 
@@ -13601,64 +13581,9 @@ function getAvailabilityPricingState(sequenceId) {
     return state.availabilityPricing;
 }
 
-function supersededCalculateSuggestedSellPriceFromMargin(costBase, marginPercent) {
-    const cleanCost = Number(costBase || 0);
-    const cleanMargin = Number(marginPercent || 0);
-
-    if (cleanCost <= 0) return 0;
-    if (cleanMargin <= 0) return cleanCost;
-    if (cleanMargin >= 95) return cleanCost;
-
-    return cleanCost / (1 - (cleanMargin / 100));
-}
-
-function supersededRoundSuggestedQuotePrice(value) {
-    const cleanValue = Number(value || 0);
-    if (cleanValue <= 0) return 0;
-
-    return Math.ceil(cleanValue / 10) * 10;
-}
-
 function renderAvailabilityPricingPanel(sequenceId) {
     renderQuoteAvailabilityPricingPanel(sequenceId);
 }
-
-function supersededHandleAvailabilityMoveDateChange(sequenceId, value) {
-    const availability = getAvailabilityPricingState(sequenceId);
-    if (!availability) return;
-
-    availability.moveDate = String(value || "");
-
-    const matchedBand = getAvailabilityBandForDate(availability.moveDate);
-    availability.band = matchedBand;
-
-    quotePricingSaved = false;
-    saveToDevice();
-    renderQuoteTab();
-}
-
-function supersededHandleAvailabilityBandChange(sequenceId, value) {
-    const availability = getAvailabilityPricingState(sequenceId);
-    if (!availability) return;
-
-    availability.band = AVAILABILITY_MARGIN_BANDS[value] ? value : "green";
-
-    quotePricingSaved = false;
-    saveToDevice();
-    renderQuoteTab();
-}
-
-function supersededHandleAvailabilityUpliftChange(sequenceId, value) {
-    const availability = getAvailabilityPricingState(sequenceId);
-    if (!availability) return;
-
-    availability.uplift = Math.max(0, Math.min(10, Number(value || 0)));
-
-    quotePricingSaved = false;
-    saveToDevice();
-    renderQuoteTab();
-}
-
 
 function renderQuoteAdditionalBreakdown(sequenceId) {
     const target = document.getElementById("quote-additionalCostsBreakdownCard");
@@ -13786,17 +13711,6 @@ function supersededRenderQuoteAvailabilityPanel(sequenceId) {
             Phase 4A only stores the availability bands. It does not change the quote price yet.
         </div>
     `;
-}
-function supersededRenderQuoteDateMarginPricingPanel(sequenceId) {
-    if (typeof renderQuoteAvailabilityPricingPanel === "function") {
-        renderQuoteAvailabilityPricingPanel(sequenceId);
-        return;
-    }
-
-    const target = document.getElementById("quote-availabilityPricingCard");
-    if (target) {
-        target.innerHTML = "";
-    }
 }
 function renderQuoteTab() {
 renderQuoteFringeWarning();
