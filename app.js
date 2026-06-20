@@ -14713,6 +14713,26 @@ function renderScheduleLegs(day, state, totals) {
     `;
 }
 
+function copyManualScheduleLeg(leg) {
+    const roadType = leg.roadType || "Road";
+    const miles = Math.max(0, Number(leg.miles || 0));
+
+    let minutes = Math.max(0, Number(leg.minutes || 0));
+
+    if (roadType !== "Manual" && miles > 0) {
+        minutes = calculateTravelMinutesFromMiles(miles, roadType);
+    }
+
+    return {
+        id: leg.id || createId(),
+        from: String(leg.from || "").trim(),
+        to: String(leg.to || "").trim(),
+        miles: miles,
+        roadType: roadType,
+        minutes: minutes
+    };
+}
+
 function loadManualScheduleFromActiveSequence() {
     const seq = getActiveSequenceRecord();
     if (!seq) {
@@ -14750,25 +14770,7 @@ function loadManualScheduleFromActiveSequence() {
             nightsOut: !!day.nightsOut,
             overtimeHours: Math.max(0, Number(day.overtimeHours || 0)),
             operatingBranch: day.operatingBranch || "",
-            legs: safeLegs.map(function(leg) {
-                const roadType = leg.roadType || "Road";
-                const miles = Math.max(0, Number(leg.miles || 0));
-
-                let minutes = Math.max(0, Number(leg.minutes || 0));
-
-                if (roadType !== "Manual" && miles > 0) {
-                    minutes = calculateTravelMinutesFromMiles(miles, roadType);
-                }
-
-                return {
-                    id: leg.id || createId(),
-                    from: String(leg.from || "").trim(),
-                    to: String(leg.to || "").trim(),
-                    miles: miles,
-                    roadType: roadType,
-                    minutes: minutes
-                };
-            })
+            legs: safeLegs.map(copyManualScheduleLeg)
         };
     });
 }
@@ -14797,25 +14799,7 @@ function saveManualScheduleToActiveSequence() {
             nightsOut: !!day.nightsOut,
             operatingBranch: day.operatingBranch || "",
             overtimeHours: Math.max(0, Number(day.overtimeHours || 0)),
-            legs: (Array.isArray(day.legs) ? day.legs : []).map(function(leg) {
-                const roadType = leg.roadType || "Road";
-                const miles = Math.max(0, Number(leg.miles || 0));
-
-                let minutes = Math.max(0, Number(leg.minutes || 0));
-
-                if (roadType !== "Manual" && miles > 0) {
-                    minutes = calculateTravelMinutesFromMiles(miles, roadType);
-                }
-
-                return {
-                    id: leg.id || createId(),
-                    from: String(leg.from || "").trim(),
-                    to: String(leg.to || "").trim(),
-                    miles: miles,
-                    roadType: roadType,
-                    minutes: minutes
-                };
-            })
+            legs: (Array.isArray(day.legs) ? day.legs : []).map(copyManualScheduleLeg)
         };
     });
 
