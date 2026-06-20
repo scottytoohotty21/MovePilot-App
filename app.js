@@ -1412,52 +1412,7 @@ function ensureScheduleDataShape() {
         if (!Array.isArray(job.sequences)) return;
 
         job.sequences.forEach(function(seq) {
-            if (!seq.schedule) {
-                seq.schedule = createEmptySequenceSchedule();
-            }
-
-            const defaults = createEmptySequenceSchedule();
-
-            delete seq.schedule.depotToCollectionMinutes;
-            delete seq.schedule.collectionToDeliveryMinutes;
-            delete seq.schedule.deliveryToDepotMinutes;
-            delete seq.schedule.depotToCollectionHours;
-            delete seq.schedule.collectionToDeliveryHours;
-            delete seq.schedule.deliveryToDepotHours;
-
-            if (seq.schedule.loftVol === undefined) seq.schedule.loftVol = defaults.loftVol;
-            if (seq.schedule.loadRate === undefined) seq.schedule.loadRate = defaults.loadRate;
-            if (seq.schedule.unloadRate === undefined) seq.schedule.unloadRate = defaults.unloadRate;
-            if (seq.schedule.loadingVariant === undefined) seq.schedule.loadingVariant = defaults.loadingVariant;
-            if (seq.schedule.operatingBranch === undefined) seq.schedule.operatingBranch = defaults.operatingBranch;
-            if (seq.schedule.exportWrapVol === undefined) seq.schedule.exportWrapVol = defaults.exportWrapVol;
-
-            if (!Array.isArray(seq.schedule.manualDays)) {
-                seq.schedule.manualDays = [];
-            }
-
-            if (!seq.schedule.special) {
-                seq.schedule.special = createEmptySequenceSchedule().special;
-            }
-
-            if (seq.schedule.special.frameBeds === undefined) seq.schedule.special.frameBeds = defaults.special.frameBeds;
-            if (seq.schedule.special.ottomanBeds === undefined) seq.schedule.special.ottomanBeds = defaults.special.ottomanBeds;
-            if (seq.schedule.special.divanBeds === undefined) seq.schedule.special.divanBeds = defaults.special.divanBeds;
-            if (seq.schedule.special.electricBeds === undefined) seq.schedule.special.electricBeds = defaults.special.electricBeds;
-            if (seq.schedule.special.bunkBeds === undefined) seq.schedule.special.bunkBeds = defaults.special.bunkBeds;
-            if (seq.schedule.special.cots === undefined) seq.schedule.special.cots = defaults.special.cots;
-            if (seq.schedule.special.diningTables === undefined) seq.schedule.special.diningTables = defaults.special.diningTables;
-            if (seq.schedule.special.wardrobes === undefined) seq.schedule.special.wardrobes = defaults.special.wardrobes;
-            if (!Array.isArray(seq.schedule.special.wardrobeItems)) {
-                seq.schedule.special.wardrobeItems = defaults.special.wardrobeItems;
-            }
-            if (seq.schedule.special.uprightPianos === undefined) seq.schedule.special.uprightPianos = defaults.special.uprightPianos;
-            if (seq.schedule.special.grandPianos === undefined) seq.schedule.special.grandPianos = defaults.special.grandPianos;
-            if (seq.schedule.special.grandfatherClocks === undefined) seq.schedule.special.grandfatherClocks = defaults.special.grandfatherClocks;
-            if (seq.schedule.special.appliances === undefined) seq.schedule.special.appliances = defaults.special.appliances;
-            if (seq.schedule.special.cratingItems === undefined) seq.schedule.special.cratingItems = defaults.special.cratingItems;
-            if (seq.schedule.special.customItemMinutes === undefined) seq.schedule.special.customItemMinutes = defaults.special.customItemMinutes;
-            if (seq.schedule.special.customItemNote === undefined) seq.schedule.special.customItemNote = defaults.special.customItemNote;
+            ensureSequenceScheduleShape(seq);
         });
     });
 }
@@ -14203,16 +14158,18 @@ function ensureSequenceScheduleShape(seq) {
 
     const defaults = createEmptySequenceSchedule();
 
-   delete seq.schedule.depotToCollectionMinutes;
-delete seq.schedule.collectionToDeliveryMinutes;
-delete seq.schedule.deliveryToDepotMinutes;
-delete seq.schedule.depotToCollectionHours;
-delete seq.schedule.collectionToDeliveryHours;
-delete seq.schedule.deliveryToDepotHours;
+    delete seq.schedule.depotToCollectionMinutes;
+    delete seq.schedule.collectionToDeliveryMinutes;
+    delete seq.schedule.deliveryToDepotMinutes;
+    delete seq.schedule.depotToCollectionHours;
+    delete seq.schedule.collectionToDeliveryHours;
+    delete seq.schedule.deliveryToDepotHours;
+
     if (seq.schedule.loftVol === undefined) seq.schedule.loftVol = defaults.loftVol;
     if (seq.schedule.loadRate === undefined) seq.schedule.loadRate = defaults.loadRate;
     if (seq.schedule.unloadRate === undefined) seq.schedule.unloadRate = defaults.unloadRate;
     if (seq.schedule.loadingVariant === undefined) seq.schedule.loadingVariant = defaults.loadingVariant;
+    if (seq.schedule.operatingBranch === undefined) seq.schedule.operatingBranch = defaults.operatingBranch;
     if (seq.schedule.exportWrapVol === undefined) seq.schedule.exportWrapVol = defaults.exportWrapVol;
 
     if (!Array.isArray(seq.schedule.manualDays)) {
@@ -14233,8 +14190,9 @@ delete seq.schedule.deliveryToDepotHours;
     if (seq.schedule.special.wardrobes === undefined) seq.schedule.special.wardrobes = defaults.special.wardrobes;
 
     if (!Array.isArray(seq.schedule.special.wardrobeItems)) {
-    seq.schedule.special.wardrobeItems = defaults.special.wardrobeItems;
-}
+        seq.schedule.special.wardrobeItems = defaults.special.wardrobeItems;
+    }
+
     if (seq.schedule.special.uprightPianos === undefined) seq.schedule.special.uprightPianos = defaults.special.uprightPianos;
     if (seq.schedule.special.grandPianos === undefined) seq.schedule.special.grandPianos = defaults.special.grandPianos;
     if (seq.schedule.special.grandfatherClocks === undefined) seq.schedule.special.grandfatherClocks = defaults.special.grandfatherClocks;
