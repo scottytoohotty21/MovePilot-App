@@ -13205,7 +13205,7 @@ function updateQuoteCommercialDisplays(sequenceId) {
     renderQuoteCommercialSummary(sequenceId);
     renderQuoteCompetitionCard(sequenceId);
     renderQuoteAdditionalBreakdown(sequenceId);
-    renderAvailabilityPricingPanel(sequenceId);
+    renderQuoteAvailabilityPricingPanel(sequenceId);
 }
 
 function renderQuoteTabShellOnly() {
@@ -13576,10 +13576,6 @@ function getAvailabilityPricingState(sequenceId) {
     }
 
     return state.availabilityPricing;
-}
-
-function renderAvailabilityPricingPanel(sequenceId) {
-    renderQuoteAvailabilityPricingPanel(sequenceId);
 }
 
 function renderQuoteAdditionalBreakdown(sequenceId) {
