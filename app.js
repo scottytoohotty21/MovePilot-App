@@ -12115,11 +12115,11 @@ function createEmptyQuoteSequenceState() {
         pricingLines: [],
         additionalCostLines: [],
         competition: {
-    partnerCrewUnsuitable: false,
-    competitorName: "",
-    competitorPrice: 0,
-    notes: ""
-},
+            partnerCrewUnsuitable: false,
+            competitorName: "",
+            competitorPrice: 0,
+            notes: ""
+        },
         availabilityPricing: {
             moveDate: "",
             band: "",
@@ -12143,63 +12143,61 @@ function ensureQuoteSequenceState(sequenceId) {
     if (!Array.isArray(state.additionalCostLines)) state.additionalCostLines = [];
     if (typeof state.quoteNotes !== "string") state.quoteNotes = "";
     if (typeof state.customerPrice !== "number") state.customerPrice = Number(state.customerPrice || 0);
+
     if (!state.competition || typeof state.competition !== "object") {
-    state.competition = {
-        competitorName: "",
-        competitorPrice: 0,
-        partnerCrewUnsuitable: false,
-        notes: ""
-    };
-}
+        state.competition = {
+            competitorName: "",
+            competitorPrice: 0,
+            partnerCrewUnsuitable: false,
+            notes: ""
+        };
+    }
 
-if (typeof state.competition.competitorName !== "string") {
-    state.competition.competitorName = "";
-}
+    if (typeof state.competition.competitorName !== "string") {
+        state.competition.competitorName = "";
+    }
 
-state.competition.competitorPrice = Number(state.competition.competitorPrice || 0);
+    state.competition.competitorPrice = Number(state.competition.competitorPrice || 0);
 
-if (state.competition.partnerCrewUnsuitable === undefined) {
-    state.competition.partnerCrewUnsuitable = false;
-}
+    if (state.competition.partnerCrewUnsuitable === undefined) {
+        state.competition.partnerCrewUnsuitable = false;
+    }
 
-state.competition.partnerCrewUnsuitable = !!state.competition.partnerCrewUnsuitable;
+    state.competition.partnerCrewUnsuitable = !!state.competition.partnerCrewUnsuitable;
 
-if (typeof state.competition.notes !== "string") {
-    state.competition.notes = "";
-}
-   if (!state.availabilityPricing || typeof state.availabilityPricing !== "object") {
-    state.availabilityPricing = {
-        moveDate: "",
-        band: "",
-        uplift: 0,
-        appliedSuggestedPrice: 0
-    };
-}
-
-if (state.availabilityPricing.band === "green" && !state.availabilityPricing.moveDate) {
-    state.availabilityPricing.band = "";
-}
-
-if (typeof state.availabilityPricing.moveDate !== "string") {
-    state.availabilityPricing.moveDate = "";
-}
-
-if (!AVAILABILITY_MARGIN_BANDS[state.availabilityPricing.band]) {
-    state.availabilityPricing.band = "green";
-}
-
-state.availabilityPricing.uplift = Math.max(
-    0,
-    Math.min(10, Number(state.availabilityPricing.uplift || 0))
-);
-
-state.availabilityPricing.appliedSuggestedPrice = Number(
-    state.availabilityPricing.appliedSuggestedPrice || 0
-);
+    if (typeof state.competition.notes !== "string") {
+        state.competition.notes = "";
+    }
 
     if (!state.availabilityPricing || typeof state.availabilityPricing !== "object") {
-        state.availabilityPricing = createEmptyQuoteSequenceState().availabilityPricing;
+        state.availabilityPricing = {
+            moveDate: "",
+            band: "",
+            uplift: 0,
+            appliedSuggestedPrice: 0
+        };
     }
+
+    if (state.availabilityPricing.band === "green" && !state.availabilityPricing.moveDate) {
+        state.availabilityPricing.band = "";
+    }
+
+    if (typeof state.availabilityPricing.moveDate !== "string") {
+        state.availabilityPricing.moveDate = "";
+    }
+
+    if (!AVAILABILITY_MARGIN_BANDS[state.availabilityPricing.band]) {
+        state.availabilityPricing.band = "green";
+    }
+
+    state.availabilityPricing.uplift = Math.max(
+        0,
+        Math.min(10, Number(state.availabilityPricing.uplift || 0))
+    );
+
+    state.availabilityPricing.appliedSuggestedPrice = Number(
+        state.availabilityPricing.appliedSuggestedPrice || 0
+    );
 
     if (!Array.isArray(state.availabilityPricing.dates)) {
         state.availabilityPricing.dates = [];
