@@ -14838,29 +14838,22 @@ function loadScheduleInputsFromActiveSequence() {
     const photonFeed = getPhotonFeed();
 
     const loftVolEl = document.getElementById("loftVol");
-const loadRateEl = document.getElementById("loadRate");
-const unloadRateEl = document.getElementById("unloadRate");
-const loadingVariantEl = document.getElementById("loadingVariant");
-/*
-    Operating Branch is now selected per schedule row.
-    Old Inputs card operating branch dropdown retired.
-*/
-
-const svcCustomMinutesEl = document.getElementById("svc_custom_minutes");
-const svcCustomNoteEl = document.getElementById("svc_custom_note");
-const exportWrapVolEl = document.getElementById("exportWrapVol");
+    const loadRateEl = document.getElementById("loadRate");
+    const unloadRateEl = document.getElementById("unloadRate");
+    const loadingVariantEl = document.getElementById("loadingVariant");
+    const svcCustomMinutesEl = document.getElementById("svc_custom_minutes");
+    const svcCustomNoteEl = document.getElementById("svc_custom_note");
+    const exportWrapVolEl = document.getElementById("exportWrapVol");
 
     if (loftVolEl) loftVolEl.value = schedule.loftVol;
-if (loadRateEl) loadRateEl.value = schedule.loadRate;
-if (unloadRateEl) unloadRateEl.value = schedule.unloadRate;
+    if (loadRateEl) loadRateEl.value = schedule.loadRate;
+    if (unloadRateEl) unloadRateEl.value = schedule.unloadRate;
+    if (loadingVariantEl) loadingVariantEl.value = schedule.loadingVariant || "Standard";
 
+    if (svcCustomMinutesEl) svcCustomMinutesEl.value = schedule.special.customItemMinutes;
+    if (svcCustomNoteEl) svcCustomNoteEl.value = schedule.special.customItemNote;
 
-if (loadingVariantEl) loadingVariantEl.value = schedule.loadingVariant || "Standard";
-
-if (svcCustomMinutesEl) svcCustomMinutesEl.value = schedule.special.customItemMinutes;
-if (svcCustomNoteEl) svcCustomNoteEl.value = schedule.special.customItemNote;
-
-setInventoryFedField(exportWrapVolEl, photonFeed.special?.exportWrapVol || 0);
+    setInventoryFedField(exportWrapVolEl, photonFeed.special?.exportWrapVol || 0);
 }
 
 function saveScheduleInputsToActiveSequence() {
@@ -14886,7 +14879,6 @@ function saveScheduleInputsToActiveSequence() {
     schedule.loadRate = getNum("loadRate", 125);
     schedule.unloadRate = getNum("unloadRate", 132);
     schedule.loadingVariant = getText("loadingVariant", "Standard");
-    // Operating Branch is now saved per schedule row.
 
     schedule.special.customItemMinutes = getNum("svc_custom_minutes", 0);
     schedule.special.customItemNote = getText("svc_custom_note", "");
@@ -14901,7 +14893,8 @@ function handleScheduleInputChange() {
     saveScheduleInputsToActiveSequence();
     renderScheduleCalculator();
 
-    if (!document.getElementById('content-quote').classList.contains('hidden')) {
+    const quoteTab = document.getElementById("content-quote");
+    if (quoteTab && !quoteTab.classList.contains("hidden")) {
         renderQuoteTab();
     }
 }
