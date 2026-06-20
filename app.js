@@ -11846,7 +11846,7 @@ function getAvailabilityCache() {
 }
 
 function saveAvailabilityCache(cache) {
-    localStorage.setItem(PHOTON_AVAILABILITY_CACHE_KEY, JSON.stringify(cache));
+    return writeJsonToLocalStorage(PHOTON_AVAILABILITY_CACHE_KEY, cache);
 }
 
 function getAvailabilityBandForDate(dateValue) {
@@ -11893,20 +11893,27 @@ function buildSampleAvailabilityRefreshData() {
 
 async function refreshAvailabilityCacheSample() {
     const sampleData = buildSampleAvailabilityRefreshData();
+    const saved = saveAvailabilityCache(sampleData);
 
-    saveAvailabilityCache(sampleData);
+    if (!saved) {
+        await appAlert(
+            "Availability could not be saved on this device.",
+            "Availability Refresh Failed"
+        );
+        return;
+    }
 
     const statusEl = document.getElementById("quote-availabilityRefreshStatus");
     if (statusEl) {
         statusEl.innerText = getAvailabilityRefreshText();
     }
 
+    await appAlert("Sample availability refreshed.", "Availability Refreshed");
+
     const seq = getQuoteSelectedSequence();
     if (seq) {
         updateQuoteCommercialDisplays(String(seq.id));
     }
-
-    await appAlert("Sample availability refreshed.", "Availability Refreshed");
 }
 const QUOTE_MANDATORY_LABELS = ["Vans", "Crew", "Mileage", "Consumables", "Cartons", "Export Wrap", "Nights Out"];
 const QUOTE_PRICING_DEFAULTS = [
