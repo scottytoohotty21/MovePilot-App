@@ -14465,6 +14465,11 @@ function getFirstRowLegHours(day) {
     return round2(Math.max(0, Number(firstLeg.minutes || 0)) / 60);
 }
 
+function commitManualScheduleEdit() {
+    saveManualScheduleToActiveSequence();
+    renderScheduleCalculator();
+}
+
 function addScheduleLeg(dayId) {
     manualSchedule = manualSchedule.map(function(day) {
         if (day.id !== dayId) return day;
@@ -14474,8 +14479,7 @@ function addScheduleLeg(dayId) {
         return day;
     });
 
-    saveManualScheduleToActiveSequence();
-    renderScheduleCalculator();
+    commitManualScheduleEdit();
 }
 
 function updateScheduleLeg(dayId, legId, field, value) {
@@ -14530,8 +14534,7 @@ function updateScheduleLeg(dayId, legId, field, value) {
         return day;
     });
 
-    saveManualScheduleToActiveSequence();
-    renderScheduleCalculator();
+    commitManualScheduleEdit();
 }
 
 function removeScheduleLeg(dayId, legId) {
@@ -14546,8 +14549,7 @@ function removeScheduleLeg(dayId, legId) {
         return day;
     });
 
-    saveManualScheduleToActiveSequence();
-    renderScheduleCalculator();
+    commitManualScheduleEdit();
 }
 function getScheduleLegAddressOptions() {
     const options = [{ value: "Depot", label: "Depot" }];
