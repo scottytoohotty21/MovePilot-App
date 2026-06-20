@@ -16570,53 +16570,42 @@ function removeScheduleDay(dayId) {
     renderScheduleCalculator();
 }
 
-function ensurePmPair(row) {
-    const pairExists = manualSchedule.some(function(day) {
-        return day.groupId === row.groupId && day.dayPart === "PM";
-    });
-
-    if (!pairExists) {
-        manualSchedule.push(createManualScheduleRow({
-            groupId: row.groupId,
-            dayPart: "PM",
-            task: "Deliver",
-            date: row.date || "",
-            men: row.men,
-            vans: row.vans,
-            hours: 4,
-            operatingBranch: row.operatingBranch || "",
-            legs: [
-                createEmptyScheduleLeg("Delivery Address", "Depot", 0)
-            ]
-        }));
+function ensurePmPair(row){
+    const pairExists = manualSchedule.some(day => day.groupId === row.groupId && day.dayPart === "PM");
+    if (!pairExists){
+manualSchedule.push({
+    id: createId(),
+    groupId: row.groupId,
+    dayPart: "PM",
+    task: "Deliver",
+    completionWindow: "None",
+    date: row.date || "",
+    men: row.men,
+    vans: row.vans,
+    hours: 4,
+    nightsOut: false,
+    overtimeHours: 0,
+    operatingBranch: row.operatingBranch || "",
+    legs: [
+    createEmptyScheduleLeg("Delivery Address", "Depot", 0)
+]
+});
     }
 }
 
-function normalizeGroup(groupId) {
-    const rows = manualSchedule.filter(function(day) {
-        return day.groupId === groupId;
-    });
-    const hasAm = rows.some(function(day) {
-        return day.dayPart === "AM";
-    });
-    const hasPm = rows.some(function(day) {
-        return day.dayPart === "PM";
-    });
-    const hasFull = rows.some(function(day) {
-        return day.dayPart === "Full Day";
-    });
+function normalizeGroup(groupId){
+    const rows = manualSchedule.filter(day => day.groupId === groupId);
+    const hasAm = rows.some(day => day.dayPart === "AM");
+    const hasPm = rows.some(day => day.dayPart === "PM");
+    const hasFull = rows.some(day => day.dayPart === "Full Day");
 
-    if (hasAm && !hasPm) {
-        const amRow = rows.find(function(day) {
-            return day.dayPart === "AM";
-        });
+    if (hasAm && !hasPm){
+        const amRow = rows.find(day => day.dayPart === "AM");
         ensurePmPair(amRow);
     }
 
-    if (hasFull && rows.length > 1) {
-        manualSchedule = manualSchedule.filter(function(day) {
-            return !(day.groupId === groupId && day.dayPart !== "Full Day");
-        });
+    if (hasFull && rows.length > 1){
+        manualSchedule = manualSchedule.filter(day => !(day.groupId === groupId && day.dayPart !== "Full Day"));
     }
 }
 function normalizeCompletionDayRow(day) {
