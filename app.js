@@ -12739,7 +12739,7 @@ function calculateSellPriceFromMargin(costBase, marginPct) {
     return Math.round((cost / (1 - (margin / 100))) * 100) / 100;
 }
 
-function updateQuoteAvailabilityFader(sequenceId, value) {
+function supersededUpdateQuoteAvailabilityFader(sequenceId, value) {
     const pricing = getAvailabilityPricingState(sequenceId);
     if (!pricing) return;
 
@@ -12752,7 +12752,7 @@ function updateQuoteAvailabilityFader(sequenceId, value) {
 }
 
 
-function renderAvailabilityBandOptions(selectedBand) {
+function supersededRenderAvailabilityBandOptions(selectedBand) {
     return QUOTE_AVAILABILITY_BANDS.map(function(band) {
         const selected = band.id === selectedBand ? "selected" : "";
         return `<option value="${band.id}" ${selected}>${band.label}</option>`;
@@ -13594,7 +13594,7 @@ function getAvailabilityPricingState(sequenceId) {
     return state.availabilityPricing;
 }
 
-function calculateSuggestedSellPriceFromMargin(costBase, marginPercent) {
+function supersededCalculateSuggestedSellPriceFromMargin(costBase, marginPercent) {
     const cleanCost = Number(costBase || 0);
     const cleanMargin = Number(marginPercent || 0);
 
@@ -13605,7 +13605,7 @@ function calculateSuggestedSellPriceFromMargin(costBase, marginPercent) {
     return cleanCost / (1 - (cleanMargin / 100));
 }
 
-function roundSuggestedQuotePrice(value) {
+function supersededRoundSuggestedQuotePrice(value) {
     const cleanValue = Number(value || 0);
     if (cleanValue <= 0) return 0;
 
@@ -13616,7 +13616,7 @@ function renderAvailabilityPricingPanel(sequenceId) {
     renderQuoteAvailabilityPricingPanel(sequenceId);
 }
 
-function handleAvailabilityMoveDateChange(sequenceId, value) {
+function supersededHandleAvailabilityMoveDateChange(sequenceId, value) {
     const availability = getAvailabilityPricingState(sequenceId);
     if (!availability) return;
 
@@ -13630,7 +13630,7 @@ function handleAvailabilityMoveDateChange(sequenceId, value) {
     renderQuoteTab();
 }
 
-function handleAvailabilityBandChange(sequenceId, value) {
+function supersededHandleAvailabilityBandChange(sequenceId, value) {
     const availability = getAvailabilityPricingState(sequenceId);
     if (!availability) return;
 
@@ -13641,7 +13641,7 @@ function handleAvailabilityBandChange(sequenceId, value) {
     renderQuoteTab();
 }
 
-function handleAvailabilityUpliftChange(sequenceId, value) {
+function supersededHandleAvailabilityUpliftChange(sequenceId, value) {
     const availability = getAvailabilityPricingState(sequenceId);
     if (!availability) return;
 
@@ -13780,7 +13780,7 @@ function supersededRenderQuoteAvailabilityPanel(sequenceId) {
         </div>
     `;
 }
-function renderQuoteDateMarginPricingPanel(sequenceId) {
+function supersededRenderQuoteDateMarginPricingPanel(sequenceId) {
     if (typeof renderQuoteAvailabilityPricingPanel === "function") {
         renderQuoteAvailabilityPricingPanel(sequenceId);
         return;
