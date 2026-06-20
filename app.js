@@ -14204,24 +14204,28 @@ function ensureSequenceScheduleShape(seq) {
     return seq.schedule;
 }
 
+function createManualScheduleRow(overrides) {
+    const row = {
+        id: createId(),
+        groupId: createId(),
+        dayPart: "Full Day",
+        task: "Load and Deliver",
+        completionWindow: "None",
+        date: "",
+        vans: 1,
+        men: 2,
+        hours: 8,
+        nightsOut: false,
+        overtimeHours: 0,
+        operatingBranch: "",
+        legs: []
+    };
+
+    return Object.assign(row, overrides || {});
+}
+
 function getDefaultManualScheduleRows() {
-    return [
-        {
-            id: createId(),
-            groupId: createId(),
-            dayPart: "Full Day",
-            task: "Load and Deliver",
-            completionWindow: "None",
-            date: "",
-            vans: 1,
-            men: 2,
-            hours: 8,
-            nightsOut: false,
-            overtimeHours: 0,
-            operatingBranch: "",
-            legs: []
-        }
-    ];
+    return [createManualScheduleRow()];
 }
 
 function createEmptyScheduleLeg(from = "Depot", to = "", minutes = 0, miles = 0, roadType = "Road") {
