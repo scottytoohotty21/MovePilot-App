@@ -13684,7 +13684,7 @@ function renderQuoteAdditionalBreakdown(sequenceId) {
     `;
 }
 
-function getQuoteAvailabilityBandById(bandId) {
+function supersededGetQuoteAvailabilityBandById(bandId) {
     return QUOTE_AVAILABILITY_BANDS.find(function(band) {
         return band.id === bandId;
     }) || QUOTE_AVAILABILITY_BANDS[0];
@@ -13702,7 +13702,7 @@ function getScheduleRowDateValue(row) {
     ).trim();
 }
 
-function formatQuoteAvailabilityDate(dateValue) {
+function supersededFormatQuoteAvailabilityDate(dateValue) {
     if (!dateValue) return "No Date";
 
     const parsed = new Date(dateValue + "T00:00:00");
@@ -13719,7 +13719,7 @@ function formatQuoteAvailabilityDate(dateValue) {
     });
 }
 
-function getQuoteScheduleDates(sequenceId) {
+function supersededGetQuoteScheduleDates(sequenceId) {
     const rows = getQuoteScheduleRows(sequenceId);
     const seen = {};
     const dates = [];
@@ -13738,17 +13738,17 @@ function getQuoteScheduleDates(sequenceId) {
     return dates.sort();
 }
 
-function getHighestAvailabilityBand(dateBands) {
+function supersededGetHighestAvailabilityBand(dateBands) {
     const selectedBands = Object.values(dateBands || {})
         .map(function(bandId) {
-            return getQuoteAvailabilityBandById(bandId);
+            return supersededGetQuoteAvailabilityBandById(bandId);
         })
         .filter(function(band) {
             return band.id !== "none";
         });
 
     if (!selectedBands.length) {
-        return getQuoteAvailabilityBandById("none");
+        return supersededGetQuoteAvailabilityBandById("none");
     }
 
     return selectedBands.reduce(function(highest, band) {
@@ -13758,7 +13758,7 @@ function getHighestAvailabilityBand(dateBands) {
     }, selectedBands[0]);
 }
 
-function updateQuoteAvailabilityBand(sequenceId, dateValue, bandId) {
+function supersededUpdateQuoteAvailabilityBand(sequenceId, dateValue, bandId) {
     const state = ensureQuoteSequenceState(sequenceId);
     if (!state) return;
 
@@ -13771,10 +13771,10 @@ function updateQuoteAvailabilityBand(sequenceId, dateValue, bandId) {
     quotePricingSaved = false;
     saveToDevice();
 
-    renderQuoteAvailabilityPanel(sequenceId);
+    supersededRenderQuoteAvailabilityPanel(sequenceId);
 }
 
-function renderQuoteAvailabilityPanel(sequenceId) {
+function supersededRenderQuoteAvailabilityPanel(sequenceId) {
     const target = document.getElementById("quote-availabilityCard");
     if (!target) return;
 
@@ -13785,7 +13785,7 @@ function renderQuoteAvailabilityPanel(sequenceId) {
         state.availabilityByDate = {};
     }
 
-    const scheduleDates = getQuoteScheduleDates(sequenceId);
+    const scheduleDates = supersededGetQuoteScheduleDates(sequenceId);
 
     if (!scheduleDates.length) {
         target.innerHTML = `
@@ -13806,7 +13806,7 @@ function renderQuoteAvailabilityPanel(sequenceId) {
         activeDateBands[dateValue] = state.availabilityByDate[dateValue] || "none";
     });
 
-    const highestBand = getHighestAvailabilityBand(activeDateBands);
+    const highestBand = supersededGetHighestAvailabilityBand(activeDateBands);
 
     target.innerHTML = `
         <div class="quote-availability-list">
@@ -13817,12 +13817,12 @@ function renderQuoteAvailabilityPanel(sequenceId) {
                     return `
                         <div class="quote-availability-row">
                             <div class="quote-availability-date">
-                                ${escapeHtml(formatQuoteAvailabilityDate(dateValue))}
+                                ${escapeHtml(supersededFormatQuoteAvailabilityDate(dateValue))}
                             </div>
 
                             <select
                                 class="quote-availability-select"
-                                onchange="updateQuoteAvailabilityBand('${sequenceId}', '${escapeHtml(dateValue)}', this.value)"
+                                onchange="supersededUpdateQuoteAvailabilityBand('${sequenceId}', '${escapeHtml(dateValue)}', this.value)"
                             >
                                 ${
                                     QUOTE_AVAILABILITY_BANDS.map(function(band) {
