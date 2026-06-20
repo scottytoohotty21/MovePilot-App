@@ -13203,9 +13203,9 @@ function updateQuoteCommercialDisplays(sequenceId) {
     }
 
     renderQuoteCommercialSummary(sequenceId);
-renderQuoteCompetitionCard(sequenceId);
-renderQuoteAdditionalBreakdown(sequenceId);
-renderAvailabilityPricingPanel(sequenceId);
+    renderQuoteCompetitionCard(sequenceId);
+    renderQuoteAdditionalBreakdown(sequenceId);
+    renderAvailabilityPricingPanel(sequenceId);
 }
 
 function renderQuoteTabShellOnly() {
@@ -13218,18 +13218,15 @@ function renderQuoteTabShellOnly() {
     renderQuoteSequenceSelect();
 
     const customerInput = document.getElementById("quote-customerPriceInput");
-const notesInput = document.getElementById("quote-quoteNotesInput");
-const availabilityStatus = document.getElementById("quote-availabilityRefreshStatus");
+    const notesInput = document.getElementById("quote-quoteNotesInput");
+    const availabilityStatus = document.getElementById("quote-availabilityRefreshStatus");
 
     if (customerInput) customerInput.value = Number(state.customerPrice || 0);
-if (notesInput) notesInput.value = state.quoteNotes || "";
+    if (notesInput) notesInput.value = state.quoteNotes || "";
 
-if (availabilityStatus) {
-    availabilityStatus.innerText = getAvailabilityRefreshText();
-}
-
-renderAvailabilityPricingPanel(sequenceId);
-updateQuoteCommercialDisplays(sequenceId);
+    if (availabilityStatus) {
+        availabilityStatus.innerText = getAvailabilityRefreshText();
+    }
 
     updateQuoteCommercialDisplays(sequenceId);
 }
