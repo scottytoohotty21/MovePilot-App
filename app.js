@@ -16735,8 +16735,12 @@ function updateScheduleDay(id, field, value){
     if (row && field === "dayPart"){
 if (value === "AM"){
     const updated = manualSchedule.find(day => day.id === id);
+    const existingTaskMode = getPlannerTaskMode(updated);
+
     updated.hours = 4;
-    updated.task = "Commence loading";
+    updated.task = existingTaskMode === "pack"
+        ? updated.task
+        : "Commence loading";
     updated.legs = updated.legs || [];
     ensurePmPair(updated);
 }
