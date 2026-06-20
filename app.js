@@ -13684,12 +13684,6 @@ function renderQuoteAdditionalBreakdown(sequenceId) {
     `;
 }
 
-function supersededGetQuoteAvailabilityBandById(bandId) {
-    return QUOTE_AVAILABILITY_BANDS.find(function(band) {
-        return band.id === bandId;
-    }) || QUOTE_AVAILABILITY_BANDS[0];
-}
-
 function getScheduleRowDateValue(row) {
     if (!row) return "";
 
@@ -13702,78 +13696,7 @@ function getScheduleRowDateValue(row) {
     ).trim();
 }
 
-function supersededFormatQuoteAvailabilityDate(dateValue) {
-    if (!dateValue) return "No Date";
-
-    const parsed = new Date(dateValue + "T00:00:00");
-
-    if (isNaN(parsed.getTime())) {
-        return dateValue;
-    }
-
-    return parsed.toLocaleDateString("en-GB", {
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
-    });
-}
-
-function supersededGetQuoteScheduleDates(sequenceId) {
-    const rows = getQuoteScheduleRows(sequenceId);
-    const seen = {};
-    const dates = [];
-
-    rows.forEach(function(row) {
-        const dateValue = getScheduleRowDateValue(row);
-
-        if (!dateValue) return;
-
-        if (!seen[dateValue]) {
-            seen[dateValue] = true;
-            dates.push(dateValue);
-        }
-    });
-
-    return dates.sort();
-}
-
-function supersededGetHighestAvailabilityBand(dateBands) {
-    const selectedBands = Object.values(dateBands || {})
-        .map(function(bandId) {
-            return supersededGetQuoteAvailabilityBandById(bandId);
-        })
-        .filter(function(band) {
-            return band.id !== "none";
-        });
-
-    if (!selectedBands.length) {
-        return supersededGetQuoteAvailabilityBandById("none");
-    }
-
-    return selectedBands.reduce(function(highest, band) {
-        return Number(band.marginPct || 0) > Number(highest.marginPct || 0)
-            ? band
-            : highest;
-    }, selectedBands[0]);
-}
-
-function supersededUpdateQuoteAvailabilityBand(sequenceId, dateValue, bandId) {
-    const state = ensureQuoteSequenceState(sequenceId);
-    if (!state) return;
-
-    if (!state.availabilityByDate || typeof state.availabilityByDate !== "object") {
-        state.availabilityByDate = {};
-    }
-
-    state.availabilityByDate[dateValue] = bandId || "none";
-
-    quotePricingSaved = false;
-    saveToDevice();
-
-    supersededRenderQuoteAvailabilityPanel(sequenceId);
-}
-
+// Inert legacy renderer retained until its encoded template can be removed safely.
 function supersededRenderQuoteAvailabilityPanel(sequenceId) {
     const target = document.getElementById("quote-availabilityCard");
     if (!target) return;
