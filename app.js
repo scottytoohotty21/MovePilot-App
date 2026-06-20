@@ -12719,34 +12719,34 @@ function getQuoteCommercialTotals(sequenceId) {
     };
 }
 
-function createAvailabilityDateId() {
+function supersededCreateAvailabilityDateId() {
     return "avail_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
 }
 
-function getAvailabilityBandById(bandId) {
+function supersededGetAvailabilityBandById(bandId) {
     return QUOTE_AVAILABILITY_BANDS.find(function(band) {
         return band.id === bandId;
     }) || QUOTE_AVAILABILITY_BANDS[0];
 }
 
-function getQuoteAvailabilityBranch(sequenceId) {
+function supersededGetQuoteAvailabilityBranch(sequenceId) {
     const branch = getOperatingBranchForSequence(sequenceId);
     return branch || "";
 }
 
-function getAvailabilityBandFromLocalTable(branch, dateValue) {
+function supersededGetAvailabilityBandFromLocalTable(branch, dateValue) {
     const key = String(branch || "") + "|" + String(dateValue || "");
     return AVAILABILITY_RATE_TABLE[key] || "";
 }
 
-function addQuoteAvailabilityDate(sequenceId) {
+function supersededAddQuoteAvailabilityDate(sequenceId) {
     const pricing = getAvailabilityPricingState(sequenceId);
     if (!pricing) return;
 
     pricing.dates.push({
-    id: createAvailabilityDateId(),
+    id: supersededCreateAvailabilityDateId(),
     date: "",
-    branch: getQuoteAvailabilityBranch(sequenceId) || "",
+    branch: supersededGetQuoteAvailabilityBranch(sequenceId) || "",
     band: ""
 });
 
@@ -12755,7 +12755,7 @@ function addQuoteAvailabilityDate(sequenceId) {
     renderQuoteTab();
 }
 
-function deleteQuoteAvailabilityDate(sequenceId, dateId) {
+function supersededDeleteQuoteAvailabilityDate(sequenceId, dateId) {
     const pricing = getAvailabilityPricingState(sequenceId);
     if (!pricing) return;
 
@@ -12768,7 +12768,7 @@ function deleteQuoteAvailabilityDate(sequenceId, dateId) {
     renderQuoteTab();
 }
 
-function updateQuoteAvailabilityDate(sequenceId, dateId, field, value) {
+function supersededUpdateQuoteAvailabilityDate(sequenceId, dateId, field, value) {
     const pricing = getAvailabilityPricingState(sequenceId);
     if (!pricing) return;
 
@@ -12781,7 +12781,7 @@ function updateQuoteAvailabilityDate(sequenceId, dateId, field, value) {
     row[field] = value;
 
     if (field === "date") {
-        const suggestedBand = getAvailabilityBandFromLocalTable(row.branch, value);
+        const suggestedBand = supersededGetAvailabilityBandFromLocalTable(row.branch, value);
         if (suggestedBand) {
             row.band = suggestedBand;
         }
@@ -12793,14 +12793,14 @@ function updateQuoteAvailabilityDate(sequenceId, dateId, field, value) {
     updateQuoteCommercialDisplays(sequenceId);
 }
 
-async function refreshQuoteAvailabilityFromLocalTable(sequenceId) {
+async function supersededRefreshQuoteAvailabilityFromLocalTable(sequenceId) {
     const pricing = getAvailabilityPricingState(sequenceId);
     if (!pricing) return;
 
     let matchedCount = 0;
 
     pricing.dates.forEach(function(row) {
-        const band = getAvailabilityBandFromLocalTable(row.branch, row.date);
+        const band = supersededGetAvailabilityBandFromLocalTable(row.branch, row.date);
 
         if (band) {
             row.band = band;
