@@ -16526,42 +16526,26 @@ function addScheduleDay() {
 
     const selectedOperatingBranch = getOperatingBranchFromManualScheduleRows() || "";
 
-    manualSchedule.push({
-        id: createId(),
+    manualSchedule.push(createManualScheduleRow({
         groupId: newGroupId,
         dayPart: "AM",
         task: "Load",
-        completionWindow: "None",
-        date: "",
-        men: 2,
-        vans: 1,
-        hours: 8,
-        nightsOut: false,
-        overtimeHours: 0,
         operatingBranch: selectedOperatingBranch,
         legs: [
-    createEmptyScheduleLeg("Depot", collectionId, 30),
-    createEmptyScheduleLeg(collectionId, deliveryId, 30)
-]
-    });
+            createEmptyScheduleLeg("Depot", collectionId, 30),
+            createEmptyScheduleLeg(collectionId, deliveryId, 30)
+        ]
+    }));
 
-    manualSchedule.push({
-        id: createId(),
+    manualSchedule.push(createManualScheduleRow({
         groupId: newGroupId,
         dayPart: "PM",
         task: "Deliver",
-        completionWindow: "None",
-        date: "",
-        men: 2,
-        vans: 1,
-        hours: 8,
-        nightsOut: false,
-        overtimeHours: 0,
         operatingBranch: selectedOperatingBranch,
         legs: [
-    createEmptyScheduleLeg(deliveryId, "Depot", 30)
-]
-    });
+            createEmptyScheduleLeg(deliveryId, "Depot", 30)
+        ]
+    }));
 
     saveManualScheduleToActiveSequence();
     renderScheduleCalculator();
