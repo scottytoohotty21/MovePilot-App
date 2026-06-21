@@ -15905,13 +15905,13 @@ function optionHtml(options, selected){
 function getPlannerTaskMode(day) {
     const task = String(day && day.task ? day.task : "").trim();
 
-   if (
-    task === "Pack" ||
-    task === "Pack & Prepare" ||
-    task === "Pack fragiles & breakables"
-) {
-    return "pack";
-}
+    if (
+        task === "Pack" ||
+        task === "Pack & Prepare" ||
+        task === "Pack fragiles & breakables"
+    ) {
+        return "pack";
+    }
 
     if (
         task === "Commence loading" ||
@@ -15934,11 +15934,11 @@ function getPlannerTaskMode(day) {
     }
 
     if (
-    task === "Pack + Load" ||
-    task === "Pack and part Load"
-) {
-    return "pack_load";
-}
+        task === "Pack + Load" ||
+        task === "Pack and part Load"
+    ) {
+        return "pack_load";
+    }
 
     if (
         task === "Pack, Load & Deliver" ||
@@ -15953,6 +15953,7 @@ function getPlannerTaskMode(day) {
 
     return "none";
 }
+
 function getCompletionWindowHours(dayPart) {
     return getNormalWindowHours(dayPart);
 }
