@@ -14910,12 +14910,7 @@ function getLoadingScenarioFromMoveType(moveType) {
 }
 
 function getAutoBuildMoveMode(moveType) {
-    const raw = String(moveType || "").toLowerCase();
-
-    if (raw.includes("to store")) return "intoStore";
-    if (raw.includes("ex store")) return "exStore";
-
-    return "direct";
+    return getLoadingScenarioFromMoveType(moveType);
 }
 function getLoadingProfile(loadingVariant, loadingScenario) {
     const variant = String(loadingVariant || "Standard");
