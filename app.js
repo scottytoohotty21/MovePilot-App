@@ -15657,9 +15657,10 @@ function getState() {
     const photonFeed = getPhotonFeed();
     const seq = getActiveSequenceRecord();
     const loadingScenario = getLoadingScenarioFromMoveType(seq ? seq.moveType : "");
+    const loadingVariantEl = document.getElementById("loadingVariant");
 
-    const loadingVariant = document.getElementById("loadingVariant")
-        ? document.getElementById("loadingVariant").value
+    const loadingVariant = loadingVariantEl
+        ? loadingVariantEl.value
         : "Standard";
 
     const loadingProfile = getLoadingProfile(loadingVariant, loadingScenario);
