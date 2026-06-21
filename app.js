@@ -16184,30 +16184,29 @@ function getScheduleAutoBuildStatusSequence() {
     return getActiveSequenceRecord ? getActiveSequenceRecord() : null;
 }
 
-function markScheduleAutoBuildUpdateNeeded(reason, shouldSave) {
+function setScheduleAutoBuildUpdateNeeded(isNeeded, reason, shouldSave) {
     const seq = getScheduleAutoBuildStatusSequence();
     if (!seq) return;
 
-    seq.scheduleAutoBuildUpdateNeeded = true;
-    seq.scheduleAutoBuildUpdateReason = reason || "Inventory or sequence details changed.";
-    seq.scheduleAutoBuildUpdateAt = new Date().toISOString();
+    seq.scheduleAutoBuildUpdateNeeded = !!isNeeded;
+    seq.scheduleAutoBuildUpdateReason = isNeeded
+        ? reason || "Inventory or sequence details changed."
+        : "";
+    seq.scheduleAutoBuildUpdateAt = isNeeded
+        ? new Date().toISOString()
+        : "";
 
     if (shouldSave !== false) {
         saveToDevice();
     }
 }
 
+function markScheduleAutoBuildUpdateNeeded(reason, shouldSave) {
+    setScheduleAutoBuildUpdateNeeded(true, reason, shouldSave);
+}
+
 function clearScheduleAutoBuildUpdateNeeded(shouldSave) {
-    const seq = getScheduleAutoBuildStatusSequence();
-    if (!seq) return;
-
-    seq.scheduleAutoBuildUpdateNeeded = false;
-    seq.scheduleAutoBuildUpdateReason = "";
-    seq.scheduleAutoBuildUpdateAt = "";
-
-    if (shouldSave !== false) {
-        saveToDevice();
-    }
+    setScheduleAutoBuildUpdateNeeded(false, "", shouldSave);
 }
 
 function shouldShowScheduleAutoBuildUpdateNeeded() {
