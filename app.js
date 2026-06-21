@@ -15542,27 +15542,6 @@ function appConfirm(message, title) {
     });
 }
 
-function appPrompt(message, defaultValue, title) {
-    return showAppModal({
-        title: title || "Enter Value",
-        message: message || "",
-        showInput: true,
-        defaultValue: defaultValue || "",
-        buttons: [
-            {
-                label: "Cancel",
-                value: null,
-                className: ""
-            },
-            {
-                label: "Save",
-                value: "input",
-                className: "primary"
-            }
-        ]
-    });
-}
-
 function formatHoursAndMinutes(hours) {
     const totalMinutes = Math.round(Number(hours || 0) * 60);
     const hrs = Math.floor(totalMinutes / 60);
