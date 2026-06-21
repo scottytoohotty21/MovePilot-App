@@ -16423,9 +16423,8 @@ function autoBuildScheduleDays() {
     }
 
     manualSchedule = newRows;
-clearScheduleAutoBuildUpdateNeeded(false);
-saveManualScheduleToActiveSequence();
-renderScheduleCalculator();
+    clearScheduleAutoBuildUpdateNeeded(false);
+    commitManualScheduleEdit();
 }
 
 function handleLoadingVariantToolbarChange(value) {
