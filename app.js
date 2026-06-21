@@ -16583,10 +16583,6 @@ function normalizeGroup(groupId) {
     }
 }
 
-function normalizeCompletionDayRow(day) {
-    return { ...day };
-}
-
 function shouldAutoSplitCompletionRow(day) {
     if (!day) return false;
 
@@ -16690,7 +16686,7 @@ function updateScheduleDay(id, field, value){
             updatedDay = { ...day, [field]: value };
         }
 
-        return normalizeCompletionDayRow(updatedDay);
+        return updatedDay;
     });
 
     const row = manualSchedule.find(day => day.id === id);
@@ -16776,10 +16772,6 @@ if (value === "AM"){
 
         normalizeGroup(row.groupId);
     }
-
-    manualSchedule = manualSchedule.map(function(day) {
-        return day.groupId === row.groupId ? normalizeCompletionDayRow(day) : day;
-    });
 
     commitManualScheduleEdit();
 }
