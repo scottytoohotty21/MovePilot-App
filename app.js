@@ -16515,8 +16515,7 @@ function addScheduleDay() {
         ]
     }));
 
-    saveManualScheduleToActiveSequence();
-    renderScheduleCalculator();
+    commitManualScheduleEdit();
 }
 
 function removeScheduleDay(dayId) {
@@ -16534,8 +16533,7 @@ function removeScheduleDay(dayId) {
         manualSchedule = getDefaultManualScheduleRows();
     }
 
-    saveManualScheduleToActiveSequence();
-    renderScheduleCalculator();
+    commitManualScheduleEdit();
 }
 
 function ensurePmPair(row){
@@ -16777,8 +16775,7 @@ if (value === "AM"){
         return day.groupId === row.groupId ? normalizeCompletionDayRow(day) : day;
     });
 
-    saveManualScheduleToActiveSequence();
-    renderScheduleCalculator();
+    commitManualScheduleEdit();
 }
 
 function minutesToClock(totalMinutes) {
