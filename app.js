@@ -15954,10 +15954,7 @@ function getPlannerTaskMode(day) {
     return "none";
 }
 function getCompletionWindowHours(dayPart) {
-    if (dayPart === "AM") return 5;       // 08:00 to 13:00
-    if (dayPart === "PM") return 4.5;     // 13:00 to 17:30
-    if (dayPart === "Full Day") return 9.5; // 08:00 to 17:30
-    return 0;
+    return getNormalWindowHours(dayPart);
 }
 
 function getNormalWindowHours(dayPart) {
@@ -16677,6 +16674,7 @@ function updateScheduleDay(id, field, value) {
                     hours: 4,
                     nightsOut: false,
                     overtimeHours: 0,
+                    operatingBranch: updated.operatingBranch || "",
                     legs: [
                         createEmptyScheduleLeg("Depot", "Collection Address", 0),
                         createEmptyScheduleLeg("Collection Address", "Delivery Address", 0)
@@ -16733,7 +16731,7 @@ function getRowWindowBounds(dayPart, overtimeHours = 0) {
     const extraMinutes = Math.max(0, Number(overtimeHours || 0)) * 60;
 
     if (dayPart === "AM") {
-        return { start: 8 * 60, end: (13 * 60) + extraMinutes };
+        return { start: (8 * 60) - extraMinutes, end: 13 * 60 };
     }
 
     if (dayPart === "PM") {
