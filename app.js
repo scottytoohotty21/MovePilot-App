@@ -16669,8 +16669,8 @@ function splitCompletionRowIntoAmPm(row) {
     manualSchedule.push(amRow, pmRow);
 }
 
-function updateScheduleDay(id, field, value){
-    manualSchedule = manualSchedule.map(day => {
+function updateScheduleDay(id, field, value) {
+    manualSchedule = manualSchedule.map(function(day) {
         if (day.id !== id) return day;
 
         let updatedDay;
@@ -16689,8 +16689,11 @@ function updateScheduleDay(id, field, value){
         return updatedDay;
     });
 
-    const row = manualSchedule.find(day => day.id === id);
-        if (row && field === "completionWindow") {
+    const row = manualSchedule.find(function(day) {
+        return day.id === id;
+    });
+
+    if (row && field === "completionWindow") {
         const updatedRow = manualSchedule.find(function(day) {
             return day.id === id;
         });
@@ -16700,75 +16703,84 @@ function updateScheduleDay(id, field, value){
         }
     }
 
-    if (row && field === "dayPart"){
-if (value === "AM"){
-    const updated = manualSchedule.find(day => day.id === id);
-    const existingTaskMode = getPlannerTaskMode(updated);
+    if (row && field === "dayPart") {
+        if (value === "AM") {
+            const updated = manualSchedule.find(function(day) {
+                return day.id === id;
+            });
+            const existingTaskMode = getPlannerTaskMode(updated);
 
-    updated.hours = 4;
-    updated.task = existingTaskMode === "pack"
-        ? updated.task
-        : "Commence loading";
-    updated.legs = updated.legs || [];
-    ensurePmPair(updated);
-}
+            updated.hours = 4;
+            updated.task = existingTaskMode === "pack"
+                ? updated.task
+                : "Commence loading";
+            updated.legs = updated.legs || [];
+            ensurePmPair(updated);
+        }
 
-        if (value === "PM"){
-    const updated = manualSchedule.find(day => day.id === id);
-    updated.hours = 4;
-    updated.task = "Deliver";
-    updated.legs = updated.legs || [];
+        if (value === "PM") {
+            const updated = manualSchedule.find(function(day) {
+                return day.id === id;
+            });
+            updated.hours = 4;
+            updated.task = "Deliver";
+            updated.legs = updated.legs || [];
 
-    const hasAm = manualSchedule.some(day => day.groupId === updated.groupId && day.dayPart === "AM");
-    if (!hasAm){
-        manualSchedule.push({
-            id: createId(),
-            groupId: updated.groupId,
-            dayPart: "AM",
-            task: "Commence loading",
-            completionWindow: "None",
-            date: updated.date || "",
-            men: updated.men,
-            vans: updated.vans,
-            hours: 4,
-            nightsOut: false,
-            overtimeHours: 0,
-            legs: [
-    createEmptyScheduleLeg("Depot", "Collection Address", 0),
-    createEmptyScheduleLeg("Collection Address", "Delivery Address", 0)
-]
-        });
-    }
-}
+            const hasAm = manualSchedule.some(function(day) {
+                return day.groupId === updated.groupId && day.dayPart === "AM";
+            });
 
-       if (value === "Full Day"){
-    manualSchedule = manualSchedule.filter(day => day.groupId !== row.groupId || day.id === row.id);
+            if (!hasAm) {
+                manualSchedule.push({
+                    id: createId(),
+                    groupId: updated.groupId,
+                    dayPart: "AM",
+                    task: "Commence loading",
+                    completionWindow: "None",
+                    date: updated.date || "",
+                    men: updated.men,
+                    vans: updated.vans,
+                    hours: 4,
+                    nightsOut: false,
+                    overtimeHours: 0,
+                    legs: [
+                        createEmptyScheduleLeg("Depot", "Collection Address", 0),
+                        createEmptyScheduleLeg("Collection Address", "Delivery Address", 0)
+                    ]
+                });
+            }
+        }
 
-    manualSchedule = manualSchedule.map(day => {
-        if (day.id !== row.id) return day;
+        if (value === "Full Day") {
+            manualSchedule = manualSchedule.filter(function(day) {
+                return day.groupId !== row.groupId || day.id === row.id;
+            });
 
-        const existingTask = String(day.task || "").trim();
-        const existingTaskMode = getPlannerTaskMode(day);
+            manualSchedule = manualSchedule.map(function(day) {
+                if (day.id !== row.id) return day;
 
-        const fullDayTask = existingTaskMode === "pack"
-            ? existingTask || "Pack"
-            : "Load and Deliver";
+                const existingTask = String(day.task || "").trim();
+                const existingTaskMode = getPlannerTaskMode(day);
 
-        return {
-            ...day,
-            dayPart: "Full Day",
-            hours: 8,
-            task: fullDayTask,
-            legs: Array.isArray(day.legs) && day.legs.length
-                ? day.legs
-                : [
-                    createEmptyScheduleLeg("Depot", "Collection Address", 0),
-                    createEmptyScheduleLeg("Collection Address", "Delivery Address", 0),
-                    createEmptyScheduleLeg("Delivery Address", "Depot", 0)
-                ]
-        };
-    });
-}
+                const fullDayTask = existingTaskMode === "pack"
+                    ? existingTask || "Pack"
+                    : "Load and Deliver";
+
+                return {
+                    ...day,
+                    dayPart: "Full Day",
+                    hours: 8,
+                    task: fullDayTask,
+                    legs: Array.isArray(day.legs) && day.legs.length
+                        ? day.legs
+                        : [
+                            createEmptyScheduleLeg("Depot", "Collection Address", 0),
+                            createEmptyScheduleLeg("Collection Address", "Delivery Address", 0),
+                            createEmptyScheduleLeg("Delivery Address", "Depot", 0)
+                        ]
+                };
+            });
+        }
 
         normalizeGroup(row.groupId);
     }
