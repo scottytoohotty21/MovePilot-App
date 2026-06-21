@@ -16596,7 +16596,7 @@ function shouldAutoSplitCompletionRow(day) {
     const seq = getActiveSequenceRecord();
     const moveMode = getAutoBuildMoveMode(seq ? seq.moveType || "" : "");
 
-    // only direct moves auto-split
+    // Only direct moves auto-split.
     if (moveMode !== "direct") return false;
 
     const task = String(day.task || "");
@@ -16606,6 +16606,7 @@ function shouldAutoSplitCompletionRow(day) {
         task === "Pack, Load & Deliver"
     );
 }
+
 function splitCompletionRowIntoAmPm(row) {
     if (!row) return;
 
@@ -16622,21 +16623,16 @@ function splitCompletionRowIntoAmPm(row) {
     const legs = Array.isArray(row.legs) ? row.legs.slice() : [];
 
     const amLegs = [];
-const pmLegs = [];
+    const pmLegs = [];
 
-if (legs[0]) amLegs.push({ ...legs[0] });
-if (legs[1]) amLegs.push({ ...legs[1] });
-if (legs[2]) pmLegs.push({ ...legs[2] });
+    if (legs[0]) amLegs.push({ ...legs[0] });
+    if (legs[1]) amLegs.push({ ...legs[1] });
+    if (legs[2]) pmLegs.push({ ...legs[2] });
 
     const amTask =
         row.task === "Pack, Load & Deliver"
             ? "Pack and part Load"
             : "Commence loading";
-
-    const pmTask =
-        row.task === "Pack, Load & Deliver"
-            ? "Deliver"
-            : "Deliver";
 
     const amRow = {
         id: createId(),
@@ -16654,11 +16650,11 @@ if (legs[2]) pmLegs.push({ ...legs[2] });
         legs: amLegs
     };
 
-   const pmRow = {
+    const pmRow = {
         id: createId(),
         groupId: row.groupId,
         dayPart: "PM",
-        task: pmTask,
+        task: "Deliver",
         completionWindow: "Completion Day",
         date: row.date || "",
         men: row.men,
@@ -16676,6 +16672,7 @@ if (legs[2]) pmLegs.push({ ...legs[2] });
 
     manualSchedule.push(amRow, pmRow);
 }
+
 function updateScheduleDay(id, field, value){
     manualSchedule = manualSchedule.map(day => {
         if (day.id !== id) return day;
