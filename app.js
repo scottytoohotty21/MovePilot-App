@@ -14270,13 +14270,6 @@ function getScheduleLegMiles(day) {
     }, 0);
 }
 
-function getScheduleLegVanMiles(day) {
-    const routeMiles = getScheduleLegMiles(day);
-    const vans = Math.max(1, Number(day && day.vans ? day.vans : 1));
-
-    return routeMiles * vans;
-}
-
 function getPlannerMileageSummary() {
     const summary = {
         costedMileage: 0,
@@ -14320,40 +14313,6 @@ function syncPlannerMileageToCosting(sequenceId) {
     );
 }
 
-function getDefaultLegMinutes(from, to) {
-    const fromText = String(from || "").toLowerCase().trim();
-    const toText = String(to || "").toLowerCase().trim();
-
-    if (fromText === "depot" && toText === "collection") {
-        return 30;
-    }
-
-    if (fromText === "collection" && toText === "delivery") {
-        return 30;
-    }
-
-    if (fromText === "delivery" && toText === "depot") {
-        return 30;
-    }
-
-    if (fromText === "depot" && toText === "store") {
-        return 30;
-    }
-
-    if (fromText === "store" && toText === "delivery") {
-        return 30;
-    }
-
-    if (fromText === "collection" && toText === "store") {
-        return 30;
-    }
-
-    if (fromText === "store" && toText === "depot") {
-        return 30;
-    }
-
-    return 0;
-}
 function ensureScheduleRowShape(day) {
     if (!day || typeof day !== "object") return day;
 
@@ -14550,23 +14509,6 @@ function removeScheduleLeg(dayId, legId) {
     });
 
     commitManualScheduleEdit();
-}
-function getScheduleLegAddressOptions() {
-    const options = [{ value: "Depot", label: "Depot" }];
-
-    if (!currentJob || !Array.isArray(currentJob.properties)) {
-        return options;
-    }
-
-    currentJob.properties.forEach(function(prop) {
-        const label = getPropertyDisplayText(prop.id);
-        options.push({
-            value: label,
-            label: label
-        });
-    });
-
-    return options;
 }
 
 function renderScheduleLegs(day, state, totals) {
@@ -16011,10 +15953,6 @@ function getPlannerTaskMode(day) {
 
     return "none";
 }
-function getDayPartHours(dayPart) {
-    return dayPart === "Full Day" ? 8 : 4;
-}
-
 function getCompletionWindowHours(dayPart) {
     if (dayPart === "AM") return 5;       // 08:00 to 13:00
     if (dayPart === "PM") return 4.5;     // 13:00 to 17:30
@@ -16164,10 +16102,6 @@ function getCompletionAdjustedCapacity(day, mode, taskHours) {
     }
 
     return usableTaskHours;
-}
-
-function getTravelPatternHours(travelPattern, state){
-    return 0;
 }
 
 function getNetTaskHoursForPlannerRow(day, state){
