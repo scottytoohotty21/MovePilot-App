@@ -15881,6 +15881,18 @@ function calcUnloading(totalVolume, unloadRate, unloadSideSpecialHours, loadingS
 function optionHtml(options, selected){
     return options.map(opt => `<option value="${opt}" ${String(opt) === String(selected) ? "selected" : ""}>${opt}</option>`).join("");
 }
+
+function taskOptionHtml(selectedTask) {
+    const currentTask = String(selectedTask || "").trim();
+    const taskOptions = TASK_OPTIONS.slice();
+
+    if (currentTask && !taskOptions.includes(currentTask)) {
+        taskOptions.unshift(currentTask);
+    }
+
+    return optionHtml(taskOptions, currentTask);
+}
+
 function getPlannerTaskMode(day) {
     const task = String(day && day.task ? day.task : "").trim();
 
@@ -17036,7 +17048,7 @@ function renderSchedulePlanner(){
                     <div>
                         <label class="mini-label">Task</label>
                         <select class="field" onchange="updateScheduleDay('${day.id}','task',this.value)">
-                            ${optionHtml(TASK_OPTIONS, day.task)}
+                            ${taskOptionHtml(day.task)}
                         </select>
                     </div>
 
