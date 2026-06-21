@@ -16475,8 +16475,7 @@ function updateScheduleOperatingBranchForAllRows(branchValue) {
         day.operatingBranch = cleanBranch;
     });
 
-    saveManualScheduleToActiveSequence();
-    renderScheduleCalculator();
+    commitManualScheduleEdit();
 }
 
 function addScheduleDay() {
@@ -17153,8 +17152,7 @@ function addOneHourOvertimeToScheduleDay(dayId) {
         };
     });
 
-    saveManualScheduleToActiveSequence();
-    renderScheduleCalculator();
+    commitManualScheduleEdit();
 }
 
 function clearOvertimeFromScheduleDay(dayId) {
@@ -17167,8 +17165,7 @@ function clearOvertimeFromScheduleDay(dayId) {
         };
     });
 
-    saveManualScheduleToActiveSequence();
-    renderScheduleCalculator();
+    commitManualScheduleEdit();
 }
 function renderSchedulePlanner(){
     const list = document.getElementById("scheduleList");
