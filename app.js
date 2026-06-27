@@ -16155,14 +16155,30 @@ function getScheduleAutoBuildUpdateCardHtml() {
             <button
                 type="button"
                 class="schedule-autobuild-update-btn"
-                onclick="autoBuildScheduleDays()"
+                onclick="autoBuildScheduleDays(this)"
             >
                 Run Auto Build
             </button>
         </div>
     `;
 }
-function autoBuildScheduleDays() {
+function pulseScheduleButton(buttonEl) {
+    if (!buttonEl) return;
+
+    buttonEl.classList.remove("schedule-btn-pulse-hit");
+    void buttonEl.offsetWidth;
+    buttonEl.classList.add("schedule-btn-pulse-hit");
+
+    triggerHaptic("light");
+
+    setTimeout(function() {
+        buttonEl.classList.remove("schedule-btn-pulse-hit");
+    }, 220);
+}
+
+function autoBuildScheduleDays(buttonEl) {
+    pulseScheduleButton(buttonEl);
+
     const seq = getActiveSequenceRecord();
     if (!seq) return;
 
@@ -16395,7 +16411,9 @@ function updateScheduleOperatingBranchForAllRows(branchValue) {
     commitManualScheduleEdit();
 }
 
-function addScheduleDay() {
+function addScheduleDay(buttonEl) {
+    pulseScheduleButton(buttonEl);
+
     const newGroupId = createId();
 
     const seq = getActiveSequenceRecord();
