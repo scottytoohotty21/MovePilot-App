@@ -4213,7 +4213,26 @@ body {
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 .schedule-title{font-size:10px;font-weight:900;text-transform:uppercase;color:var(--slate-400);}
-.schedule-btn{height:38px;border-radius:10px;border:1px solid var(--slate-300);background:#fff;color:var(--slate-700);padding:0 14px;font-size:11px;font-weight:900;text-transform:uppercase;cursor:pointer;}
+.schedule-btn{
+    height:38px;
+    border-radius:10px;
+    border:1px solid var(--slate-300);
+    background:#fff;
+    color:var(--slate-700);
+    padding:0 14px;
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition: transform 0.14s ease, background-color 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+}
+.schedule-btn:active,
+.schedule-btn.schedule-btn-pulse-hit {
+    transform: translateY(1px) scale(0.98);
+    background:#eff6ff;
+    border-color:#93c5fd;
+    box-shadow:0 0 0 3px rgba(59, 130, 246, 0.16);
+}
 .schedule-add-leg-btn{
     height:40px;
     min-width:120px;
@@ -4708,8 +4727,10 @@ body {
     letter-spacing: 0.03em;
 }
 
-.schedule-autobuild-update-btn:active {
+.schedule-autobuild-update-btn:active,
+.schedule-autobuild-update-btn.schedule-btn-pulse-hit {
     transform: scale(0.98);
+    box-shadow:0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 
 @media (max-width: 900px) {
