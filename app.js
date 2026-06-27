@@ -2196,32 +2196,63 @@ function ensureInventoryStore() {
     }
 }
 
-function buildRawInventoryEntry(entryData) {
+function createRawInventoryEntryDefaults() {
     return {
         id: "raw_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
-        sequenceId: entryData.sequenceId || "",
-        deliveryId: entryData.deliveryId || "",
-        roomName: entryData.roomName || "",
-        floorName: entryData.floorName || "",
-        itemName: entryData.itemName || "",
-        qty: entryData.qty || 1,
-        unitVolume: entryData.unitVolume || 0,
-        totalVolume: entryData.totalVolume || 0,
-        kind: entryData.kind || "item",
-        dismantle: !!entryData.dismantle,
-        expWrap: !!entryData.expWrap,
-        disconnect: !!entryData.disconnect,
-        handyman: !!entryData.handyman,
-        excluded: !!entryData.excluded,
-        note: entryData.note || "",
-        crated: !!entryData.crated,
-        crateDims: entryData.crateDims || null,
-        damage: entryData.damage || "",
-        bedType: entryData.bedType || "",
-        wardrobeTypes: Array.isArray(entryData.wardrobeTypes) ? entryData.wardrobeTypes : [],
-        pianoDetails: entryData.pianoDetails || null,
-        safeDetails: entryData.safeDetails || null
+        sequenceId: "",
+        deliveryId: "",
+        roomName: "",
+        floorName: "",
+        itemName: "",
+        qty: 1,
+        unitVolume: 0,
+        totalVolume: 0,
+        kind: "item",
+        dismantle: false,
+        expWrap: false,
+        disconnect: false,
+        handyman: false,
+        excluded: false,
+        note: "",
+        crated: false,
+        crateDims: null,
+        damage: "",
+        bedType: "",
+        wardrobeTypes: [],
+        pianoDetails: null,
+        safeDetails: null
     };
+}
+
+function buildRawInventoryEntry(entryData) {
+    entryData = entryData || {};
+
+    const rawEntry = createRawInventoryEntryDefaults();
+
+    rawEntry.sequenceId = entryData.sequenceId || "";
+    rawEntry.deliveryId = entryData.deliveryId || "";
+    rawEntry.roomName = entryData.roomName || "";
+    rawEntry.floorName = entryData.floorName || "";
+    rawEntry.itemName = entryData.itemName || "";
+    rawEntry.qty = entryData.qty || 1;
+    rawEntry.unitVolume = entryData.unitVolume || 0;
+    rawEntry.totalVolume = entryData.totalVolume || 0;
+    rawEntry.kind = entryData.kind || "item";
+    rawEntry.dismantle = !!entryData.dismantle;
+    rawEntry.expWrap = !!entryData.expWrap;
+    rawEntry.disconnect = !!entryData.disconnect;
+    rawEntry.handyman = !!entryData.handyman;
+    rawEntry.excluded = !!entryData.excluded;
+    rawEntry.note = entryData.note || "";
+    rawEntry.crated = !!entryData.crated;
+    rawEntry.crateDims = entryData.crateDims || null;
+    rawEntry.damage = entryData.damage || "";
+    rawEntry.bedType = entryData.bedType || "";
+    rawEntry.wardrobeTypes = Array.isArray(entryData.wardrobeTypes) ? entryData.wardrobeTypes : [];
+    rawEntry.pianoDetails = entryData.pianoDetails || null;
+    rawEntry.safeDetails = entryData.safeDetails || null;
+
+    return rawEntry;
 }
 
 
