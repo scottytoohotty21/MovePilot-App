@@ -11863,12 +11863,12 @@ async function refreshAvailabilityCacheSample() {
         statusEl.innerText = getAvailabilityRefreshText();
     }
 
-    await appAlert("Sample availability refreshed.", "Availability Refreshed");
-
     const seq = getQuoteSelectedSequence();
     if (seq) {
         updateQuoteCommercialDisplays(String(seq.id));
     }
+
+    await appAlert("Sample availability refreshed.", "Availability Refreshed");
 }
 const QUOTE_MANDATORY_LABELS = ["Vans", "Crew", "Mileage", "Consumables", "Cartons", "Export Wrap", "Nights Out"];
 const QUOTE_PRICING_DEFAULTS = [
@@ -13326,8 +13326,10 @@ async function applyAvailabilitySuggestedPrice(sequenceId, suggestedPrice, butto
         "No suggested price available yet. Check the cost base and availability margin.",
         "Suggested Price Unavailable"
     );
-    return;
-}
+        return;
+    }
+
+    pulseQuoteActionButton(buttonEl);
 
     state.customerPrice = cleanPrice;
     availability.appliedSuggestedPrice = cleanPrice;
@@ -13349,7 +13351,10 @@ async function applyAvailabilitySuggestedPrice(sequenceId, suggestedPrice, butto
     updateQuoteCommercialDisplays(sequenceId);
     renderQuoteAvailabilityPricingPanel(sequenceId);
 
-    pulseQuoteActionButton(buttonEl);
+    await appAlert(
+        "Suggested price applied to the customer price.",
+        "Suggested Price Applied"
+    );
 }
 
 async function handleQuoteSavePricing() {
