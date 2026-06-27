@@ -2224,6 +2224,20 @@ function createRawInventoryEntryDefaults() {
     };
 }
 
+function copyRawInventoryArray(value) {
+    return Array.isArray(value) ? value.slice() : [];
+}
+
+function copyRawInventoryObject(value) {
+    if (!value || typeof value !== "object") return null;
+
+    try {
+        return JSON.parse(JSON.stringify(value));
+    } catch (err) {
+        return null;
+    }
+}
+
 function buildRawInventoryEntry(entryData) {
     entryData = entryData || {};
 
@@ -2245,12 +2259,24 @@ function buildRawInventoryEntry(entryData) {
     rawEntry.excluded = !!entryData.excluded;
     rawEntry.note = entryData.note || "";
     rawEntry.crated = !!entryData.crated;
-    rawEntry.crateDims = entryData.crateDims || null;
+    rawEntry.crateDims = copyRawInventoryObject(entryData.crateDims);
     rawEntry.damage = entryData.damage || "";
     rawEntry.bedType = entryData.bedType || "";
-    rawEntry.wardrobeTypes = Array.isArray(entryData.wardrobeTypes) ? entryData.wardrobeTypes : [];
-    rawEntry.pianoDetails = entryData.pianoDetails || null;
-    rawEntry.safeDetails = entryData.safeDetails || null;
+    rawEntry.wardrobeTypes = copyRawInventoryArray(entryData.wardrobeTypes);
+    rawEntry.pianoDetails = copyRawInventoryObject(entryData.pianoDetails);
+    rawEntry.safeDetails = copyRawInventoryObject(entryData.safeDetails);
+
+    if (entryData.photos && typeof entryData.photos === "object") {
+        rawEntry.photos = copyRawInventoryObject(entryData.photos);
+    }
+
+    if (entryData.packedNoVolume !== undefined) {
+        rawEntry.packedNoVolume = !!entryData.packedNoVolume;
+    }
+
+    if (entryData.materialOnly !== undefined) {
+        rawEntry.materialOnly = !!entryData.materialOnly;
+    }
 
     return rawEntry;
 }
