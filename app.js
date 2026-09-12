@@ -9268,6 +9268,18 @@ function renderListedSummaryLines(items, emptyText) {
     }).join("");
 }
 
+function renderPrintableSummaryLines(items, emptyText) {
+    const lines = Array.isArray(items) ? items : [];
+
+    if (!lines.length) {
+        return `<div>${emptyText || "None"}</div>`;
+    }
+
+    return lines.map(function(item) {
+        return `<div>${escapeHtml(item)}</div>`;
+    }).join("");
+}
+
 function renderListedSummary(summary, materials, crewInstructions) {
     const footerBar = document.getElementById("listed-footer-summary");
     if (!footerBar) return;
@@ -10461,36 +10473,13 @@ function getPrintableResponsibilitiesHtml(summary, items) {
     return `
         <div class="pdf-responsibility-list">
             <div class="pdf-mini-head">Excluded Items (${summary.excludedCount || 0})</div>
-            ${
-                responsibilities.excludedItems.length
-                    ? responsibilities.excludedItems.map(function(item) {
-                        return `<div>${escapeHtml(item)}</div>`;
-                    }).join("")
-                    : `<div>None</div>`
-            }
+            ${renderPrintableSummaryLines(responsibilities.excludedItems)}
 
             <div class="pdf-mini-head space-top">Customer Responsibility Notes</div>
-            ${
-                editableNotes.length
-                    ? editableNotes.map(function(note) {
-                        return `<div>${escapeHtml(note)}</div>`;
-                    }).join("")
-                    : `<div>None recorded</div>`
-            }
+            ${renderPrintableSummaryLines(editableNotes, "None recorded")}
 
             <div class="pdf-mini-head space-top">Additional Customer Responsibilities</div>
-            ${
-                responsibilities.autoNotes.length || responsibilities.exclusionNotes.length
-                    ? `
-                        ${responsibilities.autoNotes.map(function(note) {
-                            return `<div>${escapeHtml(note)}</div>`;
-                        }).join("")}
-                        ${responsibilities.exclusionNotes.map(function(note) {
-                            return `<div>${escapeHtml(note)}</div>`;
-                        }).join("")}
-                    `
-                    : `<div>None</div>`
-            }
+            ${renderPrintableSummaryLines(responsibilities.autoNotes.concat(responsibilities.exclusionNotes))}
         </div>
     `;
 }
@@ -10502,69 +10491,27 @@ function getPrintableCrewInstructionsHtml(items) {
         <div class="pdf-materials-grid">
             <div>
                 <div class="pdf-mini-head">Notes</div>
-                ${
-                    crew.notes.length
-                        ? crew.notes.map(function(item) {
-                            return `<div>${escapeHtml(item)}</div>`;
-                        }).join("")
-                        : `<div>None</div>`
-                }
+                ${renderPrintableSummaryLines(crew.notes)}
 
                 <div class="pdf-mini-head space-top">Dismantle / Reassemble</div>
-                ${
-                    crew.dismantle.length
-                        ? crew.dismantle.map(function(item) {
-                            return `<div>${escapeHtml(item)}</div>`;
-                        }).join("")
-                        : `<div>None</div>`
-                }
+                ${renderPrintableSummaryLines(crew.dismantle)}
 
                 <div class="pdf-mini-head space-top">Export Wrap</div>
-                ${
-                    crew.exportWrap.length
-                        ? crew.exportWrap.map(function(item) {
-                            return `<div>${escapeHtml(item)}</div>`;
-                        }).join("")
-                        : `<div>None</div>`
-                }
+                ${renderPrintableSummaryLines(crew.exportWrap)}
 
                 <div class="pdf-mini-head space-top">Crates</div>
-                ${
-                    crew.crate.length
-                        ? crew.crate.map(function(item) {
-                            return `<div>${escapeHtml(item)}</div>`;
-                        }).join("")
-                        : `<div>None</div>`
-                }
+                ${renderPrintableSummaryLines(crew.crate)}
             </div>
 
             <div>
                 <div class="pdf-mini-head">Condition</div>
-                ${
-                    crew.damage.length
-                        ? crew.damage.map(function(item) {
-                            return `<div>${escapeHtml(item)}</div>`;
-                        }).join("")
-                        : `<div>None</div>`
-                }
+                ${renderPrintableSummaryLines(crew.damage)}
 
                 <div class="pdf-mini-head space-top">Disconnect</div>
-                ${
-                    crew.disconnect.length
-                        ? crew.disconnect.map(function(item) {
-                            return `<div>${escapeHtml(item)}</div>`;
-                        }).join("")
-                        : `<div>None</div>`
-                }
+                ${renderPrintableSummaryLines(crew.disconnect)}
 
                 <div class="pdf-mini-head space-top">Special Handling</div>
-                ${
-                    crew.specialHandling.length
-                        ? crew.specialHandling.map(function(item) {
-                            return `<div>${escapeHtml(item)}</div>`;
-                        }).join("")
-                        : `<div>None</div>`
-                }
+                ${renderPrintableSummaryLines(crew.specialHandling)}
             </div>
         </div>
     `;
