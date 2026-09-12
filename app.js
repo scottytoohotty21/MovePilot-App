@@ -9050,16 +9050,16 @@ function buildResponsibilitiesSummary(summary, items) {
                 }
             }
 
-const line =
-    (roomName ? roomName + ": " : "") +
-    (qty ? qty + " x " : "") +
-    itemName +
-    (modalDetail ? " — " + modalDetail : "") +
-    (entryNote ? " — " + entryNote : "");
+            const line =
+                (roomName ? roomName + ": " : "") +
+                (qty ? qty + " x " : "") +
+                itemName +
+                (modalDetail ? " - " + modalDetail : "") +
+                (entryNote ? " - " + entryNote : "");
 
-    if (entry.handyman) {
-        handymanItems.push(line);
-    }
+            if (entry.handyman) {
+                handymanItems.push(line);
+            }
 
             if (
                 (
@@ -9192,54 +9192,55 @@ function buildCrewInstructionsSummary(items) {
 
         if (isPianoItem) {
             const pianoListedTag = getPianoDetailsListedTag(entry.pianoDetails);
-    summary.specialHandling.push(
-        pianoListedTag
-            ? `${roomLine} — ${pianoListedTag}`
-            : roomLine
-    );
+
+            summary.specialHandling.push(
+                pianoListedTag
+                    ? `${roomLine} - ${pianoListedTag}`
+                    : roomLine
+            );
         }
 
         if (itemName === "SAFE") {
             const safeListedTag = getSafeDetailsListedTag(entry.safeDetails);
 
-    summary.specialHandling.push(
-        safeListedTag
-            ? `${roomLine} — ${safeListedTag}`
-            : roomLine
-    );
+            summary.specialHandling.push(
+                safeListedTag
+                    ? `${roomLine} - ${safeListedTag}`
+                    : roomLine
+            );
         }
 
         if (entry.dismantle) {
-    if (isWardrobeInventoryItem(entry.itemName)) {
-        summary.dismantle.push(
-            `${roomLine} — ${String(formatWardrobeTypes(entry)).toUpperCase()}`
-        );
-    } else {
-        summary.dismantle.push(roomLine);
-    }
-}
+            if (isWardrobeInventoryItem(entry.itemName)) {
+                summary.dismantle.push(
+                    `${roomLine} - ${String(formatWardrobeTypes(entry)).toUpperCase()}`
+                );
+            } else {
+                summary.dismantle.push(roomLine);
+            }
+        }
 
         if (entry.expWrap && !condenseExportWrapSummary) {
-    summary.exportWrap.push(roomLine);
-}
+            summary.exportWrap.push(roomLine);
+        }
 
         if (entry.crated) {
-    if (entry.crateDims) {
-        summary.crate.push(
-            `${roomLine} — ${entry.crateDims.l} x ${entry.crateDims.w} x ${entry.crateDims.h} ${entry.crateDims.unit}`
-        );
-    } else {
-        summary.crate.push(roomLine);
-    }
-}
+            if (entry.crateDims) {
+                summary.crate.push(
+                    `${roomLine} - ${entry.crateDims.l} x ${entry.crateDims.w} x ${entry.crateDims.h} ${entry.crateDims.unit}`
+                );
+            } else {
+                summary.crate.push(roomLine);
+            }
+        }
 
         if (entry.disconnect) {
-    summary.disconnect.push(roomLine);
-}
+            summary.disconnect.push(roomLine);
+        }
 
         if (entry.damage) {
-    summary.damage.push(`${roomLine} — ${String(entry.damage).trim()}`);
-}
+            summary.damage.push(`${roomLine} - ${String(entry.damage).trim()}`);
+        }
 
         const noteBelongsToCustomerResponsibilities =
             entry.handyman ||
@@ -9250,7 +9251,7 @@ function buildCrewInstructionsSummary(items) {
             String(entry.note).trim() &&
             !noteBelongsToCustomerResponsibilities
         ) {
-    summary.notes.push(`${roomLine} — ${String(entry.note).trim()}`);
+            summary.notes.push(`${roomLine} - ${String(entry.note).trim()}`);
         }
     });
 
@@ -9261,10 +9262,11 @@ function buildCrewInstructionsSummary(items) {
 
         if (hasExportWrappedItems) {
             summary.exportWrap = [
-            "Full export pack and wrap selected — all furniture items to be export wrapped."
+                "Full export pack and wrap selected - all furniture items to be export wrapped."
             ];
         }
     }
+
     return summary;
 }
 
