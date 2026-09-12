@@ -9687,6 +9687,10 @@ function groupInventoryItemsForListedView(items) {
     });
 }
 
+function getListedInventoryEmptyMessageHtml() {
+    return `<div class="p-12 text-center text-slate-400 font-bold italic uppercase">No inventory matches current view</div>`;
+}
+
 function renderListedInventory() {
     const container = document.getElementById("listed-inventory-output");
     if (!container || !currentJob) return;
@@ -9699,7 +9703,7 @@ function renderListedInventory() {
     const filteredItems = filterListedInventoryItems(allItems);
 
     if (filteredItems.length === 0) {
-    container.innerHTML = `<div class="p-12 text-center text-slate-400 font-bold italic uppercase">No inventory matches current view</div>`;
+    container.innerHTML = getListedInventoryEmptyMessageHtml();
     renderListedPhotoReview([]);
     renderListedSummary(
         buildListedSummary([]),
@@ -9716,7 +9720,7 @@ renderListedPhotoReview(filteredItems);
     const groupedSections = groupInventoryItemsForListedView(filteredItems);
 
     if (groupedSections.length === 0) {
-    container.innerHTML = `<div class="p-12 text-center text-slate-400 font-bold italic uppercase">No inventory matches current view</div>`;
+    container.innerHTML = getListedInventoryEmptyMessageHtml();
     renderListedPhotoReview(filteredItems);
     return;
 }
