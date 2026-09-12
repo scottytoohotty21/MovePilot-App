@@ -1359,9 +1359,7 @@ function resetLiveInventorySessionState() {
     inventoryHistory = [];
     inventoryReturnContext = null;
 
-    listedSequenceFilter = "__all__";
-    listedDeliveryFilter = "__all__";
-    listedTextFilter = "";
+    resetListedInventoryFilters();
 
     if (window.__listedEntryMap) {
         window.__listedEntryMap = {};
@@ -5172,9 +5170,7 @@ function switchTab(t) {
         saveInventoryContext();
 
         const defaultSeqId = setActiveSequenceToDefault();
-        listedSequenceFilter = defaultSeqId ? String(defaultSeqId) : "__all__";
-        listedDeliveryFilter = "__all__";
-        listedTextFilter = "";
+        resetListedInventoryFilters(defaultSeqId ? String(defaultSeqId) : "__all__");
         renderListedInventory();
     }
 
@@ -8123,6 +8119,12 @@ function handleListedCbmLineItemsToggle(checked) {
 // -----------------------------------------------------------------------------
 
 // Listed filters and display options
+function resetListedInventoryFilters(sequenceFilter) {
+    listedSequenceFilter = sequenceFilter || "__all__";
+    listedDeliveryFilter = "__all__";
+    listedTextFilter = "";
+}
+
 function renderListedInventoryFilters(items) {
     const seqSelect = document.getElementById("listed-sequence-filter");
     const deliverySelect = document.getElementById("listed-delivery-filter");
@@ -9691,6 +9693,11 @@ function getListedInventoryEmptyMessageHtml() {
     return `<div class="p-12 text-center text-slate-400 font-bold italic uppercase">No inventory matches current view</div>`;
 }
 
+function renderListedInventoryEmptyState(container, summaryItems) {
+    container.innerHTML = getListedInventoryEmptyMessageHtml();
+    renderListedPhotoReview(summaryItems || []);
+}
+
 function getListedInventoryEntryTags(entry) {
     const tags = [];
 
@@ -9842,27 +9849,25 @@ function renderListedInventory() {
     const filteredItems = filterListedInventoryItems(allItems);
 
     if (filteredItems.length === 0) {
-    container.innerHTML = getListedInventoryEmptyMessageHtml();
-    renderListedPhotoReview([]);
-    renderListedSummary(
-        buildListedSummary([]),
-        buildMaterialsSummary([])
-    );
-    return;
-}
+        renderListedInventoryEmptyState(container, []);
+        renderListedSummary(
+            buildListedSummary([]),
+            buildMaterialsSummary([])
+        );
+        return;
+    }
 
     const listedSummary = buildListedSummary(filteredItems);
-const materialsSummary = buildMaterialsSummary(filteredItems);
+    const materialsSummary = buildMaterialsSummary(filteredItems);
 
-renderListedSummary(listedSummary, materialsSummary, filteredItems);
-renderListedPhotoReview(filteredItems);
+    renderListedSummary(listedSummary, materialsSummary, filteredItems);
+    renderListedPhotoReview(filteredItems);
     const groupedSections = groupInventoryItemsForListedView(filteredItems);
 
     if (groupedSections.length === 0) {
-    container.innerHTML = getListedInventoryEmptyMessageHtml();
-    renderListedPhotoReview(filteredItems);
-    return;
-}
+        renderListedInventoryEmptyState(container, filteredItems);
+        return;
+    }
 
     container.innerHTML = groupedSections.map(renderListedInventorySection).join("");
 }
