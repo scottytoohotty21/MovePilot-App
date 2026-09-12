@@ -9029,12 +9029,7 @@ function buildResponsibilitiesSummary(summary, items) {
                 }
             }
 
-            if (
-                itemUpper === "PIANO (UPRIGHT)" ||
-                itemUpper === "PIANO (ELECTRIC)" ||
-                itemUpper === "PIANO (BABY GRAND)" ||
-                itemUpper === "PIANO (GRAND)"
-            ) {
+            if (isPianoInventoryItem(itemName)) {
                 const pianoDetail = String(getPianoDetailsListedTag(entry.pianoDetails) || "").trim();
 
                 if (pianoDetail) {
@@ -9062,12 +9057,7 @@ function buildResponsibilitiesSummary(summary, items) {
             }
 
             if (
-                (
-                    itemUpper === "PIANO (UPRIGHT)" ||
-                    itemUpper === "PIANO (ELECTRIC)" ||
-                    itemUpper === "PIANO (BABY GRAND)" ||
-                    itemUpper === "PIANO (GRAND)"
-                ) &&
+                isPianoInventoryItem(itemName) &&
                 entryRequiresPianoSpecialist(entry)
             ) {
                 pianoItems.push(line);
@@ -9184,11 +9174,7 @@ function buildCrewInstructionsSummary(items) {
 
         const baseLine = `${qty} x ${itemName}${bedSuffix}`;
         const roomLine = formatListedItemRoomLine(entry, baseLine);
-        const isPianoItem =
-            itemName === "PIANO (UPRIGHT)" ||
-            itemName === "PIANO (ELECTRIC)" ||
-            itemName === "PIANO (BABY GRAND)" ||
-            itemName === "PIANO (GRAND)";
+        const isPianoItem = isPianoInventoryItem(itemName);
 
         if (isPianoItem) {
             const pianoListedTag = getPianoDetailsListedTag(entry.pianoDetails);
