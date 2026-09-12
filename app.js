@@ -8125,6 +8125,28 @@ function resetListedInventoryFilters(sequenceFilter) {
     listedTextFilter = "";
 }
 
+function listedFilterOptionExists(options, value) {
+    return options.some(function(option) {
+        return option.value === String(value);
+    });
+}
+
+function normaliseListedFilterSelection(value, options) {
+    if (value !== "__all__" && !listedFilterOptionExists(options, value)) {
+        return "__all__";
+    }
+
+    return value || "__all__";
+}
+
+function renderListedFilterOptions(defaultLabel, options, selectedValue) {
+    return `<option value="__all__">${defaultLabel}</option>` +
+        options.map(function(option) {
+            const selected = option.value === String(selectedValue) ? "selected" : "";
+            return `<option value="${option.value}" ${selected}>${option.label}</option>`;
+        }).join("");
+}
+
 function renderListedInventoryFilters(items) {
     const seqSelect = document.getElementById("listed-sequence-filter");
     const deliverySelect = document.getElementById("listed-delivery-filter");
@@ -8136,35 +8158,11 @@ function renderListedInventoryFilters(items) {
     const seqOptions = getListedSequenceFilterOptions(items);
     const deliveryOptions = getListedDeliveryFilterOptions(items);
 
-    const seqStillExists = seqOptions.some(function(option) {
-        return option.value === String(listedSequenceFilter);
-    });
+    listedSequenceFilter = normaliseListedFilterSelection(listedSequenceFilter, seqOptions);
+    listedDeliveryFilter = normaliseListedFilterSelection(listedDeliveryFilter, deliveryOptions);
 
-    const deliveryStillExists = deliveryOptions.some(function(option) {
-        return option.value === String(listedDeliveryFilter);
-    });
-
-    if (listedSequenceFilter !== "__all__" && !seqStillExists) {
-        listedSequenceFilter = "__all__";
-    }
-
-    if (listedDeliveryFilter !== "__all__" && !deliveryStillExists) {
-        listedDeliveryFilter = "__all__";
-    }
-
-    seqSelect.innerHTML =
-        `<option value="__all__">All Sequences</option>` +
-        seqOptions.map(function(option) {
-            const selected = option.value === String(listedSequenceFilter) ? "selected" : "";
-            return `<option value="${option.value}" ${selected}>${option.label}</option>`;
-        }).join("");
-
-    deliverySelect.innerHTML =
-        `<option value="__all__">All Deliveries</option>` +
-        deliveryOptions.map(function(option) {
-            const selected = option.value === String(listedDeliveryFilter) ? "selected" : "";
-            return `<option value="${option.value}" ${selected}>${option.label}</option>`;
-        }).join("");
+    seqSelect.innerHTML = renderListedFilterOptions("All Sequences", seqOptions, listedSequenceFilter);
+    deliverySelect.innerHTML = renderListedFilterOptions("All Deliveries", deliveryOptions, listedDeliveryFilter);
 
     if (textInput) {
         textInput.value = listedTextFilter || "";
