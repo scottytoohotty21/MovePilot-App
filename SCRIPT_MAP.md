@@ -1044,6 +1044,649 @@ No app behaviour was changed in this prep pass. This is a starting map for the n
 
 ## Later UI and Asset Follow-ups
 
-- Restore visible pressed/pulse feedback for the `Auto Build` and `Add Day` buttons. Both buttons currently work; this is visual polish rather than a functional schedule issue.
-- Review the optional local `tailwind-local.css` and `Fonts/Inter-*.woff2` references. These assets were missing from the refactored output folder during local-server testing, although the app continued to render using its existing styles and font fallbacks.
 - Revisit the previously observed inconsistent confirmation pop-ups as a separate UI feedback pass.
+
+## Schedule Button Feedback Polish
+
+- Restored visible pressed/pulse feedback for the Schedule toolbar `Auto Build` and `Add Day` buttons.
+- Added `pulseScheduleButton(buttonEl)` for the shared schedule-button visual feedback and light haptic tap.
+- Wired the main Schedule toolbar buttons and the `Run Auto Build` refresh-card button through the same helper.
+- Left Auto Build, Add Day, schedule calculations, storage and validation logic unchanged.
+- Test focus:
+  - tap `Auto Build` and confirm the button visibly reacts
+  - tap `Add Day` and confirm the button visibly reacts
+  - confirm both actions still update the schedule as before
+
+## Offline Font Asset Cleanup
+
+- Added the local Inter font files into `Fonts/` using the names already referenced by `styles.css`:
+  - `Inter-Regular.woff2`
+  - `Inter-Bold.woff2`
+  - `Inter-Black.woff2`
+- Confirmed the provided files use the expected WOFF2 file signature.
+- Removed the missing `tailwind-local.css` link from `index.html`.
+- Kept the existing Tailwind-style utility classes inside `styles.css`, so the app remains self-contained for offline use.
+- Test focus:
+  - open the app offline or from GitHub Pages
+  - confirm the page loads without a missing `tailwind-local.css` request
+  - confirm the app typography still looks normal
+
+## Quote Feedback Popup Polish
+
+- Kept `Refresh Availability` focused on the visible refreshed date/time card update after testing showed the success popup was still inconsistent.
+- Kept `Apply Suggested Price` focused on updating the customer price and card state after testing showed the success popup was still inconsistent.
+- Moved the suggested-price button pulse before the availability panel redraw, preventing the pulse from being applied to a button that has already been replaced.
+- Kept the pricing calculation, applied price, stored availability state and commercial redraw logic unchanged.
+- Left the PDF-ready share alerts untouched because that overlay sits above the normal app modal and needs its own careful pass.
+- Test focus:
+  - click `Refresh Availability` and confirm the card updates
+  - click `Apply Suggested Price` and confirm the customer price changes
+  - confirm Save Pricing still shows its usual confirmation
+
+## Phase 3 Prep: Inventory Map
+
+Phase 3 target: the Inventory tab and the inventory data pipeline. This area is offline-critical and tablet-heavy, so cleanup should be smaller and more cautious than the schedule work.
+
+### Main inventory surfaces
+
+- `index.html` inventory entry point: `content-inventory`.
+- Top selectors:
+  - `inv-seq-select`
+  - `inv-delivery-select`
+  - `inv-floor-select`
+  - `inv-room-select`
+- Main action buttons:
+  - item flags: Dismantle, Export Wrap, Crate, Condition, Exclude, Packed 0 Vol
+  - free-entry actions: Note, Misc, Custom Item
+  - item photos
+  - button reorder, most-used sort, reset order
+- Fast-entry panels:
+  - furniture button grid
+  - carton buttons
+  - fixed-volume buttons
+  - packing-material buttons
+
+### Active inventory code groups
+
+- Context and selectors:
+  - `renderInventorySequenceDropdown()`
+  - `getActiveInventorySequence()`
+  - `getInventoryDeliveryOptions()`
+  - `renderInventoryDeliveryDropdown()`
+  - `handleInventoryDeliveryChange(...)`
+  - `handleInventorySequenceChange(...)`
+- Raw inventory store:
+  - `ensureInventoryStore()`
+  - `buildRawInventoryEntry(...)`
+  - `saveRawInventoryEntry(...)`
+  - `findRawInventoryEntry(...)`
+  - `getLastRawInventoryEntry()`
+  - `getRawInventoryEntryById(...)`
+  - `removeRawInventoryEntry(...)`
+  - `getRawInventoryItemsForSequence(...)`
+- Live inventory and totals:
+  - `getLiveInventoryEntryForRaw(...)`
+  - `syncLiveItemFlagsFromRaw()`
+  - `renderActionButtonStates()`
+  - `syncInventoryDisplayFromSequence(...)`
+  - `buildLiveInventoryKeyFromValues(...)`
+  - `getLiveInventoryGroupKey(...)`
+  - `rebuildLiveInventoryFromSequence(...)`
+  - `refreshCurrentInventorySelectionDisplay()`
+  - `syncLiveInventoryFromRawForActiveSequence()`
+- Room and floor controls:
+  - `getRoomOptions()`
+  - `renderInventoryRoomDropdown()`
+  - `handleRoomChange(...)`
+  - `getFloorOptions()`
+  - `renderInventoryFloorDropdown()`
+  - `formatNumberedFloorLabel(...)`
+  - `handleFloorChange(...)`
+- Button ordering and search:
+  - `getInventoryButtonOrderKey(...)`
+  - `getOrderedInventoryButtons(...)`
+  - `saveInventoryButtonOrder(...)`
+  - `getInventoryButtonUsageMap(...)`
+  - `recordInventoryButtonUse(...)`
+  - `handleInventoryButtonClick(...)`
+  - `sortInventoryButtonsByMostUsed()`
+  - `moveInventoryButton(...)`
+  - `toggleInventoryButtonReorderMode()`
+  - `resetInventoryButtonOrder()`
+  - `renderInventoryButtons()`
+  - `setInventoryCategory(...)`
+  - `handleInventorySearch(...)`
+  - `clearInventorySearch()`
+- Item creation and item-type modals:
+  - `addInventoryItem(...)`
+  - `addBox(...)`
+  - `addVolume(...)`
+  - `addMiscItem()`
+  - `addInventoryNote()`
+  - `addOrEditCrate()`
+  - `addOrEditDamage()`
+  - `addOrEditWardrobeType()`
+  - `addOrEditBedType()`
+  - `openPianoModalForInventoryItem(...)`
+  - `openSafeModalForInventoryItem(...)`
+- Custom items:
+  - `getCustomInventoryItems()`
+  - `saveCustomInventoryItems(...)`
+  - `openCustomInventoryItemModal()`
+  - `saveCustomInventoryItemModal()`
+  - `addSavedCustomInventoryItem(...)`
+  - `openDeleteCustomInventoryItemModal()`
+  - `renderCustomInventoryDeleteList()`
+- Photos:
+  - shared IndexedDB helpers: `openPhotoDatabase()`, `savePhotoBlobToIndexedDb(...)`, `getPhotoBlobFromIndexedDb(...)`, `deletePhotoBlobFromIndexedDb(...)`
+  - address photos: `handleAddressPhotoSelected(...)`, `deleteAddressAccessPhoto(...)`
+  - item photos: `closeInventoryPhotosModal()`, `ensureRawEntryPhotoShape(...)`, `renderInventoryPhotoList(...)`
+  - viewer: `openPhotoViewModal(...)`, `closePhotoViewModal()`
+- Downstream feed:
+  - `saveCalculatorFeedForActiveSequence()`
+  - `getPhotonFeed()`
+  - listed inventory reads raw entries through `getListedInventoryItems()`
+  - schedule and costing depend on the calculator feed and raw inventory totals
+
+### Suggested Phase 3 order
+
+1. Raw inventory entry shape: add small copy/default helpers so item records are consistent before they reach listed inventory or schedule.
+2. Live inventory sync: tidy the raw-to-live rebuild path without changing grouping or totals.
+3. Room/floor/sequence context: reduce repeated save/render code around selector changes.
+4. Button grid/search/reorder: split the rendering from ordering/search state.
+5. Custom item modal: isolate storage and validation.
+6. Item photos: keep as a later sub-pile because older tablets and IndexedDB make this riskier.
+7. Item-type modals: crate, damage, wardrobe, bed, piano and safe can be cleaned after the raw item shape is stable.
+
+### Phase 3 first safe target
+
+- Start with `buildRawInventoryEntry(entryData)`.
+- Add a small helper for default raw-entry fields and one helper for copying array/object optional fields.
+- Preserve all existing field names because listed inventory, PDF, schedule, costing and old saved surveys may depend on them.
+- Test focus after the first real code pass:
+  - add normal furniture
+  - add carton/material items
+  - add note and misc item
+  - add a bed/wardrobe/crate/damage flag if quick
+  - confirm listed inventory and schedule feed still see the items
+
+## Phase 3 Pass 1 Raw Entry Defaults
+
+- Added `createRawInventoryEntryDefaults()` as the single default field list for new raw inventory records.
+- Updated `buildRawInventoryEntry(entryData)` to fill that default record instead of building the whole object inline.
+- Preserved the same field names and defaults used by listed inventory, schedule, costing, PDF export and older saved survey records.
+- Left item adding, totals, grouping, photos, custom items and specialist flags unchanged.
+- Test focus:
+  - add normal furniture
+  - add cartons and fixed-volume items
+  - add Note and Misc items
+  - add or edit a crate/damage/bed/wardrobe flag if quick
+  - check Listed Inventory still shows the new items correctly
+
+## Phase 3 Pass 2 Raw Entry Copy Helpers
+
+- Added `copyRawInventoryArray(value)` and `copyRawInventoryObject(value)` for optional raw-entry fields.
+- Updated `buildRawInventoryEntry(entryData)` to copy object/array details instead of sharing references:
+  - `crateDims`
+  - `wardrobeTypes`
+  - `pianoDetails`
+  - `safeDetails`
+  - optional `photos`
+- Preserved optional `packedNoVolume` and `materialOnly` flags when supplied.
+- Left the separate materials store unchanged because packing-material buttons do not create raw inventory item records.
+- Test focus:
+  - add a crate item and confirm dimensions show in Listed Inventory
+  - add a wardrobe type and confirm it shows in Listed Inventory
+  - add a bed type if quick
+  - add or view an item photo if convenient
+  - confirm normal furniture and boxes still add as before
+
+## Phase 3 Pass 3 Raw Entry Commit Helper
+
+- Added `commitRawInventoryEntry(rawEntry)` for the shared raw item insert and last-added tracking step.
+- Updated `saveRawInventoryEntry(entryData)` to build the raw entry, commit it through the helper, then save to device.
+- Removed a duplicate `lastAddedRawEntryId = rawEntryId` assignment from the Misc item save path because `saveRawInventoryEntry(...)` already handles it.
+- Left inventory item creation, totals, history, undo, listed inventory and schedule feed behavior unchanged.
+- Test focus:
+  - add normal furniture and confirm it remains the selected last item
+  - add Misc and confirm action buttons/Listed Inventory still refer to the new Misc item
+  - undo the last added item if convenient
+  - switch tabs and return to Inventory to confirm the last item display is stable
+
+## Phase 3 Pass 4 Live Inventory Rebuild Helpers
+
+- Updated `getLiveInventoryGroupKey(entry)` to delegate to the existing `buildLiveInventoryKeyFromValues(...)` helper, leaving one active key recipe.
+- Added `createLiveInventoryItemFromRaw(entry, liveKey)` for the object created when raw inventory records rebuild the live inventory list.
+- Updated `rebuildLiveInventoryFromSequence(sequenceId)` to use the new live-item helper.
+- Preserved grouping fields, quantities, volume totals, excluded handling, notes, specialist flags and listed-inventory inputs.
+- Test focus:
+  - add the same furniture item twice in the same room and confirm it groups
+  - add the same furniture item in a different room/floor and confirm it separates
+  - mark an item excluded and confirm volume/listed inventory still behave
+  - switch away and back to Inventory to trigger the rebuild path
+
+## Phase 3 Pass 5 Remove Dead Live Flag Sync Helper
+
+- Removed unused `syncLiveItemFlagsFromRaw()`.
+- Confirmed no active callers remained; current item-flag changes use `syncLiveInventoryFromRawForActiveSequence()` and rebuild live inventory from raw records.
+- Left `getLiveInventoryEntryForRaw(...)` in place because quantity/volume edit paths still use it after a rebuild.
+- Left item flags, exclusion handling, volume totals, undo and listed-inventory behaviour unchanged.
+- Test focus:
+  - toggle Dismantle, Export Wrap and Exclude on a normal item
+  - confirm the live display and Listed Inventory update
+  - change quantity or volume if quick, since those paths still look up the rebuilt live item
+
+## Phase 3 Pass 6 Shared Raw Sequence Total
+
+- Reused `getSequenceInventoryTotal(sequenceId)` in inventory display sync and live rebuild paths.
+- Removed repeated raw-item total calculations from:
+  - `syncInventoryDisplayFromSequence(sequenceId)`
+  - `rebuildLiveInventoryFromSequence(sequenceId)`
+- Kept the existing rule unchanged: excluded raw entries do not count toward total volume.
+- Left live item grouping, current-item display, listed inventory and schedule feed behavior unchanged.
+- Test focus:
+  - add included items and confirm total volume
+  - exclude an item and confirm total volume drops
+  - switch away/back to Inventory and confirm restored total volume remains correct
+
+## Phase 3 Pass 7 Empty Sequence Live Reset
+
+- Added `resetLiveInventoryForEmptySequence()` for the focused "this sequence has no raw inventory items" state.
+- Reused it in:
+  - `syncInventoryDisplayFromSequence(sequenceId)`
+  - `rebuildLiveInventoryFromSequence(sequenceId)`
+- Kept this separate from `resetLiveInventorySessionState()` because the full reset also clears category/search/listed-filter state.
+- Left sequence switching, item grouping, totals, undo state and action-button refresh behavior unchanged.
+- Test focus:
+  - switch to or create an empty sequence and confirm Inventory shows no items
+  - switch back to a sequence with items and confirm the display restores
+  - confirm search/category selection is not unexpectedly wiped by this empty-sequence state
+
+## Phase 3 Pass 8 Active Inventory Context Helper
+
+- Added `getActiveInventoryContext()` for the current sequence, delivery, room and floor.
+- Updated normal furniture item creation in `addInventoryItem(...)` to use that shared context helper.
+- Updated fixed-volume item creation in `addVolume(...)` to use that shared context helper.
+- Confirmed carton/box item creation is also using the helper.
+- Left misc and custom item creation on their existing direct context reads for later smaller passes.
+- Preserved the existing fallback values:
+  - sequence: active sequence or `null`
+  - delivery: empty string
+  - room: `Hallway`
+  - floor: `Ground`
+- Test focus:
+  - add normal furniture in the default room/floor
+  - change room and floor, then add normal furniture again
+  - add a fixed-volume item in the changed room/floor
+  - confirm Listed Inventory shows the correct room/floor
+  - confirm cartons still behave as before
+
+## Phase 3 Pass 8A Furniture Button Event Hotfix
+
+- Fixed furniture and fixed-volume button handlers so they do not read the browser `event` object directly.
+- Matched the safer carton-button pattern using `typeof event !== "undefined"` before reading `event.currentTarget`.
+- This prevents older or stricter browsers from stopping furniture item creation before the raw inventory record is saved.
+- Left carton behaviour unchanged.
+- Test focus:
+  - add normal furniture and confirm total volume updates immediately
+  - confirm normal furniture appears in Listed Inventory
+  - add a carton and confirm it still works
+  - add fixed-volume and confirm it still works
+
+## Phase 3 Pass 9 Misc and Custom Context Helper
+
+- Updated `saveMiscModal()` to use `getActiveInventoryContext()` for sequence, delivery, room and floor.
+- This also covers saved custom inventory buttons because `addSavedCustomInventoryItem(...)` fills the Misc modal fields and then calls `saveMiscModal()`.
+- Left custom-item storage itself unchanged; this pass only affects where the created inventory record is assigned.
+- Preserved existing misc/custom validation, live grouping, raw inventory saving, listed inventory and schedule feed behavior.
+- Test focus:
+  - add a Misc item in the current room/floor
+  - add a saved Custom item if available
+  - change room/floor and repeat one of them
+  - confirm Listed Inventory shows the right room/floor
+
+## Phase 3 Pass 10 Carton Context Completion
+
+- Updated carton/box raw inventory saving in `addBox(...)` to use `inventoryContext.sequenceId`.
+- Cartons were already using `getActiveInventoryContext()` for delivery, room and floor.
+- This aligns the main item creation paths:
+  - furniture
+  - cartons/boxes
+  - fixed-volume items
+  - misc/custom items
+- Left material-only buttons unchanged because they use the separate materials store rather than raw inventory records.
+- Test focus:
+  - add cartons in the current sequence and confirm Listed Inventory shows them
+  - switch sequence if quick and confirm cartons attach to the active sequence
+  - confirm material-only buttons still update the materials summary as before
+
+## Phase 3 Pass 11 Inventory Context Commit Helper
+
+- Added `commitInventoryContextChange()` for the repeated `saveInventoryContext()` plus `saveToDevice()` ending.
+- Reused it in:
+  - `handleInventoryDeliveryChange(...)`
+  - `handleRoomChange(...)`
+  - `handleFloorChange(...)`
+- Left sequence switching and item creation logic unchanged.
+- Test focus:
+  - change delivery, room and floor
+  - add an item after each change
+  - leave and return to Inventory to confirm the selected context persists
+
+## Phase 3 Pass 12 Inventory Context Selection Reset Helper
+
+- Added `resetInventorySelectionForContextChange()` for the existing room-change reset behaviour.
+- Reused it when:
+    - selecting an existing room
+  - saving a newly added custom room
+- Left floor-change behaviour unchanged because current testing passed and it did not previously clear the selected item.
+- Left delivery/sequence behaviour, item creation, listed inventory and totals unchanged.
+- Test focus:
+    - change room and confirm the selected item/action buttons reset as before
+    - add a custom room and confirm the same reset happens
+    - change floor and confirm behaviour remains as currently tested
+
+## Phase 3 Pass 13 Custom Context Commit Alignment
+
+- Updated custom room, numbered floor and custom floor saves to use `commitInventoryContextChange()`.
+- Added the same active sequence tracking to those custom save paths that normal room/floor dropdown changes already use.
+- Left room/floor labels, dropdown rendering, item creation, listed inventory and totals unchanged.
+- Test focus:
+    - add a custom room, then add an inventory item into it
+    - add a numbered floor, then add an inventory item on it
+    - add a custom floor, then add an inventory item on it
+    - switch sequence/delivery and confirm the selected room/floor still feels normal
+
+## Phase 3 Pass 14 Inventory Context Dropdown Refresh Helper
+
+- Added `renderInventoryContextDropdowns()` for the repeated delivery, room and floor dropdown refresh.
+- Reused it only where those same three dropdowns were already being refreshed together.
+- Left sequence dropdown rendering separate because it has its own behaviour.
+- Left item creation, room/floor values, delivery selection, listed inventory and totals unchanged.
+- Test focus:
+    - open a customer and confirm Inventory dropdowns appear normally
+    - change inventory sequence and confirm delivery/room/floor dropdowns still refresh
+    - leave Inventory and return to it, confirming the remembered context still appears
+
+## Phase 3 Pass 15 Active Inventory Sequence Refresh Helper
+
+- Added `refreshActiveInventorySequenceView()` for the repeated active-sequence refresh routine.
+- The helper performs the same existing steps:
+    - rebuild live inventory for the active sequence
+    - sync the Inventory display from that sequence
+    - refresh action/undo button state
+    - refresh the schedule calculator feed
+- Reused it when:
+    - changing the Inventory sequence dropdown
+    - returning to the Inventory tab
+- Left item creation, delivery/room/floor context, listed inventory and totals unchanged.
+- Test focus:
+    - switch Inventory sequence and confirm totals/listed inventory update
+    - leave Inventory and return to it
+    - add an item after returning and confirm it lands in the active sequence
+
+## Phase 3 Pass 16 Inventory Action State Refresh Helper
+
+- Added `refreshInventoryActionStateAndFeed()` for the repeated action-button, undo-button and schedule-feed refresh ending.
+- Updated only the matching refresh blocks that already used this order:
+    - render action button states
+    - update undo button state
+    - refresh the schedule calculator feed
+- Left the slightly different/reversed endings alone for a later careful pass.
+- Left item creation, quantity/volume calculations, listed inventory and totals unchanged.
+- Test focus:
+    - add an item and confirm action buttons still update
+    - edit a listed quantity or note if quick
+    - use an item action such as crate/damage/exclude if quick
+    - confirm the schedule feed/totals still refresh normally
+
+## Phase 3 Pass 16A Undo After Item Action Fix
+
+- Fixed Undo after adding actions such as dismantle, export wrap, disconnect, handyman, exclude or crate.
+- Cause: actions can change the live inventory grouping key, so Undo could remove the raw item but leave the rebuilt live row visible.
+- Updated item/manual-volume undo to rebuild the live inventory from the raw store after removing the raw entry.
+- Cleared the last-selected raw item pointer when the undone item is the selected item.
+- Left listed-inventory delete behaviour unchanged.
+- Test focus:
+    - add furniture with no action, then Undo
+    - add furniture, add an action, then Undo
+    - add furniture, add crate/damage/note if quick, then Undo
+    - confirm Listed Inventory no longer contains the undone item
+
+## Phase 3 Pass 16B Preserve Undo History During Action Rebuild
+
+- Fixed the remaining Undo-after-action issue.
+- Cause: action/edit paths call `syncLiveInventoryFromRawForActiveSequence()`, which rebuilt the live inventory and indirectly cleared `inventoryHistory`.
+- Updated `syncLiveInventoryFromRawForActiveSequence()` to preserve the current undo history across action/edit rebuilds.
+- Sequence switching and full sequence rebuild behaviour remain separate.
+- Test focus:
+    - add furniture, add an action, confirm Undo button still works
+    - repeat with export wrap/exclude if quick
+    - confirm normal add-without-action Undo still works
+
+## Phase 3 Pass 17 Inventory Undo/Feed Refresh Helper
+
+- Added `refreshInventoryUndoStateAndFeed()` for the repeated Undo-button plus schedule-feed refresh ending.
+- Updated only paths where action-button state was already refreshed nearby:
+    - simple item actions
+    - electric bed handyman/dismantle handling
+    - quantity override
+    - crate, note and damage saves
+- Left odd/different refresh endings unchanged for later review.
+- Left item creation, undo history, calculations, listed inventory and totals unchanged.
+- Test focus:
+    - add furniture and use Undo
+    - add furniture, apply an action, then use Undo
+    - test crate/note/damage quickly if convenient
+
+## Phase 3 Pass 18 Inventory Selection Display Refresh Helper
+
+- Added `refreshInventorySelectionDisplayAndFeed()` for the repeated selected-item display, action-button and schedule-feed refresh ending.
+- Reused it only where the same refresh steps were already grouped together:
+    - adding an inventory item photo
+    - deleting an inventory item photo
+    - saving wardrobe type details
+    - saving bed type details
+- Left calculations, undo history, listed inventory and modal validation unchanged.
+- Test focus:
+    - add/edit a wardrobe type if quick
+    - add/edit a bed type if quick
+    - add/delete an item photo only if convenient
+    - confirm action buttons and totals still refresh normally
+
+## Phase 3 Pass 19 Furniture Add Ending Alignment
+
+- Updated the main furniture add path to use existing refresh/change helpers at the end of the add flow.
+- Reused:
+    - `refreshInventoryActionStateAndFeed()`
+    - `markInventoryChangedAfterSignatureAndSchedule(...)`
+- Tidied the local indentation around the furniture add ending.
+- Left furniture lookup, quantities, volume calculations, piano/safe/bed/wardrobe modal triggers, listed inventory and undo history unchanged.
+- Test focus:
+    - add normal furniture and confirm totals/action buttons update
+    - add bed/wardrobe/piano/safe if quick and confirm their modals still open
+    - confirm Undo still works after adding furniture
+
+## Phase 3 Pass 20 Misc Item Ending Alignment
+
+- Updated the Misc item save path to use `refreshInventoryActionStateAndFeed()` for its repeated action-button, undo-button and schedule-feed refresh ending.
+- Preserved the existing explicit `saveToDevice()` call at the end of the Misc save flow.
+- Left Misc validation, quantity, volume, raw inventory saving, listed inventory and undo history unchanged.
+- Test focus:
+    - add a Misc item
+    - confirm totals/action buttons update
+    - use Undo on the Misc item
+    - confirm Listed Inventory shows/removes the Misc item correctly
+
+## Phase 3 Pass 21 Listed Delete Change Helper Alignment
+
+- Updated listed-inventory delete to use `markInventoryChangedAfterSignatureAndSchedule(...)`.
+- This matches the helper already used by listed quantity, note and flag edits.
+- Preserved the existing explicit `saveToDevice()` call and listed refresh behaviour.
+- Left raw delete matching, active-sequence rebuild, listed rendering, totals and undo behaviour unchanged.
+- Test focus:
+    - delete a line from Listed Inventory
+    - confirm it disappears from Listed Inventory
+    - return to Inventory and confirm totals/listed feed are still consistent
+
+## Phase 3 Pass 22 Listed Edit Finish Helper
+
+- Added `finishListedInventoryEdit(mergedEntry)` for the shared listed edit ending.
+- The helper performs the existing finish steps:
+    - save to device
+    - rebuild active live inventory when the edited line belongs to the active sequence
+    - render Listed Inventory
+    - refresh inventory action/undo/feed state
+- Reused it for:
+    - listed quantity edit
+    - listed note edit
+    - listed crate save
+    - listed delete
+    - listed flags save
+- Preserved the special listed-flags branch that opens crate dimensions before finishing.
+- Left raw matching, validation, quantity/note/flag/crate changes, totals and current Undo behaviour unchanged.
+- Test focus:
+    - edit listed quantity
+    - edit listed note
+    - edit listed flags/crate if quick
+    - delete a listed line
+
+## Phase 3 Pass 23 Listed Match Text Helpers
+
+- Added small helper functions for listed/raw inventory matching:
+    - `getListedMatchCrateText(entry)`
+    - `getListedMatchSafeText(entry)`
+    - `getListedMatchWardrobeText(entry)`
+- Updated `getRawEntriesForListedEntry(entry)` to use those helpers instead of building those match strings inline.
+- Kept the matching rules the same for sequence, delivery, room, floor, item name, volume, flags, notes, damage, bed type, wardrobe type, crate and safe details.
+- Left listed quantity, note, flag, crate and delete behaviour unchanged.
+- Test focus:
+    - edit a listed quantity
+    - edit a listed note
+    - edit listed flags/crate if quick
+    - delete a listed line and confirm the correct line is removed
+
+## Phase 3 Pass 23A Undo Refreshes Listed Inventory
+
+- Fixed a stale Listed Inventory display after using Undo from the Inventory tab.
+- Updated `undoLastInventoryAction()` to refresh Listed Inventory after undoing an inventory action.
+- Moved `window.__listedEntryMap = {}` to the start of `renderListedInventory()` so stale listed row actions are cleared even when the filtered list is empty.
+- Left Undo behaviour, raw item removal, live Inventory rebuild, listed matching, quantities and totals unchanged.
+- Test focus:
+    - add an item, press Undo, then open Listed Inventory
+    - confirm the undone item is gone
+    - repeat with an item that has an action if quick
+
+## Phase 3 Pass 24 Listed Empty Message Helper
+
+- Added `getListedInventoryEmptyMessageHtml()` for the repeated Listed Inventory empty-state message.
+- Reused it in both existing empty Listed Inventory branches.
+- Left filtering, summaries, photo review, row rendering, listed matching, edits, deletes, totals and undo behaviour unchanged.
+- Test focus:
+    - open Listed Inventory with no matching items
+    - use a search/filter that returns no results
+    - confirm the normal populated Listed Inventory still renders
+
+## Phase 3 Pass 25 Listed Renderer Helper Batch
+
+- Split the nested Listed Inventory HTML renderer into smaller helpers:
+    - `getListedInventoryEntryTags(entry)`
+    - `renderListedInventoryRowActions(entryKey)`
+    - `renderListedInventoryRow(entry)`
+    - `renderListedInventoryRoomBlock(room)`
+    - `renderListedInventorySection(section)`
+- Updated `renderListedInventory()` to render grouped sections through `renderListedInventorySection(...)`.
+- Preserved the existing listed row text, action buttons, tags, totals, room blocks and section blocks.
+- Left filters, summaries, photo review, listed edit/delete behaviour, raw matching, calculations and PDF output unchanged.
+- Test focus:
+    - open Listed Inventory with normal items
+    - confirm tags still show for actions/condition/crate/bed/wardrobe/photos
+    - use Qty, Flags, Note and delete on one listed row if quick
+    - confirm a no-results filter still shows the empty message
+
+## Phase 3 Pass 26 Listed Filter and Empty State Helpers
+
+- Added `resetListedInventoryFilters(sequenceFilter)` for the repeated listed-filter reset routine.
+- Reused it when:
+    - resetting live inventory session state
+    - opening the Listed Inventory tab with the active/default sequence
+- Added `renderListedInventoryEmptyState(container, summaryItems)` for the repeated Listed Inventory empty-state rendering.
+- Cleaned the nearby `renderListedInventory()` indentation around summary/photo rendering.
+- Left filter rules, listed row rendering, summaries, photo review, edits/deletes, matching, totals, PDF output and undo behaviour unchanged.
+- Test focus:
+    - open Listed Inventory normally
+    - use a filter/search that returns no rows
+    - leave Listed Inventory and return
+    - confirm the default sequence filter still behaves as before
+
+## Phase 3 Pass 27 Listed Filter Option Helpers
+
+- Added small helpers for Listed Inventory filter dropdowns:
+    - `listedFilterOptionExists(options, value)`
+    - `normaliseListedFilterSelection(value, options)`
+    - `renderListedFilterOptions(defaultLabel, options, selectedValue)`
+- Updated `renderListedInventoryFilters(items)` to use those helpers instead of repeating the same option checking and option HTML building.
+- Left the actual filter choices, selected values, search text, CBM toggle, listed rows, summaries, photo review and PDF output unchanged.
+- Test focus:
+    - open Listed Inventory with normal items
+    - change the sequence filter
+    - change the delivery filter if there is more than one delivery
+    - use the search box
+    - confirm the CBM line-item toggle still works
+
+## Phase 3 Pass 28 Listed Summary Line Helper
+
+- Added `renderListedSummaryLines(items, emptyText)` for repeated "show these lines, otherwise show None" blocks in the Listed Inventory footer.
+- Reused it for:
+    - excluded item lines
+    - auto responsibility lines
+    - crew dismantle, export wrap, crate, notes, special handling, disconnect and condition lines
+- Left the rules that build those lists unchanged.
+- Left editable customer responsibility notes and editable crew notes unchanged.
+- Left listed rows, filters, summaries, photo review, PDF output, undo and totals unchanged.
+- Test focus:
+    - add at least one item with a crew action such as dismantle/export wrap/crate/condition
+    - open Listed Inventory and confirm the footer still shows those lines correctly
+    - confirm sections with no lines still show `None`
+    - quickly check excluded/customer responsibility lines if convenient
+
+## Phase 3 Pass 29 Listed Responsibility Builder Readability
+
+- Cleaned indentation inside the Listed Inventory responsibility summary builders.
+- Focused on:
+    - customer responsibility auto-line creation
+    - crew special handling lines
+    - dismantle, export wrap, crate, disconnect, condition and note branches
+- Left the actual responsibility/crew rules and output text unchanged.
+- Left listed rows, filters, summaries, photo review, PDF output, undo and totals unchanged.
+- Test focus:
+    - add handyman, piano/safe if quick, or another action-driven responsibility
+    - add dismantle/export wrap/crate/condition/disconnect if quick
+    - open Listed Inventory and confirm the footer still shows the same responsibility and crew lines
+
+## Phase 3 Pass 30 Listed Piano Check Reuse
+
+- Reused the existing `isPianoInventoryItem(itemName)` helper inside the Listed Inventory responsibility builders.
+- Replaced repeated hard-coded piano name checks in:
+    - customer responsibility auto-detail handling
+    - piano specialist responsibility detection
+    - crew special handling detection
+- Left piano detail text, specialist rules, customer responsibility text, crew special handling text, listed rows, PDF output and totals unchanged.
+- Test focus:
+    - add a piano item
+    - fill piano details if quick
+    - open Listed Inventory and confirm customer/crew responsibility lines still appear as before
+
+## Phase 3 Pass 31 Printable Summary Line Helper
+
+- Added `renderPrintableSummaryLines(items, emptyText)` for repeated PDF "show these lines, otherwise show None" blocks.
+- Reused it in the printable Listed Inventory PDF sections for:
+    - excluded items
+    - customer responsibility notes
+    - additional customer responsibilities
+    - crew notes, dismantle, export wrap, crates, condition, disconnect and special handling
+- Left the PDF wording, responsibility rules, crew rules, listed rows, on-screen footer, filters, undo and totals unchanged.
+- Test focus:
+    - generate or print the Listed Inventory PDF
+    - confirm customer responsibility and crew instruction sections still show their lines
+    - confirm blank sections still show `None` or `None recorded` as before
