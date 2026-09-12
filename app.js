@@ -9691,6 +9691,145 @@ function getListedInventoryEmptyMessageHtml() {
     return `<div class="p-12 text-center text-slate-400 font-bold italic uppercase">No inventory matches current view</div>`;
 }
 
+function getListedInventoryEntryTags(entry) {
+    const tags = [];
+
+    if (entry.bedType) tags.push("BED: " + String(entry.bedType).toUpperCase());
+
+    if (Array.isArray(entry.wardrobeTypes) && entry.wardrobeTypes.length) {
+        tags.push("WARDROBE: " + entry.wardrobeTypes.join(", ").toUpperCase());
+    }
+
+    const pianoListedTag = getPianoDetailsListedTag(entry.pianoDetails);
+    if (pianoListedTag) tags.push(pianoListedTag);
+
+    const photoCount = getInventoryEntryPhotoCount(entry);
+    if (photoCount > 0) tags.push("PHOTOS: " + photoCount);
+
+    if (entry.dismantle) tags.push("DISMANTLE");
+    if (entry.expWrap) tags.push("EXP WRAP");
+    if (entry.disconnect) tags.push("DISCONNECT");
+    if (entry.handyman) tags.push("HANDYMAN");
+
+    if (entry.crated) {
+        if (entry.crateDims) {
+            tags.push(
+                "CRATE: " +
+                entry.crateDims.l + " x " +
+                entry.crateDims.w + " x " +
+                entry.crateDims.h + " " +
+                entry.crateDims.unit
+            );
+        } else {
+            tags.push("CRATE");
+        }
+    }
+
+    if (entry.damage) tags.push("CONDITION: " + entry.damage.toUpperCase());
+    if (entry.excluded) tags.push("EXCLUDED");
+    if (entry.note) tags.push("NOTE: " + entry.note.toUpperCase());
+
+    return tags;
+}
+
+function renderListedInventoryRowActions(entryKey) {
+    const safeEntryKey = escapeHtml(entryKey);
+
+    return `
+        <div class="listed-row-actions">
+            <button class="listed-action-btn listed-action-qty" onclick="editListedEntryQty('${safeEntryKey}')">Qty</button>
+            <button class="listed-action-btn listed-action-flags" onclick="editListedEntryFlags('${safeEntryKey}')">Flags</button>
+            <button class="listed-action-btn listed-action-note" onclick="editListedEntryNote('${safeEntryKey}')">Note</button>
+            <button class="listed-action-btn listed-action-delete delete" onclick="deleteListedEntry('${safeEntryKey}')">x</button>
+        </div>
+    `;
+}
+
+function renderListedInventoryRow(entry) {
+    const entryKey = getListedEntryMergeKey(entry);
+    window.__listedEntryMap = window.__listedEntryMap || {};
+    window.__listedEntryMap[entryKey] = entry;
+
+    const tags = getListedInventoryEntryTags(entry);
+    const tagText = tags.length ? ` [${tags.join("] [")}]` : "";
+    const isExcluded = !!entry.excluded;
+
+    return `
+        <tr class="border-t border-slate-200 ${isExcluded ? 'bg-slate-50' : ''}">
+            <td class="py-2 pr-2 text-[10px] font-bold uppercase align-top break-words ${isExcluded ? 'text-slate-500 italic opacity-70' : 'text-slate-900'}">
+                ${entry.itemName || "-"}${tagText}
+            </td>
+            <td class="py-2 px-1 text-[10px] font-black uppercase text-center align-top ${isExcluded ? 'text-slate-400 italic' : 'text-blue-600'}">
+                ${entry.qty || 0}
+            </td>
+            <td class="py-2 px-1 text-[10px] font-black uppercase text-center align-top ${isExcluded ? 'text-slate-300 italic' : 'text-slate-700'}">
+                ${isExcluded ? '' : formatListedLineVolumeDisplay(entry.unitVolume || 0)}
+            </td>
+            <td class="py-2 px-1 text-[10px] font-black uppercase text-center align-top ${isExcluded ? 'text-slate-300 italic' : 'text-slate-900'}">
+                ${isExcluded ? '' : formatListedLineVolumeDisplay(entry.totalVolume || 0)}
+            </td>
+            <td class="py-2 pl-1 align-top">
+                ${renderListedInventoryRowActions(entryKey)}
+            </td>
+        </tr>
+    `;
+}
+
+function renderListedInventoryRoomBlock(room) {
+    const rows = room.entries.map(renderListedInventoryRow).join("");
+
+    return `
+        <div class="listed-room-block mt-4">
+            <div class="listed-room-head">
+                <div>
+                    <div class="listed-room-title">${room.roomName}</div>
+                    <div class="text-[9px] font-bold text-slate-400 uppercase mt-1">Floor: ${room.floorName}</div>
+                </div>
+                <div class="listed-room-total">${formatListedLineVolumeDisplay(room.totalVolume, true)}</div>
+            </div>
+
+            <div class="p-4">
+                <table class="w-full table-fixed">
+                    <thead>
+                        <tr class="border-b border-slate-300">
+                            <th class="w-[44%] text-left py-2 pr-2 text-[9px] font-black text-slate-400 uppercase">Item</th>
+                            <th class="w-[10%] text-center py-2 px-1 text-[9px] font-black text-slate-400 uppercase">Qty</th>
+                            <th class="w-[14%] text-center py-2 px-1 text-[9px] font-black text-slate-400 uppercase">Unit Vol</th>
+                            <th class="w-[16%] text-center py-2 px-1 text-[9px] font-black text-slate-400 uppercase">Total Vol</th>
+                            <th class="w-[16%] text-center py-2 pl-1 text-[9px] font-black text-slate-400 uppercase">Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+function renderListedInventorySection(section) {
+    const roomBlocks = section.rooms.map(renderListedInventoryRoomBlock).join("");
+
+    return `
+        <div class="border border-slate-200 rounded-2xl overflow-hidden">
+            <div class="bg-slate-900 px-4 py-3">
+                <div class="text-[11px] font-black text-white uppercase">${section.sequenceLabel}</div>
+                <div class="text-[10px] font-bold text-blue-300 uppercase mt-1">Delivery To: ${section.deliveryLabel}</div>
+            </div>
+
+            <div class="p-4">
+                ${roomBlocks}
+
+                <div class="mt-4 pt-3 border-t border-slate-200 text-right">
+                    <span class="text-[10px] font-black text-slate-400 uppercase mr-2">Section Total</span>
+                    <span class="text-sm font-black text-blue-600">${formatListedLineVolumeDisplay(section.totalVolume, true)}</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 function renderListedInventory() {
     const container = document.getElementById("listed-inventory-output");
     if (!container || !currentJob) return;
@@ -9725,124 +9864,7 @@ renderListedPhotoReview(filteredItems);
     return;
 }
 
-    container.innerHTML = groupedSections.map(function(section) {
-        const roomBlocks = section.rooms.map(function(room) {
-            const rows = room.entries.map(function(entry) {
-                const entryKey = getListedEntryMergeKey(entry);
-                window.__listedEntryMap = window.__listedEntryMap || {};
-                window.__listedEntryMap[entryKey] = entry;
-
-                const tags = [];
-
-if (entry.bedType) tags.push("BED: " + String(entry.bedType).toUpperCase());
-if (Array.isArray(entry.wardrobeTypes) && entry.wardrobeTypes.length) {
-    tags.push("WARDROBE: " + entry.wardrobeTypes.join(", ").toUpperCase());
-}
-
-const pianoListedTag = getPianoDetailsListedTag(entry.pianoDetails);
-if (pianoListedTag) tags.push(pianoListedTag);
-
-const photoCount = getInventoryEntryPhotoCount(entry);
-if (photoCount > 0) tags.push("PHOTOS: " + photoCount);
-
-if (entry.dismantle) tags.push("DISMANTLE");
-if (entry.expWrap) tags.push("EXP WRAP");
-if (entry.disconnect) tags.push("DISCONNECT");
-if (entry.handyman) tags.push("HANDYMAN");
-                if (entry.crated) {
-                    if (entry.crateDims) {
-                        tags.push(
-                            "CRATE: " +
-                            entry.crateDims.l + " x " +
-                            entry.crateDims.w + " x " +
-                            entry.crateDims.h + " " +
-                            entry.crateDims.unit
-                        );
-                    } else {
-                        tags.push("CRATE");
-                    }
-                }
-                if (entry.damage) tags.push("CONDITION: " + entry.damage.toUpperCase());
-                if (entry.excluded) tags.push("EXCLUDED");
-                if (entry.note) tags.push("NOTE: " + entry.note.toUpperCase());
-
-                const tagText = tags.length ? ` [${tags.join("] [")}]` : "";
-                const isExcluded = !!entry.excluded;
-
-                return `
-                    <tr class="border-t border-slate-200 ${isExcluded ? 'bg-slate-50' : ''}">
-                        <td class="py-2 pr-2 text-[10px] font-bold uppercase align-top break-words ${isExcluded ? 'text-slate-500 italic opacity-70' : 'text-slate-900'}">
-                            ${entry.itemName || "-"}${tagText}
-                        </td>
-                        <td class="py-2 px-1 text-[10px] font-black uppercase text-center align-top ${isExcluded ? 'text-slate-400 italic' : 'text-blue-600'}">
-                            ${entry.qty || 0}
-                        </td>
-                        <td class="py-2 px-1 text-[10px] font-black uppercase text-center align-top ${isExcluded ? 'text-slate-300 italic' : 'text-slate-700'}">
-                            ${isExcluded ? '' : formatListedLineVolumeDisplay(entry.unitVolume || 0)}
-                        </td>
-                        <td class="py-2 px-1 text-[10px] font-black uppercase text-center align-top ${isExcluded ? 'text-slate-300 italic' : 'text-slate-900'}">
-                            ${isExcluded ? '' : formatListedLineVolumeDisplay(entry.totalVolume || 0)}
-                        </td>
-                        <td class="py-2 pl-1 align-top">
-                            <div class="listed-row-actions">
-                                <button class="listed-action-btn listed-action-qty" onclick="editListedEntryQty('${escapeHtml(entryKey)}')">Qty</button>
-<button class="listed-action-btn listed-action-flags" onclick="editListedEntryFlags('${escapeHtml(entryKey)}')">Flags</button>
-<button class="listed-action-btn listed-action-note" onclick="editListedEntryNote('${escapeHtml(entryKey)}')">Note</button>
-<button class="listed-action-btn listed-action-delete delete" onclick="deleteListedEntry('${escapeHtml(entryKey)}')">×</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join("");
-
-            return `
-                <div class="listed-room-block mt-4">
-                    <div class="listed-room-head">
-                        <div>
-                            <div class="listed-room-title">${room.roomName}</div>
-                            <div class="text-[9px] font-bold text-slate-400 uppercase mt-1">Floor: ${room.floorName}</div>
-                        </div>
-                        <div class="listed-room-total">${formatListedLineVolumeDisplay(room.totalVolume, true)}</div>
-                    </div>
-
-                    <div class="p-4">
-                        <table class="w-full table-fixed">
-                            <thead>
-                                <tr class="border-b border-slate-300">
-                                    <th class="w-[44%] text-left py-2 pr-2 text-[9px] font-black text-slate-400 uppercase">Item</th>
-                                    <th class="w-[10%] text-center py-2 px-1 text-[9px] font-black text-slate-400 uppercase">Qty</th>
-                                    <th class="w-[14%] text-center py-2 px-1 text-[9px] font-black text-slate-400 uppercase">Unit Vol</th>
-                                    <th class="w-[16%] text-center py-2 px-1 text-[9px] font-black text-slate-400 uppercase">Total Vol</th>
-                                    <th class="w-[16%] text-center py-2 pl-1 text-[9px] font-black text-slate-400 uppercase">Edit</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${rows}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-        }).join("");
-
-        return `
-            <div class="border border-slate-200 rounded-2xl overflow-hidden">
-                <div class="bg-slate-900 px-4 py-3">
-                    <div class="text-[11px] font-black text-white uppercase">${section.sequenceLabel}</div>
-                    <div class="text-[10px] font-bold text-blue-300 uppercase mt-1">Delivery To: ${section.deliveryLabel}</div>
-                </div>
-
-                <div class="p-4">
-                    ${roomBlocks}
-
-                    <div class="mt-4 pt-3 border-t border-slate-200 text-right">
-                        <span class="text-[10px] font-black text-slate-400 uppercase mr-2">Section Total</span>
-                        <span class="text-sm font-black text-blue-600">${formatListedLineVolumeDisplay(section.totalVolume, true)}</span>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join("");
+    container.innerHTML = groupedSections.map(renderListedInventorySection).join("");
 }
 function resetInventoryQtyInput() {
     const qtyInput = document.getElementById("inv-qty");
