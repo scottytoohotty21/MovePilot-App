@@ -9268,6 +9268,18 @@ function buildCrewInstructionsSummary(items) {
     return summary;
 }
 
+function renderListedSummaryLines(items, emptyText) {
+    const lines = Array.isArray(items) ? items : [];
+
+    if (!lines.length) {
+        return `<div class="text-slate-400 italic">${emptyText || "None"}</div>`;
+    }
+
+    return lines.map(function(item) {
+        return `<div>${escapeHtml(item)}</div>`;
+    }).join("");
+}
+
 function renderListedSummary(summary, materials, crewInstructions) {
     const footerBar = document.getElementById("listed-footer-summary");
     if (!footerBar) return;
@@ -9399,29 +9411,12 @@ ${getSurveyorSignatureHtml()}
     <div class="space-y-3 text-[10px] font-black text-slate-900 uppercase leading-5">
         <div>
             <div class="text-slate-400 pb-1">Excluded Items (${summary.excludedCount})</div>
-            ${
-                responsibilities.excludedItems.length
-                    ? responsibilities.excludedItems.map(function(item) {
-                        return `<div>${escapeHtml(item)}</div>`;
-                    }).join("")
-                    : `<div class="text-slate-400 italic">None</div>`
-            }
+            ${renderListedSummaryLines(responsibilities.excludedItems)}
         </div>
 
         <div>
             <div class="text-slate-400 pb-1">Auto Responsibilities</div>
-            ${
-                responsibilities.autoNotes.length || responsibilities.exclusionNotes.length
-                    ? `
-                        ${responsibilities.autoNotes.map(function(note) {
-                            return `<div>${escapeHtml(note)}</div>`;
-                        }).join("")}
-                        ${responsibilities.exclusionNotes.map(function(note) {
-                            return `<div>${escapeHtml(note)}</div>`;
-                        }).join("")}
-                    `
-                    : `<div class="text-slate-400 italic">None</div>`
-            }
+            ${renderListedSummaryLines(responsibilities.autoNotes.concat(responsibilities.exclusionNotes))}
         </div>
 
         <div>
@@ -9468,33 +9463,21 @@ ${getSurveyorSignatureHtml()}
                 <div>
                     <div class="text-slate-400 pb-1">Dismantle / Reassemble</div>
                     ${
-                        crew.dismantle.length
-                            ? crew.dismantle.map(function(item) {
-                                return `<div>${escapeHtml(item)}</div>`;
-                            }).join("")
-                            : `<div class="text-slate-400 italic">None</div>`
+                        renderListedSummaryLines(crew.dismantle)
                     }
                 </div>
 
                 <div>
                     <div class="text-slate-400 pb-1">Export Wrap</div>
                     ${
-                        crew.exportWrap.length
-                            ? crew.exportWrap.map(function(item) {
-                                return `<div>${escapeHtml(item)}</div>`;
-                            }).join("")
-                            : `<div class="text-slate-400 italic">None</div>`
+                        renderListedSummaryLines(crew.exportWrap)
                     }
                 </div>
 
                 <div>
                     <div class="text-slate-400 pb-1">Crates</div>
                     ${
-                        crew.crate.length
-                            ? crew.crate.map(function(item) {
-                                return `<div>${escapeHtml(item)}</div>`;
-                            }).join("")
-                            : `<div class="text-slate-400 italic">None</div>`
+                        renderListedSummaryLines(crew.crate)
                     }
                 </div>
 
@@ -9502,11 +9485,7 @@ ${getSurveyorSignatureHtml()}
                     <div class="text-slate-400 pb-1">Notes</div>
 
                     ${
-                        crew.notes.length
-                            ? crew.notes.map(function(item) {
-                                return `<div>${escapeHtml(item)}</div>`;
-                            }).join("")
-                            : `<div class="text-slate-400 italic">None</div>`
+                        renderListedSummaryLines(crew.notes)
                     }
 
                     <div class="mt-2">
@@ -9545,33 +9524,21 @@ ${getSurveyorSignatureHtml()}
                 <div>
     <div class="text-slate-400 pb-1">Special Handling</div>
     ${
-        crew.specialHandling.length
-            ? crew.specialHandling.map(function(item) {
-                return `<div>${escapeHtml(item)}</div>`;
-            }).join("")
-            : `<div class="text-slate-400 italic">None</div>`
+        renderListedSummaryLines(crew.specialHandling)
     }
 </div>
 
                 <div>
                     <div class="text-slate-400 pb-1">Disconnect</div>
                     ${
-                        crew.disconnect.length
-                            ? crew.disconnect.map(function(item) {
-                                return `<div>${escapeHtml(item)}</div>`;
-                            }).join("")
-                            : `<div class="text-slate-400 italic">None</div>`
+                        renderListedSummaryLines(crew.disconnect)
                     }
                 </div>
 
                 <div>
                     <div class="text-slate-400 pb-1">Condition</div>
                     ${
-                        crew.damage.length
-                            ? crew.damage.map(function(item) {
-                                return `<div>${escapeHtml(item)}</div>`;
-                            }).join("")
-                            : `<div class="text-slate-400 italic">None</div>`
+                        renderListedSummaryLines(crew.damage)
                     }
                 </div>
             </div>
