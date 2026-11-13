@@ -5586,3 +5586,68 @@ body {
     font-weight: 900;
     text-transform: uppercase;
 }
+/* Listed Inventory: keep all edit buttons inside the tablet screen */
+#listed-inventory-output .listed-room-block > .p-4 {
+    padding: 10px;
+}
+
+/* Reserve enough room for Qty, Flags, Note and Delete */
+#listed-inventory-output .listed-room-block table th:nth-child(1) {
+    width: auto;
+}
+
+#listed-inventory-output .listed-room-block table th:nth-child(2) {
+    width: 7%;
+}
+
+#listed-inventory-output .listed-room-block table th:nth-child(3),
+#listed-inventory-output .listed-room-block table th:nth-child(4) {
+    width: 11%;
+}
+
+#listed-inventory-output .listed-room-block table th:nth-child(5) {
+    width: 220px;
+}
+
+#listed-inventory-output .listed-row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    flex-wrap: nowrap;
+}
+
+#listed-inventory-output .listed-action-btn {
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: 52px;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 4px;
+    font-size: 10px;
+}
+
+#listed-inventory-output .listed-action-delete {
+    width: 44px;
+    min-width: 44px;
+    padding: 0;
+    font-size: 20px;
+}
+
+/* On narrow screens, arrange the actions in two rows */
+@media (max-width: 600px) {
+    #listed-inventory-output .listed-room-block table th:nth-child(5) {
+        width: 112px;
+    }
+
+    #listed-inventory-output .listed-row-actions {
+        display: grid;
+        grid-template-columns: repeat(2, 48px);
+        gap: 4px;
+        justify-content: end;
+    }
+
+    #listed-inventory-output .listed-action-btn {
+        width: 48px;
+        min-width: 0;
+    }
+}
