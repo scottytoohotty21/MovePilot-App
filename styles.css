@@ -5586,12 +5586,15 @@ body {
     font-weight: 900;
     text-transform: uppercase;
 }
-/* Listed Inventory: keep all edit buttons inside the tablet screen */
+/* =========================================================
+   LISTED INVENTORY - TABLET FRIENDLY ACTIONS
+   ========================================================= */
+
 #listed-inventory-output .listed-room-block > .p-4 {
     padding: 10px;
 }
 
-/* Reserve enough room for Qty, Flags, Note and Delete */
+/* Keep the action column compact */
 #listed-inventory-output .listed-room-block table th:nth-child(1) {
     width: auto;
 }
@@ -5602,52 +5605,79 @@ body {
 
 #listed-inventory-output .listed-room-block table th:nth-child(3),
 #listed-inventory-output .listed-room-block table th:nth-child(4) {
-    width: 11%;
+    width: 10%;
 }
 
 #listed-inventory-output .listed-room-block table th:nth-child(5) {
-    width: 220px;
+    width: 185px;
 }
 
+/* Keep all four buttons on one line */
 #listed-inventory-output .listed-row-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 4px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 3px;
     flex-wrap: nowrap;
 }
 
+/* Compact tablet buttons */
 #listed-inventory-output .listed-action-btn {
     box-sizing: border-box;
     flex: 0 0 auto;
-    width: 52px;
-    min-width: 0;
-    min-height: 44px;
+    min-height: 36px;
+    height: 36px;
     padding: 0 4px;
-    font-size: 10px;
+    font-size: 8px;
+    border-radius: 8px;
 }
 
+/* Individual button widths */
+#listed-inventory-output .listed-action-qty {
+    width: 42px;
+    min-width: 42px;
+}
+
+#listed-inventory-output .listed-action-flags {
+    width: 52px;
+    min-width: 52px;
+}
+
+#listed-inventory-output .listed-action-note {
+    width: 48px;
+    min-width: 48px;
+}
+
+/* Delete button */
 #listed-inventory-output .listed-action-delete {
-    width: 44px;
-    min-width: 44px;
+    width: 34px;
+    min-width: 34px;
     padding: 0;
-    font-size: 20px;
+    font-size: 17px;
 }
 
-/* On narrow screens, arrange the actions in two rows */
+/* Extra-small screens:
+   allow the action buttons to use two rows */
 @media (max-width: 600px) {
+
     #listed-inventory-output .listed-room-block table th:nth-child(5) {
-        width: 112px;
+        width: 105px;
     }
 
     #listed-inventory-output .listed-row-actions {
         display: grid;
-        grid-template-columns: repeat(2, 48px);
-        gap: 4px;
-        justify-content: end;
+        grid-template-columns: repeat(2, 44px);
+        gap: 3px;
+        justify-content: start;
     }
 
     #listed-inventory-output .listed-action-btn {
-        width: 48px;
-        min-width: 0;
+        width: 44px;
+        min-width: 44px;
+    }
+
+    #listed-inventory-output .listed-action-delete {
+        width: 44px;
+        min-width: 44px;
     }
 }
