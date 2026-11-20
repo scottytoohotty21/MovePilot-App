@@ -1461,7 +1461,8 @@ function createDefaultProperties() {
         {
             id: now,
             label: "Collection Address",
-            line1: "10 Downing Street",
+            line1: "",
+            line3: "",
             country: "United Kingdom",
             salutation: "",
             clientName: "",
@@ -1476,7 +1477,8 @@ function createDefaultProperties() {
         {
             id: now + 1,
             label: "Delivery Address",
-            line1: "42 Wallaby Way",
+            line1: "",
+            line3: "",
             country: "United Kingdom",
             contactName: "",
             contactPhone: "",
@@ -1486,7 +1488,8 @@ function createDefaultProperties() {
         {
             id: now + 2,
             label: "Store",
-            line1: "The Vaults, Unit B",
+            line1: "Storage",
+            line3: "",
             country: "United Kingdom",
             contactName: "",
             contactPhone: "",
@@ -2083,10 +2086,41 @@ saveBtn.setAttribute('aria-label', isSaved ? 'Unlock address' : 'Lock address');
     ` : ''}
 
     <div class="prop-grid">
-                    <div class="col-7"><label class="mini-label">1st line</label><input type="text" ${status} oninput="updatePropData('line1', this.value)" class="input-field" value="${prop.line1 || ''}"></div>
-                    <div class="col-5"><label class="mini-label">Road</label><input type="text" ${status} oninput="updatePropData('road', this.value)" class="input-field" value="${prop.road || ''}"></div>
-                    <div class="col-3"><label class="mini-label">Town</label><input type="text" ${status} oninput="updatePropData('city', this.value)" class="input-field" value="${prop.city || ''}"></div>
-                    <div class="col-3"><label class="mini-label">County</label><input type="text" ${status} oninput="updatePropData('county', this.value)" class="input-field" value="${prop.county || ''}"></div>
+    
+    <div class="col-4">
+        <label class="mini-label">Address 1</label>
+        <input type="text" ${status} oninput="updatePropData('line1', this.value)" class="input-field" value="${prop.line1 || ''}">
+    </div>
+
+    <div class="col-4">
+        <label class="mini-label">Address 2</label>
+        <input type="text" ${status} oninput="updatePropData('road', this.value)" class="input-field" value="${prop.road || ''}">
+    </div>
+
+    <div class="col-4">
+        <label class="mini-label">Address 3</label>
+        <input type="text" ${status} oninput="updatePropData('line3', this.value)" class="input-field" value="${prop.line3 || ''}">
+    </div>
+
+    <div class="col-3">
+        <label class="mini-label">Town</label>
+        <input type="text" ${status} oninput="updatePropData('city', this.value)" class="input-field" value="${prop.city || ''}">
+    </div>
+
+    <div class="col-3">
+        <label class="mini-label">County</label>
+        <input type="text" ${status} oninput="updatePropData('county', this.value)" class="input-field" value="${prop.county || ''}">
+    </div>
+
+    <div class="col-3">
+        <label class="mini-label">Postcode</label>
+        <input type="text" ${status} oninput="updatePropData('postcode', this.value)" class="input-field uppercase" value="${prop.postcode || ''}">
+    </div>
+
+    <div class="col-3">
+        <label class="mini-label">Country</label>
+        <input type="text" ${status} oninput="updatePropData('country', this.value)" class="input-field" value="${prop.country || 'United Kingdom'}">
+    </div>
                     <div class="col-3"><label class="mini-label">Postcode</label><input type="text" ${status} oninput="updatePropData('postcode', this.value)" class="input-field uppercase" value="${prop.postcode || ''}"></div>
                     <div class="col-3"><label class="mini-label">Country</label><input type="text" ${status} oninput="updatePropData('country', this.value)" class="input-field" value="${prop.country || 'United Kingdom'}"></div>
                     <div class="col-6"><label class="mini-label">Type</label><select ${status} onchange="updatePropData('type', this.value)" class="input-field"><option value="">-Select-</option>${PROPERTY_TYPES.map(t => `<option ${prop.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
@@ -4957,10 +4991,11 @@ function addProperty() {
     const newId = Date.now();
 
     currentJob.properties.push({ 
-        id: newId, 
-        label: "Add Address", 
-        line1: "", 
-        country: "United Kingdom", 
+    id: newId, 
+    label: "Add Address", 
+    line1: "", 
+    line3: "", 
+    country: "United Kingdom", 
         contactName: "",
         contactPhone: "",
         isCore: false, 
@@ -7634,13 +7669,14 @@ function getFullAddressText(propertyId) {
     if (!prop) return "";
 
     return [
-        prop.line1 || "",
-        prop.road || "",
-        prop.city || "",
-        prop.county || "",
-        prop.postcode || "",
-        prop.country || ""
-    ]
+    prop.line1 || "",
+    prop.road || "",
+    prop.line3 || "",
+    prop.city || "",
+    prop.county || "",
+    prop.postcode || "",
+    prop.country || ""
+]
     .map(function(part) { return String(part || "").trim(); })
     .filter(Boolean)
     .join(", ");
