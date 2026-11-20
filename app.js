@@ -2121,9 +2121,7 @@ saveBtn.setAttribute('aria-label', isSaved ? 'Unlock address' : 'Lock address');
         <label class="mini-label">Country</label>
         <input type="text" ${status} oninput="updatePropData('country', this.value)" class="input-field" value="${prop.country || 'United Kingdom'}">
     </div>
-                    <div class="col-3"><label class="mini-label">Postcode</label><input type="text" ${status} oninput="updatePropData('postcode', this.value)" class="input-field uppercase" value="${prop.postcode || ''}"></div>
-                    <div class="col-3"><label class="mini-label">Country</label><input type="text" ${status} oninput="updatePropData('country', this.value)" class="input-field" value="${prop.country || 'United Kingdom'}"></div>
-                    <div class="col-6"><label class="mini-label">Type</label><select ${status} onchange="updatePropData('type', this.value)" class="input-field"><option value="">-Select-</option>${PROPERTY_TYPES.map(t => `<option ${prop.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
+                                        <div class="col-6"><label class="mini-label">Type</label><select ${status} onchange="updatePropData('type', this.value)" class="input-field"><option value="">-Select-</option>${PROPERTY_TYPES.map(t => `<option ${prop.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
                     <div class="col-6"><label class="mini-label">Vehicle Access</label><select ${status} onchange="updatePropData('access', this.value)" class="input-field"><option value="">-Select-</option>${VEHICLE_TYPES.map(v => `<option ${prop.access===v?'selected':''}>${v}</option>`).join('')}</select></div>
                     <div class="col-3"><label class="mini-label">Floor</label><input type="text" ${status} oninput="updatePropData('floor', this.value)" class="input-field" value="${prop.floor || ''}"></div>
                     <div class="col-3"><label class="mini-label">Stairs</label><input type="text" ${status} oninput="updatePropData('stairs', this.value)" class="input-field" value="${prop.stairs || ''}"></div>
