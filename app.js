@@ -8228,11 +8228,27 @@ function renderListedInventoryFilters(items) {
     const seqOptions = getListedSequenceFilterOptions(items);
     const deliveryOptions = getListedDeliveryFilterOptions(items);
 
-    listedSequenceFilter = normaliseListedFilterSelection(listedSequenceFilter, seqOptions);
-    listedDeliveryFilter = normaliseListedFilterSelection(listedDeliveryFilter, deliveryOptions);
+    listedSequenceFilter = normaliseListedFilterSelection(
+        listedSequenceFilter,
+        seqOptions
+    );
 
-    seqSelect.innerHTML = renderListedFilterOptions("All Sequences", seqOptions, listedSequenceFilter);
-    deliverySelect.innerHTML = renderListedFilterOptions("All Deliveries", deliveryOptions, listedDeliveryFilter);
+    listedDeliveryFilter = normaliseListedFilterSelection(
+        listedDeliveryFilter,
+        deliveryOptions
+    );
+
+    seqSelect.innerHTML = renderListedFilterOptions(
+        "All Sequences",
+        seqOptions,
+        listedSequenceFilter
+    );
+
+    deliverySelect.innerHTML = renderListedFilterOptions(
+        "All Deliveries",
+        deliveryOptions,
+        listedDeliveryFilter
+    );
 
     if (textInput) {
         textInput.value = listedTextFilter || "";
@@ -8241,12 +8257,13 @@ function renderListedInventoryFilters(items) {
     if (cbmLineItemsInput) {
         cbmLineItemsInput.checked = shouldShowListedCbmLineItems();
     }
-}
-if (reportFormatInput) {
-    reportFormatInput.value = ensureListedReportOptions().reportFormat;
-}
 
-updateListedReportFormatUI();
+    if (reportFormatInput) {
+        reportFormatInput.value =
+            ensureListedReportOptions().reportFormat;
+    }
+
+    updateListedReportFormatUI();
 }
 
 function handleListedSequenceFilterChange(value) {
