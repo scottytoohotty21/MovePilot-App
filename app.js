@@ -8098,7 +8098,8 @@ function getListedDeliveryFilterOptions(items) {
 function ensureListedReportOptions() {
     if (!currentJob) {
         return {
-            showCbmLineItems: false
+            showCbmLineItems: false,
+            reportFormat: "standard"
         };
     }
 
@@ -8108,6 +8109,13 @@ function ensureListedReportOptions() {
 
     if (typeof currentJob.listedReportOptions.showCbmLineItems !== "boolean") {
         currentJob.listedReportOptions.showCbmLineItems = false;
+    }
+
+    if (
+        currentJob.listedReportOptions.reportFormat !== "standard" &&
+        currentJob.listedReportOptions.reportFormat !== "agility"
+    ) {
+        currentJob.listedReportOptions.reportFormat = "standard";
     }
 
     return currentJob.listedReportOptions;
@@ -8145,6 +8153,33 @@ function handleListedCbmLineItemsToggle(checked) {
 
     saveToDevice();
     renderListedInventory();
+}
+function handleListedReportFormatChange(value) {
+    const options = ensureListedReportOptions();
+
+    options.reportFormat = value === "agility"
+        ? "agility"
+        : "standard";
+
+    saveToDevice();
+    updateListedReportFormatUI();
+}
+function updateListedReportFormatUI() {
+    const options = ensureListedReportOptions();
+
+    const formatSelect = document.getElementById("listed-report-format");
+    const agilityPanel = document.getElementById("listed-agility-details");
+
+    if (formatSelect) {
+        formatSelect.value = options.reportFormat;
+    }
+
+    if (agilityPanel) {
+        agilityPanel.style.display =
+            options.reportFormat === "agility"
+                ? ""
+                : "none";
+    }
 }
 
 
@@ -8186,6 +8221,7 @@ function renderListedInventoryFilters(items) {
     const deliverySelect = document.getElementById("listed-delivery-filter");
     const textInput = document.getElementById("listed-text-filter");
     const cbmLineItemsInput = document.getElementById("listed-show-cbm-lines");
+    const reportFormatInput = document.getElementById("listed-report-format");
 
     if (!seqSelect || !deliverySelect) return;
 
@@ -8205,6 +8241,12 @@ function renderListedInventoryFilters(items) {
     if (cbmLineItemsInput) {
         cbmLineItemsInput.checked = shouldShowListedCbmLineItems();
     }
+}
+if (reportFormatInput) {
+    reportFormatInput.value = ensureListedReportOptions().reportFormat;
+}
+
+updateListedReportFormatUI();
 }
 
 function handleListedSequenceFilterChange(value) {
