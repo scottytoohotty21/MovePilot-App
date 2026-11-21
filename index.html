@@ -439,15 +439,43 @@ Enter as: Surname, First Name
         </div>
 
     <div class="listed-report-options-row mb-4">
-        <label class="listed-report-option-check">
-            <input
-                id="listed-show-cbm-lines"
-                type="checkbox"
-                onchange="handleListedCbmLineItemsToggle(this.checked)"
-            >
-            <span>Report listed inventory in CBM</span>
-        </label>
+
+    <div>
+        <label class="mini-label">Report Format</label>
+        <select
+            id="listed-report-format"
+            class="listed-filter-select"
+            onchange="handleListedReportFormatChange(this.value)"
+        >
+            <option value="standard">Standard PDF</option>
+            <option value="agility">Agility Corporate PDF</option>
+        </select>
     </div>
+
+    <label class="listed-report-option-check">
+        <input
+            id="listed-show-cbm-lines"
+            type="checkbox"
+            onchange="handleListedCbmLineItemsToggle(this.checked)"
+        >
+        <span>Report listed inventory in CBM</span>
+    </label>
+
+</div>
+
+<div
+    id="listed-agility-details"
+    class="listed-agility-details mb-4"
+    style="display:none;"
+>
+    <div class="text-sm font-black text-slate-900 uppercase">
+        Agility Corporate Inventory
+    </div>
+
+    <div class="text-[10px] font-bold text-slate-400 uppercase">
+        Agility-specific report information will appear here.
+    </div>
+</div>
 
     <div id="listed-inventory-output" class="space-y-4">
     <div class="p-12 text-center text-slate-400 font-bold italic uppercase">No inventory saved</div>
