@@ -8161,24 +8161,158 @@ function handleListedReportFormatChange(value) {
         ? "agility"
         : "standard";
 
+    if (
+        options.reportFormat === "agility" &&
+        !options.agilityTakenOn &&
+        currentJob &&
+        currentJob.survey &&
+        currentJob.survey.createdAt
+    ) {
+        options.agilityTakenOn = currentJob.survey.createdAt;
+    }
+
     saveToDevice();
     updateListedReportFormatUI();
 }
+
+function getAgilityAddressText(prop) {
+    if (!prop) return "";
+
+    return [
+        prop.line1 || "",
+        prop.road || "",
+        prop.line3 || "",
+        prop.city || "",
+        prop.county || "",
+        prop.postcode || "",
+        prop.country || ""
+    ]
+        .map(value => String(value).trim())
+        .filter(Boolean)
+        .join(", ");
+}
+
 function updateListedReportFormatUI() {
     const options = ensureListedReportOptions();
 
     const formatSelect = document.getElementById("listed-report-format");
     const agilityPanel = document.getElementById("listed-agility-details");
+    const agilityDetails = document.getElementById("listed-agility-auto-details");
 
     if (formatSelect) {
         formatSelect.value = options.reportFormat;
     }
 
-    if (agilityPanel) {
-        agilityPanel.style.display =
-            options.reportFormat === "agility"
-                ? ""
-                : "none";
+    if (!agilityPanel) return;
+
+    if (options.reportFormat !== "agility") {
+        agilityPanel.style.display = "none";
+        return;
+    }
+
+    agilityPanel.style.display = "";
+
+    if (!currentJob) {
+        if (agilityDetails) {
+            agilityDetails.innerHTML = "";
+        }
+        return;
+    }
+
+    const customer = currentJob.customer || {};
+    const properties = Array.isArray(currentJob.properties)
+        ? currentJob.properties
+        : [];
+
+    const collection = properties[0] || {};
+    const delivery = properties[1] || {};
+
+    const inventoryForParts = [
+        customer.salutation || collection.salutation || "",
+        customer.firstName || collection.firstName || "",
+        customer.surname || collection.surname || ""
+    ].filter(Boolean);
+
+    const inventoryFor =
+        inventoryForParts.join(" ").trim() ||
+        customer.displayName ||
+        currentJob.name ||
+        "";
+
+    const takenBy = getSurveyorDisplayName();
+
+    const takenOnSource =
+        options.agilityTakenOn ||
+        (currentJob.survey && currentJob.survey.createdAt) ||
+        "";
+
+    const takenOn = takenOnSource
+        ? new Date(takenOnSource).toLocaleDateString("en-GB")
+        : "";
+
+    const fromAddress = getAgilityAddressText(collection);
+    const toAddress = getAgilityAddressText(delivery);
+
+    let includedVolumeCuft = 0;
+
+    try {
+        const listedItems = getListedInventoryItems();
+        const summary = buildListedSummary(listedItems);
+        includedVolumeCuft = Number(summary.includedVolume || 0);
+    } catch (err) {
+        console.warn("Could not calculate Agility volume", err);
+    }
+
+    const volumeCbm = formatCbmFromCuft(includedVolumeCuft);
+
+    if (agilityDetails) {
+        agilityDetails.innerHTML = `
+            <div class="grid grid-cols-12 gap-3">
+
+                <div class="col-span-12">
+                    <label class="mini-label">Inventory For</label>
+                    <div class="input-field bg-slate-50">
+                        ${escapeHtml(inventoryFor || "-")}
+                    </div>
+                </div>
+
+                <div class="col-span-6">
+                    <label class="mini-label">Taken On</label>
+                    <div class="input-field bg-slate-50">
+                        ${escapeHtml(takenOn || "-")}
+                    </div>
+                </div>
+
+                <div class="col-span-6">
+                    <label class="mini-label">Taken By</label>
+                    <div class="input-field bg-slate-50">
+                        ${escapeHtml(takenBy || "-")}
+                    </div>
+                </div>
+
+                <div class="col-span-6">
+                    <label class="mini-label">From</label>
+                    <div class="input-field bg-slate-50 min-h-[44px]">
+                        ${escapeHtml(fromAddress || "-")}
+                    </div>
+                </div>
+
+                <div class="col-span-6">
+                    <label class="mini-label">To</label>
+                    <div class="input-field bg-slate-50 min-h-[44px]">
+                        ${escapeHtml(toAddress || "-")}
+                    </div>
+                </div>
+
+                <div class="col-span-12">
+                    <label class="mini-label">Volume per Inventory</label>
+                    <div class="input-field bg-slate-50 font-black">
+                        ${escapeHtml(volumeCbm)} CBM
+                    </div>
+                </div>
+
+            </div>
+        `;
     }
 }
 
