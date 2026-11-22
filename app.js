@@ -8118,7 +8118,7 @@ function ensureListedReportOptions() {
     if (typeof currentJob.listedReportOptions.agilityDeliveryDate !== "string") {
         currentJob.listedReportOptions.agilityDeliveryDate = "";
     }
-    
+
     if (
         currentJob.listedReportOptions.reportFormat !== "standard" &&
         currentJob.listedReportOptions.reportFormat !== "agility"
@@ -8499,6 +8499,28 @@ function updateListedReportFormatUI() {
                         ${escapeHtml(toAddress || "-")}
                     </div>
                 </div>
+
+                <div class="col-span-6">
+    <label class="mini-label">Collection Date</label>
+    <input
+        type="date"
+        id="listed-agility-collection-date"
+        class="input-field"
+        value="${options.agilityCollectionDate || ''}"
+        onchange="handleListedAgilityCollectionDateChange(this.value)"
+    >
+</div>
+
+<div class="col-span-6">
+    <label class="mini-label">Delivery Date</label>
+    <input
+        type="date"
+        id="listed-agility-delivery-date"
+        class="input-field"
+        value="${options.agilityDeliveryDate || ''}"
+        onchange="handleListedAgilityDeliveryDateChange(this.value)"
+    >
+</div>
 
                 <!-- TOTAL VOLUME -->
 
