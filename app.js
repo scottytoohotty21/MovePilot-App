@@ -8192,6 +8192,113 @@ function getAgilityAddressText(prop) {
         .join(", ");
 }
 
+function buildAgilityInventorySummary(items) {
+    const summary = {
+        ownerPackedCartons: 0,
+        ownerPackedCartonVolume: 0,
+
+        bishopsPackedCartons: 0,
+        bishopsPackedCartonVolume: 0,
+
+        bishopsPackedWardrobeCtns: 0,
+        bishopsPackedWardrobeVolume: 0,
+
+        totalPackedCartons: 0,
+        totalPackedCartonVolume: 0,
+
+        totalPackedFurnitureVolume: 0,
+
+        totalOwnerPackedVolume: 0,
+
+        ownerPackedMfo: null
+    };
+
+    if (!Array.isArray(items)) {
+        return summary;
+    }
+
+    items.forEach(function(entry) {
+        if (!entry || entry.excluded) return;
+
+        const itemName = String(entry.itemName || "")
+            .trim()
+            .toUpperCase();
+
+        const qty = Number(entry.qty || 0);
+        const totalVolume = Number(
+            entry.totalVolume ||
+            (Number(entry.unitVolume || 0) * qty) ||
+            0
+        );
+
+        // -------------------------------------------------
+        // PBO - Packed By Owner
+        // -------------------------------------------------
+        if (itemName === "PBO (PACKED BY OWNER BOX)") {
+            summary.ownerPackedCartons += qty;
+            summary.ownerPackedCartonVolume += totalVolume;
+            summary.totalOwnerPackedVolume += totalVolume;
+            return;
+        }
+
+        // -------------------------------------------------
+        // Bishops wardrobe cartons
+        // -------------------------------------------------
+        if (itemName === "WR BOX") {
+            summary.bishopsPackedWardrobeCtns += qty;
+            summary.bishopsPackedWardrobeVolume += totalVolume;
+            summary.totalPackedCartons += qty;
+            summary.totalPackedCartonVolume += totalVolume;
+            return;
+        }
+
+        // -------------------------------------------------
+        // Standard Bishops packed cartons
+        // -------------------------------------------------
+        if (
+            itemName === "AP BOX" ||
+            itemName === "CG BOX" ||
+            itemName === "BOOK BOX" ||
+            itemName === "LINEN BOX"
+        ) {
+            summary.bishopsPackedCartons += qty;
+            summary.bishopsPackedCartonVolume += totalVolume;
+            summary.totalPackedCartons += qty;
+            summary.totalPackedCartonVolume += totalVolume;
+            return;
+        }
+    });
+
+    /*
+     * For now, furniture volume is the included inventory
+     * volume minus the carton volume we can positively identify.
+     *
+     * MFO is deliberately NOT included yet because we still
+     * need to confirm exactly what Agility means by MFO.
+     */
+    let includedVolumeCuft = 0;
+
+    try {
+        const listedSummary = buildListedSummary(items);
+        includedVolumeCuft = Number(
+            listedSummary.includedVolume || 0
+        );
+    } catch (err) {
+        console.warn(
+            "Could not calculate Agility furniture volume",
+            err
+        );
+    }
+
+    summary.totalPackedFurnitureVolume = Math.max(
+    0,
+    includedVolumeCuft
+        - summary.totalPackedCartonVolume
+        - summary.totalOwnerPackedVolume
+);
+
+    return summary;
+}
 function updateListedReportFormatUI() {
     const options = ensureListedReportOptions();
 
@@ -8220,12 +8327,17 @@ function updateListedReportFormatUI() {
     }
 
     const customer = currentJob.customer || {};
+
     const properties = Array.isArray(currentJob.properties)
         ? currentJob.properties
         : [];
 
     const collection = properties[0] || {};
     const delivery = properties[1] || {};
+
+    // -------------------------------------------------
+    // Inventory For
+    // -------------------------------------------------
 
     const inventoryForParts = [
         customer.salutation || collection.salutation || "",
@@ -8239,31 +8351,86 @@ function updateListedReportFormatUI() {
         currentJob.name ||
         "";
 
+    // -------------------------------------------------
+    // Taken By
+    // -------------------------------------------------
+
     const takenBy = getSurveyorDisplayName();
+
+    // -------------------------------------------------
+    // Taken On
+    // -------------------------------------------------
 
     const takenOnSource =
         options.agilityTakenOn ||
-        (currentJob.survey && currentJob.survey.createdAt) ||
+        (
+            currentJob.survey &&
+            currentJob.survey.createdAt
+        ) ||
         "";
 
     const takenOn = takenOnSource
         ? new Date(takenOnSource).toLocaleDateString("en-GB")
         : "";
 
+    // -------------------------------------------------
+    // Addresses
+    // -------------------------------------------------
+
     const fromAddress = getAgilityAddressText(collection);
     const toAddress = getAgilityAddressText(delivery);
 
+    // -------------------------------------------------
+    // Inventory calculations
+    // -------------------------------------------------
+
+    let listedItems = [];
+
+    try {
+        listedItems = getListedInventoryItems();
+    } catch (err) {
+        console.warn(
+            "Could not retrieve Listed Inventory items for Agility",
+            err
+        );
+    }
+
+    const agilitySummary =
+        buildAgilityInventorySummary(listedItems);
+
+    // Existing total inventory volume
     let includedVolumeCuft = 0;
 
     try {
-        const listedItems = getListedInventoryItems();
-        const summary = buildListedSummary(listedItems);
-        includedVolumeCuft = Number(summary.includedVolume || 0);
+        const listedSummary =
+            buildListedSummary(listedItems);
+
+        includedVolumeCuft =
+            Number(listedSummary.includedVolume || 0);
     } catch (err) {
-        console.warn("Could not calculate Agility volume", err);
+        console.warn(
+            "Could not calculate Agility inventory volume",
+            err
+        );
     }
 
-    const volumeCbm = formatCbmFromCuft(includedVolumeCuft);
+    const volumeCbm =
+        formatCbmFromCuft(includedVolumeCuft);
+
+    const cartonVolumeCbm =
+        formatCbmFromCuft(
+            agilitySummary.totalPackedCartonVolume
+        );
+
+    const furnitureVolumeCbm =
+        formatCbmFromCuft(
+            agilitySummary.totalPackedFurnitureVolume
+        );
+
+    const ownerPackedVolumeCbm =
+        formatCbmFromCuft(
+            agilitySummary.totalOwnerPackedVolume
+        );
 
     if (agilityDetails) {
         agilityDetails.innerHTML = `
@@ -8311,11 +8478,93 @@ function updateListedReportFormatUI() {
                     </div>
                 </div>
 
+                <!-- =====================================
+                     AGILITY VOLUME BREAKDOWN
+                     ===================================== -->
+
+                <div class="col-span-12 mt-2">
+                    <div class="text-[10px] font-black text-slate-400 uppercase">
+                        Volume Breakdown in Cubic Metres
+                    </div>
+                </div>
+
+                <div class="col-span-4">
+                    <label class="mini-label">
+                        Total Packed Cartons
+                    </label>
+                    <div class="input-field bg-slate-50 font-black">
+                        ${escapeHtml(cartonVolumeCbm)} CBM
+                    </div>
+                </div>
+
+                <div class="col-span-4">
+                    <label class="mini-label">
+                        Total Packed Furniture
+                    </label>
+                    <div class="input-field bg-slate-50 font-black">
+                        ${escapeHtml(furnitureVolumeCbm)} CBM
+                    </div>
+                </div>
+
+                <div class="col-span-4">
+                    <label class="mini-label">
+                        Total Owner Packed
+                    </label>
+                    <div class="input-field bg-slate-50 font-black">
+                        ${escapeHtml(ownerPackedVolumeCbm)} CBM
+                    </div>
+                </div>
+
+                <!-- =====================================
+                     AGILITY CARTON QUANTITIES
+                     ===================================== -->
+
+                <div class="col-span-12 mt-2">
+                    <div class="text-[10px] font-black text-slate-400 uppercase">
+                        Carton Quantities
+                    </div>
+                </div>
+
+                <div class="col-span-3">
+                    <label class="mini-label">
+                        Owner Packed Cartons
+                    </label>
+                    <div class="input-field bg-slate-50 font-black">
+                        ${agilitySummary.ownerPackedCartons}
+                    </div>
+                </div>
+
+                <div class="col-span-3">
+                    <label class="mini-label">
+                        Owner Packed MFO
+                    </label>
+                    <div class="input-field bg-slate-50 font-black">
+                        —
+                    </div>
+                </div>
+
+                <div class="col-span-3">
+                    <label class="mini-label">
+                        Bishops Packed Cartons
+                    </label>
+                    <div class="input-field bg-slate-50 font-black">
+                        ${agilitySummary.bishopsPackedCartons}
+                    </div>
+                </div>
+
+                <div class="col-span-3">
+                    <label class="mini-label">
+                        Bishops Packed Wardrobe Ctns
+                    </label>
+                    <div class="input-field bg-slate-50 font-black">
+                        ${agilitySummary.bishopsPackedWardrobeCtns}
+                    </div>
+                </div>
+
             </div>
         `;
     }
 }
-
 
 // -----------------------------------------------------------------------------
 // Listed inventory tab
