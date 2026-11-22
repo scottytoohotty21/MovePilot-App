@@ -11462,6 +11462,952 @@ function buildListedInventoryPdfContext(filteredItems) {
     };
 }
 
+/* ============================================================
+   AGILITY CORPORATE PDF
+   ============================================================ */
+
+function getAgilityCorporatePdfCss() {
+    return `
+        .agility-pdf {
+            width: 190mm;
+            margin: 0 auto;
+            background: #ffffff;
+            color: #111827;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 8.5pt;
+            line-height: 1.25;
+        }
+
+        .agility-page {
+            width: 100%;
+            min-height: 270mm;
+            box-sizing: border-box;
+            page-break-after: always;
+        }
+
+        .agility-page:last-child {
+            page-break-after: auto;
+        }
+
+        .agility-header {
+            border-bottom: 2px solid #111827;
+            padding-bottom: 5mm;
+            margin-bottom: 4mm;
+        }
+
+        .agility-title {
+            font-size: 17pt;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 3mm;
+        }
+
+        .agility-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2mm;
+            margin-bottom: 3mm;
+        }
+
+        .agility-field {
+            border: 1px solid #9ca3af;
+            min-height: 8mm;
+            padding: 2mm;
+            box-sizing: border-box;
+        }
+
+        .agility-field-label {
+            font-size: 6.5pt;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #4b5563;
+            margin-bottom: 1mm;
+        }
+
+        .agility-field-value {
+            font-size: 9pt;
+            font-weight: 700;
+        }
+
+        .agility-wide {
+            grid-column: 1 / -1;
+        }
+
+        .agility-address-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2mm;
+            margin-bottom: 3mm;
+        }
+
+        .agility-volume-line {
+            border: 1px solid #9ca3af;
+            padding: 2.5mm;
+            font-weight: 900;
+            margin-bottom: 3mm;
+        }
+
+        .agility-date-note {
+            border: 1px solid #d1d5db;
+            padding: 2.5mm;
+            margin-bottom: 3mm;
+        }
+
+        .agility-two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4mm;
+            margin-bottom: 4mm;
+        }
+
+        .agility-section {
+            border: 1px solid #9ca3af;
+            margin-bottom: 4mm;
+            page-break-inside: avoid;
+        }
+
+        .agility-section-title {
+            background: #e5e7eb;
+            border-bottom: 1px solid #9ca3af;
+            padding: 2mm;
+            font-size: 8pt;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .agility-section-body {
+            padding: 2.5mm;
+        }
+
+        .agility-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .agility-summary-table td {
+            border-bottom: 1px solid #d1d5db;
+            padding: 1.5mm;
+            vertical-align: top;
+        }
+
+        .agility-summary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .agility-summary-value {
+            text-align: right;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .agility-exclusions-table,
+        .agility-inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .agility-exclusions-table th,
+        .agility-exclusions-table td,
+        .agility-inventory-table th,
+        .agility-inventory-table td {
+            border: 1px solid #9ca3af;
+            padding: 1.4mm;
+            vertical-align: top;
+        }
+
+        .agility-exclusions-table th,
+        .agility-inventory-table th {
+            background: #f3f4f6;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 6.5pt;
+        }
+
+        .agility-inventory-table {
+            font-size: 7pt;
+        }
+
+        .agility-inventory-table th {
+            font-size: 6pt;
+        }
+
+        .agility-inventory-table .num {
+            text-align: center;
+        }
+
+        .agility-notice {
+            border: 1px solid #9ca3af;
+            padding: 2.5mm;
+            margin-bottom: 3mm;
+            page-break-inside: avoid;
+        }
+
+        .agility-notice-title {
+            font-size: 8pt;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 1.5mm;
+        }
+
+        .agility-notice-text {
+            font-size: 7.5pt;
+            line-height: 1.3;
+        }
+
+        .agility-signatures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8mm;
+            margin-top: 5mm;
+            page-break-inside: avoid;
+        }
+
+        .agility-signature-box {
+            min-height: 30mm;
+            border-bottom: 1px solid #111827;
+            position: relative;
+        }
+
+        .agility-signature-label {
+            font-weight: 900;
+            margin-bottom: 2mm;
+        }
+
+        .agility-signature-image {
+            max-width: 75mm;
+            max-height: 22mm;
+            object-fit: contain;
+            object-position: left center;
+            display: block;
+        }
+
+        .agility-signature-empty {
+            color: #6b7280;
+            font-style: italic;
+            padding-top: 8mm;
+        }
+
+        .agility-date-line {
+            margin-top: 2mm;
+            font-weight: 700;
+        }
+
+        .agility-condition-key {
+            font-size: 6.5pt;
+            line-height: 1.35;
+        }
+
+        .agility-warning {
+            margin-top: 4mm;
+            border-top: 1px solid #111827;
+            padding-top: 2mm;
+            font-weight: 700;
+            font-size: 7pt;
+        }
+
+        .agility-page-number {
+            text-align: right;
+            font-size: 6.5pt;
+            color: #4b5563;
+            margin-top: 3mm;
+        }
+
+        @media print {
+            .agility-page {
+                page-break-after: always;
+            }
+
+            .agility-page:last-child {
+                page-break-after: auto;
+            }
+
+            .agility-section,
+            .agility-notice,
+            .agility-signatures {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+        }
+    `;
+}
+
+function getAgilityConditionCode(value) {
+    const raw = String(value || "").trim();
+
+    if (!raw) return "NWT";
+
+    const codes = {
+        "Dented": "D",
+        "Scratched": "Sc",
+        "Marked": "M",
+        "Soiled": "So",
+        "Chipped": "CH",
+        "Broken": "Br",
+        "ECU": "ECU"
+    };
+
+    const parts = raw
+        .split(" - ")[0]
+        .split(",")
+        .map(function(part) {
+            return part.trim();
+        })
+        .filter(Boolean);
+
+    const mapped = parts.map(function(part) {
+        return codes[part] || part;
+    });
+
+    return mapped.length ? mapped.join(", ") : "NWT";
+}
+
+function getAgilityPackedBy(entry) {
+    const itemName = String(entry.itemName || "")
+        .trim()
+        .toUpperCase();
+
+    if (itemName === "PBO (PACKED BY OWNER BOX)") {
+        return "OWNER";
+    }
+
+    return "BISHOPS";
+}
+
+function getAgilityInventoryRowHtml(entry) {
+    const room = entry.roomName || "-";
+    const item = entry.itemName || "-";
+
+    const unitVolume = Number(
+        entry.unitVolume ||
+        entry.volume ||
+        0
+    );
+
+    const totalVolume = Number(
+        entry.totalVolume ||
+        (unitVolume * Number(entry.qty || 0)) ||
+        0
+    );
+
+    const sizeCbm = formatCbmFromCuft(unitVolume);
+    const totalCbm = formatCbmFromCuft(totalVolume);
+
+    return `
+        <tr>
+            <td>${escapeHtml(room)}</td>
+            <td>${escapeHtml(item)}</td>
+            <td class="num">${escapeHtml(sizeCbm)}</td>
+            <td class="num">${Number(entry.qty || 0)}</td>
+            <td class="num">${escapeHtml(totalCbm)}</td>
+            <td class="num">${escapeHtml(getAgilityConditionCode(entry.damage))}</td>
+            <td class="num">${escapeHtml(getAgilityPackedBy(entry))}</td>
+            <td class="num">${escapeHtml(entry.dr || entry.dR || entry.deliveryRemoval || "")}</td>
+            <td class="num">${escapeHtml(entry.load || "")}</td>
+            <td class="num">${escapeHtml(entry.unload || "")}</td>
+        </tr>
+    `;
+}
+
+function getAgilityInventoryTablesHtml(filteredItems) {
+    const activeItems = filteredItems.filter(function(entry) {
+        return entry && !entry.excluded;
+    });
+
+    const standardItems = activeItems.filter(function(entry) {
+        return String(entry.kind || "").toLowerCase() !== "misc";
+    });
+
+    const additionalItems = activeItems.filter(function(entry) {
+        return String(entry.kind || "").toLowerCase() === "misc";
+    });
+
+    const renderTableRows = function(items) {
+        if (!items.length) {
+            return `
+                <tr>
+                    <td colspan="10" style="text-align:center;color:#6b7280;">
+                        No items recorded
+                    </td>
+                </tr>
+            `;
+        }
+
+        return items.map(getAgilityInventoryRowHtml).join("");
+    };
+
+    const tableHead = `
+        <thead>
+            <tr>
+                <th>Room</th>
+                <th>Item</th>
+                <th>Size</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Cond</th>
+                <th>Packedby</th>
+                <th>D/R</th>
+                <th>Load</th>
+                <th>Unload</th>
+            </tr>
+        </thead>
+    `;
+
+    return `
+        <div class="agility-section">
+            <div class="agility-section-title">
+                Inventory for ${escapeHtml(
+                    (currentJob.customer && currentJob.customer.displayName) ||
+                    currentJob.name ||
+                    ""
+                )}
+            </div>
+
+            <div class="agility-section-body">
+                <table class="agility-inventory-table">
+                    ${tableHead}
+                    <tbody>
+                        ${renderTableRows(standardItems)}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="agility-section">
+            <div class="agility-section-title">
+                Additional Items
+            </div>
+
+            <div class="agility-section-body">
+                <table class="agility-inventory-table">
+                    ${tableHead}
+                    <tbody>
+                        ${renderTableRows(additionalItems)}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+function buildAgilityCorporatePdfContext(filteredItems) {
+    const options = ensureListedReportOptions();
+
+    const customer = currentJob.customer || {};
+    const properties = Array.isArray(currentJob.properties)
+        ? currentJob.properties
+        : [];
+
+    const collection = properties[0] || {};
+    const delivery = properties[1] || {};
+
+    const inventoryFor = [
+        customer.salutation || collection.salutation || "",
+        customer.firstName || collection.firstName || "",
+        customer.surname || collection.surname || ""
+    ]
+        .filter(Boolean)
+        .join(" ")
+        .trim() ||
+        customer.displayName ||
+        currentJob.name ||
+        "---";
+
+    const takenBy = getSurveyorDisplayName();
+
+    const takenOnSource =
+        options.agilityTakenOn ||
+        (
+            currentJob.survey &&
+            currentJob.survey.createdAt
+        ) ||
+        "";
+
+    const takenOn = takenOnSource
+        ? new Date(takenOnSource).toLocaleDateString("en-GB")
+        : "";
+
+    const fromAddress = getAgilityAddressText(collection);
+    const toAddress = getAgilityAddressText(delivery);
+
+    const agilitySummary =
+        buildAgilityInventorySummary(filteredItems);
+
+    const includedVolumeCuft =
+        Number(buildListedSummary(filteredItems).includedVolume || 0);
+
+    const totalVolumeCbm =
+        formatCbmFromCuft(includedVolumeCuft);
+
+    const collectionDate =
+        currentJob.sequences &&
+        currentJob.sequences[0] &&
+        currentJob.sequences[0].schedule
+            ? currentJob.sequences[0].schedule.moveDate || ""
+            : "";
+
+    const excludedItems = filteredItems.filter(function(entry) {
+        return entry && entry.excluded;
+    });
+
+    const excludedRows = excludedItems.length
+        ? excludedItems.map(function(entry) {
+            return `
+                <tr>
+                    <td>${escapeHtml(entry.roomName || "-")}</td>
+                    <td>${escapeHtml(
+                        String(entry.qty || 0) +
+                        " x " +
+                        String(entry.itemName || "-")
+                    )}</td>
+                </tr>
+            `;
+        }).join("")
+        : `
+            <tr>
+                <td colspan="2" style="text-align:center;color:#6b7280;">
+                    No exclusions
+                </td>
+            </tr>
+        `;
+
+    const signatureHtml =
+        currentJob.signature &&
+        currentJob.signature.image
+            ? `
+                <img
+                    src="${currentJob.signature.image}"
+                    class="agility-signature-image"
+                    alt="Authorised Client Signature"
+                >
+            `
+            : `
+                <div class="agility-signature-empty">
+                    No client signature saved
+                </div>
+            `;
+
+    const fileName =
+        "Agility_Corporate_Inventory_" +
+        makeSafePdfFilenamePart(inventoryFor) +
+        "_" +
+        makeSafePdfFilenamePart(currentJob.ref || "") +
+        ".pdf";
+
+    return {
+        filteredItems,
+        inventoryFor,
+        takenOn,
+        takenBy,
+        fromAddress,
+        toAddress,
+        totalVolumeCbm,
+        collectionDate,
+        agilitySummary,
+        excludedRows,
+        signatureHtml,
+        fileName
+    };
+}
+
+function createAgilityCorporatePdfWrapper(pdfContext) {
+    const wrapper = document.createElement("div");
+
+    wrapper.style.position = "fixed";
+    wrapper.style.left = "-10000px";
+    wrapper.style.top = "0";
+    wrapper.style.background = "#ffffff";
+    wrapper.style.zIndex = "-1";
+
+    const s = pdfContext.agilitySummary;
+
+    const packedCartonsCbm =
+        formatCbmFromCuft(s.totalPackedCartonVolume);
+
+    const packedFurnitureCbm =
+        formatCbmFromCuft(s.totalPackedFurnitureVolume);
+
+    const ownerPackedCbm =
+        formatCbmFromCuft(s.totalOwnerPackedVolume);
+
+    wrapper.innerHTML = `
+        <style>
+            ${getAgilityCorporatePdfCss()}
+        </style>
+
+        <div class="agility-pdf">
+
+            <!-- =========================================
+                 PAGE 1
+                 ========================================= -->
+
+            <div class="agility-page">
+
+                <div class="agility-header">
+                    <div class="agility-title">
+                        Agility Corporate Inventory
+                    </div>
+                </div>
+
+                <div class="agility-meta-grid">
+
+                    <div class="agility-field agility-wide">
+                        <div class="agility-field-label">
+                            Inventory For
+                        </div>
+                        <div class="agility-field-value">
+                            ${escapeHtml(pdfContext.inventoryFor)}
+                        </div>
+                    </div>
+
+                    <div class="agility-field">
+                        <div class="agility-field-label">
+                            Taken On
+                        </div>
+                        <div class="agility-field-value">
+                            ${escapeHtml(pdfContext.takenOn || "-")}
+                        </div>
+                    </div>
+
+                    <div class="agility-field">
+                        <div class="agility-field-label">
+                            Taken By
+                        </div>
+                        <div class="agility-field-value">
+                            ${escapeHtml(pdfContext.takenBy || "-")}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="agility-address-grid">
+
+                    <div class="agility-field">
+                        <div class="agility-field-label">
+                            From
+                        </div>
+                        <div class="agility-field-value">
+                            ${escapeHtml(pdfContext.fromAddress || "-")}
+                        </div>
+                    </div>
+
+                    <div class="agility-field">
+                        <div class="agility-field-label">
+                            To
+                        </div>
+                        <div class="agility-field-value">
+                            ${escapeHtml(pdfContext.toAddress || "-")}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="agility-volume-line">
+                    Volume per Inventory:
+                    ${escapeHtml(pdfContext.totalVolumeCbm)} m3
+                    from items to be moved / stored.
+                </div>
+
+                <div class="agility-date-note">
+                    We note that your requested dates are for
+                    collection on ${escapeHtml(pdfContext.collectionDate || "")}
+                    and delivery on ,
+                    we will confirm with you shortly subject to availability.
+                </div>
+
+                <div class="agility-two-column">
+
+                    <div class="agility-section">
+                        <div class="agility-section-title">
+                            Volume Breakdown in Cubic Metres
+                        </div>
+
+                        <div class="agility-section-body">
+                            <table class="agility-summary-table">
+                                <tr>
+                                    <td>Total packed cartons</td>
+                                    <td class="agility-summary-value">
+                                        ${escapeHtml(packedCartonsCbm)}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Total packed furniture</td>
+                                    <td class="agility-summary-value">
+                                        ${escapeHtml(packedFurnitureCbm)}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Total owner packed</td>
+                                    <td class="agility-summary-value">
+                                        ${escapeHtml(ownerPackedCbm)}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="agility-section">
+                        <div class="agility-section-title">
+                            Carton Quantities
+                        </div>
+
+                        <div class="agility-section-body">
+                            <table class="agility-summary-table">
+                                <tr>
+                                    <td>Owner packed cartons</td>
+                                    <td class="agility-summary-value">
+                                        ${s.ownerPackedCartons}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Owner packed MFO</td>
+                                    <td class="agility-summary-value">
+                                        —
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Bishops Packed Cartons</td>
+                                    <td class="agility-summary-value">
+                                        ${s.bishopsPackedCartons}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Bishops Packed Wardrobe Ctns</td>
+                                    <td class="agility-summary-value">
+                                        ${s.bishopsPackedWardrobeCtns}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="agility-section">
+                    <div class="agility-section-title">
+                        Exclusions
+                    </div>
+
+                    <div class="agility-section-body">
+                        <table class="agility-exclusions-table">
+                            <thead>
+                                <tr>
+                                    <th>Room</th>
+                                    <th>Item</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${pdfContext.excludedRows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="agility-notice">
+                    <div class="agility-notice-title">
+                        Important Notice
+                    </div>
+
+                    <div class="agility-notice-text">
+                        Please note that the MoD strongly recommends that you arrange
+                        insurance of your personal effects whilst they are being
+                        transported and/or stored at public expense. The carrier's
+                        liability is strictly limited and should not be relied upon
+                        for full or partial recompense of any damage or loss. In the
+                        event of loss/damage your insurance company will approach the
+                        moving company for copies of documentation and clarification
+                        of claim details. In the event of a claim being determined
+                        the insurer will subrogate the claim against the limited
+                        liability of the removal company. Although you are not obliged
+                        to take insurance for your effects, it would be appreciated if
+                        you could confirm that you understand the implications of
+                        failing to do so by providing details in the following
+                        statement which should be passed to the surveyor of the
+                        removal company at the time of the survey.
+                    </div>
+                </div>
+
+                <div class="agility-notice">
+                    <div class="agility-notice-title">
+                        Insurance Statement
+                    </div>
+
+                    <div class="agility-notice-text">
+                        We must advise you that household contents insurance that
+                        offers a removal extension clause may have a high excess and
+                        may have terms that do not cover you correctly in the event
+                        of a claim, this would not occur with correct and adequate
+                        insurance from a specialist transit insurance company. I
+                        have made my own provision for transit insurance and/or
+                        storage insurance cover or I am covered by my nominated
+                        insurer. I accept that should any damage or loss occur I am
+                        expected to claim against my own insurance policy and that
+                        any such claim may impact on my own insurance premiums.
+                    </div>
+                </div>
+
+                <div class="agility-notice">
+                    <div class="agility-notice-title">
+                        JSP800 and Prohibited List
+                    </div>
+
+                    <div class="agility-notice-text">
+                        I acknowledge that I have visited
+                        https://grms.agilitylogistics.com and viewed the JSP 800
+                        Removal Policy or confirm I will do so. I acknowledge that
+                        within JSP800 I have read and understood the prohibited
+                        list which is published on page 44 of the document.
+                    </div>
+                </div>
+
+                <div class="agility-signatures">
+
+                    <div>
+                        <div class="agility-signature-label">
+                            Authorised Clients Signature
+                        </div>
+
+                        <div class="agility-signature-box">
+                            ${pdfContext.signatureHtml}
+                        </div>
+
+                        <div class="agility-date-line">
+                            Date:
+                            ${
+                                currentJob.signature &&
+                                currentJob.signature.signedAt
+                                    ? escapeHtml(
+                                        new Date(
+                                            currentJob.signature.signedAt
+                                        ).toLocaleDateString("en-GB")
+                                    )
+                                    : ""
+                            }
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="agility-signature-label">
+                            Surveyors Signature
+                        </div>
+
+                        <div class="agility-signature-box">
+                            ${getPrintableSurveyorSignatureHtml()}
+                        </div>
+
+                        <div class="agility-date-line">
+                            Surveyor:
+                            ${getPrintableSurveyorNameHtml()}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="agility-section">
+                    <div class="agility-section-title">
+                        Condition Indicator
+                    </div>
+
+                    <div class="agility-section-body agility-condition-key">
+                        no reference assumes normal household wear (NWT).<br><br>
+
+                        NWT - Normal Wear and Tear &nbsp;&nbsp;
+                        F - Faded &nbsp;&nbsp;
+                        Br - Broken &nbsp;&nbsp;
+                        So - Soiled &nbsp;&nbsp;
+                        Sc - Scratched<br>
+
+                        CU - Contents/Condition Unknown &nbsp;&nbsp;
+                        G - Gouged &nbsp;&nbsp;
+                        M - Marked &nbsp;&nbsp;
+                        Be - Bent &nbsp;&nbsp;
+                        R - Rusty<br>
+
+                        CH - Chipped &nbsp;&nbsp;
+                        L - Loose &nbsp;&nbsp;
+                        T - Torn &nbsp;&nbsp;
+                        W - Worn<br>
+
+                        ECU - Electrical Condition Unknown &nbsp;&nbsp;
+                        D - Dented
+                    </div>
+                </div>
+
+                <div class="agility-warning">
+                    Please note: if any items are added or amended to this list
+                    at the time of loading this will affect your volume and may
+                    take you over your allowances and increase charges.
+                </div>
+
+                <div class="agility-page-number">
+                    Page 1 of 2
+                </div>
+
+            </div>
+
+            <!-- =========================================
+                 PAGE 2
+                 ========================================= -->
+
+            <div class="agility-page">
+
+                ${getAgilityInventoryTablesHtml(
+                    pdfContext.filteredItems
+                )}
+
+                <div class="agility-page-number">
+                    Page 2 of 2
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+    return wrapper;
+}
+
+async function createAgilityCorporatePdfFile(filteredItems) {
+    const pdfContext =
+        buildAgilityCorporatePdfContext(filteredItems);
+
+    const wrapper =
+        createAgilityCorporatePdfWrapper(pdfContext);
+
+    document.body.appendChild(wrapper);
+
+    const pdfElement =
+        wrapper.querySelector(".agility-pdf");
+
+    if (!pdfElement) {
+        wrapper.remove();
+        throw new Error("Agility PDF element could not be created.");
+    }
+
+    try {
+        const pdfBlob = await html2pdf()
+            .set(
+                getListedInventoryPdfOptions(
+                    pdfContext.fileName
+                )
+            )
+            .from(pdfElement)
+            .outputPdf("blob");
+
+        return {
+            pdfContext: pdfContext,
+            pdfBlob: pdfBlob
+        };
+
+    } finally {
+        wrapper.remove();
+    }
+}
+
 function createListedInventoryPdfWrapper(pdfContext) {
     const wrapper = document.createElement("div");
     wrapper.style.position = "fixed";
@@ -11523,8 +12469,82 @@ function createListedInventoryPdfWrapper(pdfContext) {
 
     return wrapper;
 }
+async function shareAgilityCorporateInventoryPdf() {
+    clearListedInventoryPreparedShare();
 
+    if (!currentJob) {
+        await appAlert(
+            "No active job found.",
+            "Share PDF"
+        );
+        return;
+    }
+
+    if (typeof html2pdf === "undefined") {
+        await appAlert(
+            "PDF generator is not loaded.",
+            "PDF Library Missing"
+        );
+        return;
+    }
+
+    const allItems =
+        getListedInventoryItems();
+
+    const filteredItems =
+        filterListedInventoryItems(allItems);
+
+    if (!filteredItems.length) {
+        await appAlert(
+            "No listed inventory to share.",
+            "Export Unavailable"
+        );
+        return;
+    }
+
+    try {
+        const result =
+            await createAgilityCorporatePdfFile(
+                filteredItems
+            );
+
+        const pdfFile = new File(
+            [result.pdfBlob],
+            result.pdfContext.fileName,
+            { type: "application/pdf" }
+        );
+
+        listedInventoryPreparedSharePayload = {
+            files: [pdfFile],
+            title: result.pdfContext.fileName,
+            text: "MovePilot Agility Corporate Inventory PDF"
+        };
+
+        listedInventoryPreparedShareFileName =
+            result.pdfContext.fileName;
+
+        openListedPdfReadyModal();
+        bindPdfShareButton(pdfFile);
+
+    } catch (err) {
+        console.error(
+            "Agility PDF share failed:",
+            err
+        );
+
+        await appAlert(
+            "The Agility PDF could not be prepared: " +
+            (err && err.message ? err.message : err),
+            "Agility PDF Failed"
+        );
+    }
+}
 async function shareListedInventoryPdf() {
+        if (
+        ensureListedReportOptions().reportFormat === "agility"
+    ) {
+        return shareAgilityCorporateInventoryPdf();
+    }
     clearListedInventoryPreparedShare();
 
     if (!currentJob) {
@@ -11637,7 +12657,113 @@ async function sharePreparedListedInventoryPdf(event) {
     return tryShareListedInventoryPdfFromGesture(preparedFile, downloadLink, event);
 }
 
+async function saveAgilityCorporateInventoryPdfToDevice() {
+    if (!currentJob) {
+        await appAlert(
+            "No active job is open, so the PDF cannot be saved.",
+            "PDF Save Unavailable"
+        );
+        return;
+    }
+
+    if (typeof html2pdf === "undefined") {
+        await appAlert(
+            "PDF generator is not loaded.",
+            "PDF Library Missing"
+        );
+        return;
+    }
+
+    const allItems =
+        getListedInventoryItems();
+
+    const filteredItems =
+        filterListedInventoryItems(allItems);
+
+    if (!filteredItems.length) {
+        await appAlert(
+            "No listed inventory to save.",
+            "Export Unavailable"
+        );
+        return;
+    }
+
+    let result = null;
+
+    try {
+        await appAlert(
+            "Creating Agility PDF now. This may take a few seconds on older tablets.",
+            "Agility PDF"
+        );
+
+        result =
+            await createAgilityCorporatePdfFile(
+                filteredItems
+            );
+
+        const pdfUrl =
+            URL.createObjectURL(
+                result.pdfBlob
+            );
+
+        const downloadLink =
+            document.createElement("a");
+
+        downloadLink.href = pdfUrl;
+        downloadLink.download =
+            result.pdfContext.fileName;
+        downloadLink.style.display = "none";
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
+
+        let openedFallback = false;
+
+        try {
+            const fallbackWindow =
+                window.open(
+                    pdfUrl,
+                    "_blank"
+                );
+
+            openedFallback =
+                !!fallbackWindow;
+
+        } catch (_) {
+            openedFallback = false;
+        }
+
+        setTimeout(function() {
+            URL.revokeObjectURL(pdfUrl);
+        }, 120000);
+
+        await appAlert(
+            openedFallback
+                ? "Agility PDF created. Use the opened PDF tab to save or share it."
+                : "Agility PDF created. If it did not appear in Downloads, use Review / Print PDF as a fallback.",
+            "Agility PDF Complete"
+        );
+
+    } catch (err) {
+        console.error(
+            "Agility PDF save failed:",
+            err
+        );
+
+        await appAlert(
+            "The Agility PDF could not be saved: " +
+            (err && err.message ? err.message : err),
+            "Agility PDF Failed"
+        );
+    }
+}
 async function saveListedInventoryPdfToDevice() {
+        if (
+        ensureListedReportOptions().reportFormat === "agility"
+    ) {
+        return saveAgilityCorporateInventoryPdfToDevice();
+    }
     try {
         if (typeof closeAllMovePilotModals === "function") {
             closeAllMovePilotModals();
@@ -11725,8 +12851,129 @@ async function saveListedInventoryPdfToDevice() {
         wrapper.remove();
     }
 }
+async function printAgilityCorporateInventoryPdf() {
+    closeAllMovePilotModals();
+
+    if (!currentJob) return;
+
+    const allItems =
+        getListedInventoryItems();
+
+    const filteredItems =
+        filterListedInventoryItems(allItems);
+
+    if (!filteredItems.length) {
+        await appAlert(
+            "No listed inventory to export.",
+            "Export Unavailable"
+        );
+        return;
+    }
+
+    const pdfContext =
+        buildAgilityCorporatePdfContext(
+            filteredItems
+        );
+
+    const wrapper =
+        createAgilityCorporatePdfWrapper(
+            pdfContext
+        );
+
+    const printWindow =
+        window.open("", "_blank");
+
+    if (!printWindow) {
+        await appAlert(
+            "The print window could not be opened. Please allow pop-ups for this app and try again.",
+            "Print Window Blocked"
+        );
+        return;
+    }
+
+    const documentHtml =
+        wrapper.innerHTML;
+
+    wrapper.remove();
+
+    printWindow.document.open();
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>
+                Agility Corporate Inventory
+            </title>
+
+            <style>
+                ${getAgilityCorporatePdfCss()}
+
+                @page {
+                    size: A4 portrait;
+                    margin: 10mm;
+                }
+
+                body {
+                    margin: 0;
+                    background: #ffffff;
+                }
+
+                .agility-pdf {
+                    width: 100%;
+                }
+            </style>
+        </head>
+
+        <body>
+            ${documentHtml}
+
+            <script>
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                    }, 400);
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+
+    if (movePilotPrintWindowWatcher) {
+        clearInterval(
+            movePilotPrintWindowWatcher
+        );
+
+        movePilotPrintWindowWatcher = null;
+    }
+
+    movePilotPrintWindowWatcher =
+        setInterval(function() {
+
+            if (printWindow.closed) {
+
+                clearInterval(
+                    movePilotPrintWindowWatcher
+                );
+
+                movePilotPrintWindowWatcher =
+                    null;
+
+                runPostPrintCleanup();
+            }
+
+        }, 500);
+}
 // Browser print/review fallback
 async function printListedInventoryPdf() {
+        if (
+        ensureListedReportOptions().reportFormat === "agility"
+    ) {
+        return printAgilityCorporateInventoryPdf();
+    }
     closeAllMovePilotModals();
     if (!currentJob) return;
 
