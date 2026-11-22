@@ -8111,6 +8111,14 @@ function ensureListedReportOptions() {
         currentJob.listedReportOptions.showCbmLineItems = false;
     }
 
+    if (typeof currentJob.listedReportOptions.agilityCollectionDate !== "string") {
+        currentJob.listedReportOptions.agilityCollectionDate = "";
+    }
+
+    if (typeof currentJob.listedReportOptions.agilityDeliveryDate !== "string") {
+        currentJob.listedReportOptions.agilityDeliveryDate = "";
+    }
+    
     if (
         currentJob.listedReportOptions.reportFormat !== "standard" &&
         currentJob.listedReportOptions.reportFormat !== "agility"
@@ -12042,12 +12050,7 @@ function createAgilityCorporatePdfWrapper(pdfContext) {
 
             <div class="agility-page">
 
-                <div class="agility-header">
-                    <div class="agility-title">
-                        Agility Corporate Inventory
-                    </div>
-                </div>
-
+                
                 <div class="agility-meta-grid">
 
                     <div class="agility-field agility-wide">
