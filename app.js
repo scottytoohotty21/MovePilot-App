@@ -8336,7 +8336,7 @@ function updateListedReportFormatUI() {
     const delivery = properties[1] || {};
 
     // -------------------------------------------------
-    // Inventory For
+    // INVENTORY FOR
     // -------------------------------------------------
 
     const inventoryForParts = [
@@ -8352,13 +8352,13 @@ function updateListedReportFormatUI() {
         "";
 
     // -------------------------------------------------
-    // Taken By
+    // TAKEN BY
     // -------------------------------------------------
 
     const takenBy = getSurveyorDisplayName();
 
     // -------------------------------------------------
-    // Taken On
+    // TAKEN ON
     // -------------------------------------------------
 
     const takenOnSource =
@@ -8374,14 +8374,14 @@ function updateListedReportFormatUI() {
         : "";
 
     // -------------------------------------------------
-    // Addresses
+    // ADDRESSES
     // -------------------------------------------------
 
     const fromAddress = getAgilityAddressText(collection);
     const toAddress = getAgilityAddressText(delivery);
 
     // -------------------------------------------------
-    // Inventory calculations
+    // INVENTORY
     // -------------------------------------------------
 
     let listedItems = [];
@@ -8395,10 +8395,13 @@ function updateListedReportFormatUI() {
         );
     }
 
+    // -------------------------------------------------
+    // AGILITY SUMMARY
+    // -------------------------------------------------
+
     const agilitySummary =
         buildAgilityInventorySummary(listedItems);
 
-    // Existing total inventory volume
     let includedVolumeCuft = 0;
 
     try {
@@ -8432,9 +8435,23 @@ function updateListedReportFormatUI() {
             agilitySummary.totalOwnerPackedVolume
         );
 
+    // -------------------------------------------------
+    // EXCLUSIONS
+    // -------------------------------------------------
+
+    const excludedItems = listedItems.filter(function(entry) {
+        return !!entry && !!entry.excluded;
+    });
+
+    // -------------------------------------------------
+    // RENDER AGILITY PANEL
+    // -------------------------------------------------
+
     if (agilityDetails) {
         agilityDetails.innerHTML = `
             <div class="grid grid-cols-12 gap-3">
+
+                <!-- INVENTORY FOR -->
 
                 <div class="col-span-12">
                     <label class="mini-label">Inventory For</label>
@@ -8442,6 +8459,8 @@ function updateListedReportFormatUI() {
                         ${escapeHtml(inventoryFor || "-")}
                     </div>
                 </div>
+
+                <!-- TAKEN ON / BY -->
 
                 <div class="col-span-6">
                     <label class="mini-label">Taken On</label>
@@ -8457,6 +8476,8 @@ function updateListedReportFormatUI() {
                     </div>
                 </div>
 
+                <!-- FROM / TO -->
+
                 <div class="col-span-6">
                     <label class="mini-label">From</label>
                     <div class="input-field bg-slate-50 min-h-[44px]">
@@ -8471,6 +8492,8 @@ function updateListedReportFormatUI() {
                     </div>
                 </div>
 
+                <!-- TOTAL VOLUME -->
+
                 <div class="col-span-12">
                     <label class="mini-label">Volume per Inventory</label>
                     <div class="input-field bg-slate-50 font-black">
@@ -8478,9 +8501,7 @@ function updateListedReportFormatUI() {
                     </div>
                 </div>
 
-                <!-- =====================================
-                     AGILITY VOLUME BREAKDOWN
-                     ===================================== -->
+                <!-- VOLUME BREAKDOWN -->
 
                 <div class="col-span-12 mt-2">
                     <div class="text-[10px] font-black text-slate-400 uppercase">
@@ -8515,9 +8536,7 @@ function updateListedReportFormatUI() {
                     </div>
                 </div>
 
-                <!-- =====================================
-                     AGILITY CARTON QUANTITIES
-                     ===================================== -->
+                <!-- CARTON QUANTITIES -->
 
                 <div class="col-span-12 mt-2">
                     <div class="text-[10px] font-black text-slate-400 uppercase">
@@ -8559,6 +8578,60 @@ function updateListedReportFormatUI() {
                     <div class="input-field bg-slate-50 font-black">
                         ${agilitySummary.bishopsPackedWardrobeCtns}
                     </div>
+                </div>
+
+                <!-- EXCLUSIONS -->
+
+                <div class="col-span-12 mt-4">
+
+                    <div class="text-[10px] font-black text-slate-400 uppercase mb-2">
+                        Exclusions
+                    </div>
+
+                    <div class="border border-slate-200 rounded-lg overflow-hidden">
+
+                        <div class="grid grid-cols-12 bg-slate-100 border-b border-slate-200">
+                            <div class="col-span-5 px-3 py-2 text-[9px] font-black uppercase text-slate-500">
+                                Room
+                            </div>
+
+                            <div class="col-span-7 px-3 py-2 text-[9px] font-black uppercase text-slate-500">
+                                Item
+                            </div>
+                        </div>
+
+                        ${
+                            excludedItems.length
+                                ? excludedItems.map(function(entry) {
+                                    const room =
+                                        entry.roomName ||
+                                        entry.floorName ||
+                                        "-";
+
+                                    const item =
+                                        `${Number(entry.qty || 0)} x ${String(entry.itemName || "-")}`;
+
+                                    return `
+                                        <div class="grid grid-cols-12 border-b border-slate-100 last:border-b-0">
+                                            <div class="col-span-5 px-3 py-2 text-[10px] font-bold text-slate-700">
+                                                ${escapeHtml(room)}
+                                            </div>
+
+                                            <div class="col-span-7 px-3 py-2 text-[10px] font-bold text-slate-700">
+                                                ${escapeHtml(item)}
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join("")
+                                : `
+                                    <div class="px-3 py-3 text-[10px] font-bold text-slate-400">
+                                        No exclusions recorded
+                                    </div>
+                                `
+                        }
+
+                    </div>
+
                 </div>
 
             </div>
