@@ -11984,11 +11984,10 @@ function buildAgilityCorporatePdfContext(filteredItems) {
         formatCbmFromCuft(includedVolumeCuft);
 
     const collectionDate =
-        currentJob.sequences &&
-        currentJob.sequences[0] &&
-        currentJob.sequences[0].schedule
-            ? currentJob.sequences[0].schedule.moveDate || ""
-            : "";
+    options.agilityCollectionDate || "";
+
+const deliveryDate =
+    options.agilityDeliveryDate || "";
 
     const excludedItems = filteredItems.filter(function(entry) {
         return entry && entry.excluded;
@@ -12047,6 +12046,7 @@ function buildAgilityCorporatePdfContext(filteredItems) {
         toAddress,
         totalVolumeCbm,
         collectionDate,
+        deliveryDate,
         agilitySummary,
         excludedRows,
         signatureHtml,
@@ -12149,9 +12149,9 @@ function createAgilityCorporatePdfWrapper(pdfContext) {
 
                 <div class="agility-date-note">
                     We note that your requested dates are for
-                    collection on ${escapeHtml(pdfContext.collectionDate || "")}
-                    and delivery on ,
-                    we will confirm with you shortly subject to availability.
+collection on ${escapeHtml(pdfContext.collectionDate || "________________")}
+and delivery on ${escapeHtml(pdfContext.deliveryDate || "________________")},
+we will confirm with you shortly subject to availability.
                 </div>
 
                 <div class="agility-two-column">
