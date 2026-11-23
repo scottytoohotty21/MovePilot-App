@@ -8162,6 +8162,21 @@ function handleListedCbmLineItemsToggle(checked) {
     saveToDevice();
     renderListedInventory();
 }
+function handleListedAgilityCollectionDateChange(value) {
+    const options = ensureListedReportOptions();
+
+    options.agilityCollectionDate = value || "";
+
+    saveToDevice();
+}
+
+function handleListedAgilityDeliveryDateChange(value) {
+    const options = ensureListedReportOptions();
+
+    options.agilityDeliveryDate = value || "";
+
+    saveToDevice();
+}
 function handleListedReportFormatChange(value) {
     const options = ensureListedReportOptions();
 
