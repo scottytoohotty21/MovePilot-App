@@ -11933,6 +11933,24 @@ function getAgilityInventoryTablesHtml(filteredItems) {
         </div>
     `;
 }
+function formatAgilityDateForPdf(value) {
+    const raw = String(value || "").trim();
+
+    if (!raw) {
+        return "";
+    }
+
+    const parts = raw.split("-");
+
+    if (
+        parts.length === 3 &&
+        parts[0].length === 4
+    ) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+
+    return raw;
+}
 
 function buildAgilityCorporatePdfContext(filteredItems) {
     const options = ensureListedReportOptions();
@@ -11984,10 +12002,14 @@ function buildAgilityCorporatePdfContext(filteredItems) {
         formatCbmFromCuft(includedVolumeCuft);
 
     const collectionDate =
-    options.agilityCollectionDate || "";
+    formatAgilityDateForPdf(
+        options.agilityCollectionDate
+    );
 
 const deliveryDate =
-    options.agilityDeliveryDate || "";
+    formatAgilityDateForPdf(
+        options.agilityDeliveryDate
+    );
 
     const excludedItems = filteredItems.filter(function(entry) {
         return entry && entry.excluded;
