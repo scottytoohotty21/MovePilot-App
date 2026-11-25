@@ -8609,15 +8609,14 @@ function updateListedReportFormatUI() {
                         ${agilitySummary.ownerPackedCartons}
                     </div>
                 </div>
-
-                <div class="col-span-3">
-                    <label class="mini-label">
-                        Owner Packed MFO
-                    </label>
-                    <div class="input-field bg-slate-50 font-black">
-                        —
-                    </div>
-                </div>
+<div class="col-span-3">
+    <label class="mini-label">
+        Owner Packed MFO
+    </label>
+    <div class="input-field bg-slate-50 font-black">
+        ${summary.ownerPackedMfo}
+    </div>
+</div>
 
                 <div class="col-span-3">
                     <label class="mini-label">
