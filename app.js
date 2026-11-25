@@ -12235,11 +12235,11 @@ we will confirm with you shortly subject to availability.
                                 </tr>
 
                                 <tr>
-                                    <td>Owner packed MFO</td>
-                                    <td class="agility-summary-value">
-                                        —
-                                    </td>
-                                </tr>
+    <td>Owner packed MFO</td>
+    <td class="agility-summary-value">
+        ${s.ownerPackedMfo}
+    </td>
+</tr>
 
                                 <tr>
                                     <td>Bishops Packed Cartons</td>
