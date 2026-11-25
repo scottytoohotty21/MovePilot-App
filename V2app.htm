@@ -404,6 +404,7 @@ const furnitureDB = [
     {item:"Mattress (Double)", volume:30},
     {item:"Mattress (Queensize)", volume:30},
     {item:"Mattress (Kingsize)", volume:30},
+    {item:"MFO", volume:8},
     {item:"Microwave", volume:5},
     {item:"Mirror", volume:2},
     {item:"Mirror (Medium)", volume:5},
@@ -637,6 +638,7 @@ const inventoryCategories = {
         "Mattress (Double)",
         "Mattress (Queensize)",
         "Mattress (Kingsize)",
+        "MFO",
         "Microwave",
         "Mirror",
         "Mirror (Medium)",
@@ -800,6 +802,7 @@ const inventoryCategories = {
         "Mattress (Double)",
         "Mattress (Queensize)",
         "Mattress (Kingsize)",
+        "MFO",
         "Mirror",
         "Mirror (Medium)",
         "Mirror (Large)",
@@ -911,6 +914,7 @@ const inventoryCategories = {
         "Lamp (Table)",
         "Light Fitting",
         "Mannequin / Dress Stand",
+        "MFO",
         "Mirror",
         "Mirror (Medium)",
         "Mirror (Large)",
@@ -8233,7 +8237,7 @@ function buildAgilityInventorySummary(items) {
 
         totalOwnerPackedVolume: 0,
 
-        ownerPackedMfo: null
+        ownerPackedMfo: 0
     };
 
     if (!Array.isArray(items)) {
@@ -8274,6 +8278,14 @@ function buildAgilityInventorySummary(items) {
             summary.totalPackedCartonVolume += totalVolume;
             return;
         }
+        // -------------------------------------------------
+        // Owner packed MFO
+        // -------------------------------------------------
+        if (itemName === "MFO") {
+            summary.ownerPackedMfo += qty;
+            summary.totalOwnerPackedVolume += totalVolume;
+            return;
+        }
 
         // -------------------------------------------------
         // Standard Bishops packed cartons
@@ -8296,8 +8308,8 @@ function buildAgilityInventorySummary(items) {
      * For now, furniture volume is the included inventory
      * volume minus the carton volume we can positively identify.
      *
-     * MFO is deliberately NOT included yet because we still
-     * need to confirm exactly what Agility means by MFO.
+     * MFO is now treated separately as owner-packed MFO,
+     * with its volume included in total owner-packed volume.
      */
     let includedVolumeCuft = 0;
 
@@ -8314,11 +8326,11 @@ function buildAgilityInventorySummary(items) {
     }
 
     summary.totalPackedFurnitureVolume = Math.max(
-    0,
-    includedVolumeCuft
-        - summary.totalPackedCartonVolume
-        - summary.totalOwnerPackedVolume
-);
+        0,
+        includedVolumeCuft
+            - summary.totalPackedCartonVolume
+            - summary.totalOwnerPackedVolume
+    );
 
     return summary;
 }
@@ -8597,15 +8609,14 @@ function updateListedReportFormatUI() {
                         ${agilitySummary.ownerPackedCartons}
                     </div>
                 </div>
-
-                <div class="col-span-3">
-                    <label class="mini-label">
-                        Owner Packed MFO
-                    </label>
-                    <div class="input-field bg-slate-50 font-black">
-                        —
-                    </div>
-                </div>
+<div class="col-span-3">
+    <label class="mini-label">
+        Owner Packed MFO
+    </label>
+    <div class="input-field bg-slate-50 font-black">
+        ${summary.ownerPackedMfo}
+    </div>
+</div>
 
                 <div class="col-span-3">
                     <label class="mini-label">
@@ -12470,6 +12481,124 @@ async function createAgilityCorporatePdfFile(filteredItems) {
     }
 }
 
+function getAgilityDrValue(entry) {
+    if (entry && entry.dismantle === true) {
+        return "Yes";
+    }
+
+    return "N/A";
+}
+
+function getAgilityInventoryRowHtml(entry) {
+    const room = entry.roomName || "";
+    const item = entry.itemName || entry.displayName || entry.item || "";
+    const size = entry.unitVolume || "";
+    const qty = entry.qty || "";
+    const total = entry.totalVolume || "";
+    const cond = entry.damage || "";
+    const packedBy = "";
+    const dr = getAgilityDrValue(entry);
+    const load = "";
+    const unload = "";
+
+    return `
+        <tr>
+            <td>${escapeHtml(room)}</td>
+            <td>${escapeHtml(item)}</td>
+            <td class="num">${escapeHtml(String(size))}</td>
+            <td class="num">${escapeHtml(String(qty))}</td>
+            <td class="num">${escapeHtml(String(total))}</td>
+            <td>${escapeHtml(cond)}</td>
+            <td>${escapeHtml(packedBy)}</td>
+            <td class="num">${escapeHtml(dr)}</td>
+            <td class="num">${escapeHtml(load)}</td>
+            <td class="num">${escapeHtml(unload)}</td>
+        </tr>
+    `;
+}
+
+function getAgilityInventoryTablesHtml(filteredItems) {
+    const items = Array.isArray(filteredItems) ? filteredItems : [];
+
+    const inventoryRows = items
+        .map(function(entry) {
+            return getAgilityInventoryRowHtml(entry);
+        })
+        .join("");
+
+    const additionalRows = Array.from({ length: 14 }, function() {
+        return `
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class="num">N/A</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        `;
+    }).join("");
+
+    return `
+        <div class="agility-inventory-section">
+
+            <div class="agility-inventory-title">
+                Inventory for
+            </div>
+
+            <table class="agility-inventory-table">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Item</th>
+                        <th>Size</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                        <th>Cond</th>
+                        <th>Packedby</th>
+                        <th>D/R</th>
+                        <th>Load</th>
+                        <th>Unload</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${inventoryRows}
+                </tbody>
+            </table>
+
+            <div class="agility-additional-title">
+                Additional Items
+            </div>
+
+            <table class="agility-inventory-table">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Item</th>
+                        <th>Size</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                        <th>Cond</th>
+                        <th>Packedby</th>
+                        <th>D/R</th>
+                        <th>Load</th>
+                        <th>Unload</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${additionalRows}
+                </tbody>
+            </table>
+
+        </div>
+    `;
+}
 function createListedInventoryPdfWrapper(pdfContext) {
     const wrapper = document.createElement("div");
     wrapper.style.position = "fixed";
@@ -12495,6 +12624,8 @@ function createListedInventoryPdfWrapper(pdfContext) {
             </div>
 
             ${pdfContext.sectionsHtml}
+
+${getAgilityInventoryTablesHtml(pdfContext.filteredItems)}
 
             <div class="pdf-footer-grid">
                 <div class="pdf-card">
