@@ -12470,6 +12470,124 @@ async function createAgilityCorporatePdfFile(filteredItems) {
     }
 }
 
+function getAgilityDrValue(entry) {
+    if (entry && entry.dismantle === true) {
+        return "Yes";
+    }
+
+    return "N/A";
+}
+
+function getAgilityInventoryRowHtml(entry) {
+    const room = entry.roomName || "";
+    const item = entry.itemName || entry.displayName || entry.item || "";
+    const size = entry.unitVolume || "";
+    const qty = entry.qty || "";
+    const total = entry.totalVolume || "";
+    const cond = entry.damage || "";
+    const packedBy = "";
+    const dr = getAgilityDrValue(entry);
+    const load = "";
+    const unload = "";
+
+    return `
+        <tr>
+            <td>${escapeHtml(room)}</td>
+            <td>${escapeHtml(item)}</td>
+            <td class="num">${escapeHtml(String(size))}</td>
+            <td class="num">${escapeHtml(String(qty))}</td>
+            <td class="num">${escapeHtml(String(total))}</td>
+            <td>${escapeHtml(cond)}</td>
+            <td>${escapeHtml(packedBy)}</td>
+            <td class="num">${escapeHtml(dr)}</td>
+            <td class="num">${escapeHtml(load)}</td>
+            <td class="num">${escapeHtml(unload)}</td>
+        </tr>
+    `;
+}
+
+function getAgilityInventoryTablesHtml(filteredItems) {
+    const items = Array.isArray(filteredItems) ? filteredItems : [];
+
+    const inventoryRows = items
+        .map(function(entry) {
+            return getAgilityInventoryRowHtml(entry);
+        })
+        .join("");
+
+    const additionalRows = Array.from({ length: 14 }, function() {
+        return `
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class="num">N/A</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        `;
+    }).join("");
+
+    return `
+        <div class="agility-inventory-section">
+
+            <div class="agility-inventory-title">
+                Inventory for
+            </div>
+
+            <table class="agility-inventory-table">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Item</th>
+                        <th>Size</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                        <th>Cond</th>
+                        <th>Packedby</th>
+                        <th>D/R</th>
+                        <th>Load</th>
+                        <th>Unload</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${inventoryRows}
+                </tbody>
+            </table>
+
+            <div class="agility-additional-title">
+                Additional Items
+            </div>
+
+            <table class="agility-inventory-table">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Item</th>
+                        <th>Size</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                        <th>Cond</th>
+                        <th>Packedby</th>
+                        <th>D/R</th>
+                        <th>Load</th>
+                        <th>Unload</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${additionalRows}
+                </tbody>
+            </table>
+
+        </div>
+    `;
+}
 function createListedInventoryPdfWrapper(pdfContext) {
     const wrapper = document.createElement("div");
     wrapper.style.position = "fixed";
@@ -12495,6 +12613,8 @@ function createListedInventoryPdfWrapper(pdfContext) {
             </div>
 
             ${pdfContext.sectionsHtml}
+
+${getAgilityInventoryTablesHtml(pdfContext.filteredItems)}
 
             <div class="pdf-footer-grid">
                 <div class="pdf-card">
