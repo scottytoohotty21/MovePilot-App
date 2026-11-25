@@ -8237,7 +8237,7 @@ function buildAgilityInventorySummary(items) {
 
         totalOwnerPackedVolume: 0,
 
-        ownerPackedMfo: 0
+        ownerPackedMfo: null
     };
 
     if (!Array.isArray(items)) {
@@ -8278,14 +8278,6 @@ function buildAgilityInventorySummary(items) {
             summary.totalPackedCartonVolume += totalVolume;
             return;
         }
-        // -------------------------------------------------
-        // Owner packed MFO
-        // -------------------------------------------------
-        if (itemName === "MFO") {
-            summary.ownerPackedMfo += qty;
-            summary.totalOwnerPackedVolume += totalVolume;
-            return;
-        }
 
         // -------------------------------------------------
         // Standard Bishops packed cartons
@@ -8308,8 +8300,8 @@ function buildAgilityInventorySummary(items) {
      * For now, furniture volume is the included inventory
      * volume minus the carton volume we can positively identify.
      *
-     * MFO is now treated separately as owner-packed MFO,
-     * with its volume included in total owner-packed volume.
+     * MFO is deliberately NOT included yet because we still
+     * need to confirm exactly what Agility means by MFO.
      */
     let includedVolumeCuft = 0;
 
@@ -8326,11 +8318,11 @@ function buildAgilityInventorySummary(items) {
     }
 
     summary.totalPackedFurnitureVolume = Math.max(
-        0,
-        includedVolumeCuft
-            - summary.totalPackedCartonVolume
-            - summary.totalOwnerPackedVolume
-    );
+    0,
+    includedVolumeCuft
+        - summary.totalPackedCartonVolume
+        - summary.totalOwnerPackedVolume
+);
 
     return summary;
 }
@@ -8609,14 +8601,15 @@ function updateListedReportFormatUI() {
                         ${agilitySummary.ownerPackedCartons}
                     </div>
                 </div>
-<div class="col-span-3">
-    <label class="mini-label">
-        Owner Packed MFO
-    </label>
-    <div class="input-field bg-slate-50 font-black">
-        ${summary.ownerPackedMfo}
-    </div>
-</div>
+
+                <div class="col-span-3">
+                    <label class="mini-label">
+                        Owner Packed MFO
+                    </label>
+                    <div class="input-field bg-slate-50 font-black">
+                        —
+                    </div>
+                </div>
 
                 <div class="col-span-3">
                     <label class="mini-label">
