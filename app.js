@@ -8237,7 +8237,7 @@ function buildAgilityInventorySummary(items) {
 
         totalOwnerPackedVolume: 0,
 
-        ownerPackedMfo: null
+        ownerPackedMfo: 0
     };
 
     if (!Array.isArray(items)) {
@@ -8278,6 +8278,14 @@ function buildAgilityInventorySummary(items) {
             summary.totalPackedCartonVolume += totalVolume;
             return;
         }
+        // -------------------------------------------------
+        // Owner packed MFO
+        // -------------------------------------------------
+        if (itemName === "MFO") {
+            summary.ownerPackedMfo += qty;
+            summary.totalOwnerPackedVolume += totalVolume;
+            return;
+        }
 
         // -------------------------------------------------
         // Standard Bishops packed cartons
@@ -8300,8 +8308,8 @@ function buildAgilityInventorySummary(items) {
      * For now, furniture volume is the included inventory
      * volume minus the carton volume we can positively identify.
      *
-     * MFO is deliberately NOT included yet because we still
-     * need to confirm exactly what Agility means by MFO.
+     * MFO is now treated separately as owner-packed MFO,
+     * with its volume included in total owner-packed volume.
      */
     let includedVolumeCuft = 0;
 
@@ -8318,11 +8326,11 @@ function buildAgilityInventorySummary(items) {
     }
 
     summary.totalPackedFurnitureVolume = Math.max(
-    0,
-    includedVolumeCuft
-        - summary.totalPackedCartonVolume
-        - summary.totalOwnerPackedVolume
-);
+        0,
+        includedVolumeCuft
+            - summary.totalPackedCartonVolume
+            - summary.totalOwnerPackedVolume
+    );
 
     return summary;
 }
