@@ -11634,20 +11634,29 @@ function getAgilityCorporatePdfCss() {
         }
 
         .agility-address-grid {
+    display: block;
     margin-bottom: 3mm;
 }
 
 .agility-address-block {
-    margin-bottom: 3mm;
+    border: 1px solid #9ca3af;
+    min-height: 10mm;
+    padding: 2mm;
+    box-sizing: border-box;
+    margin-bottom: 2mm;
 }
 
 .agility-address-block .agility-field-label {
+    display: inline;
     font-size: 7.5pt;
     font-weight: 900;
-    margin-bottom: 1mm;
+    text-transform: uppercase;
+    color: #4b5563;
+    margin-right: 2mm;
 }
 
 .agility-address-block .agility-field-value {
+    display: inline;
     font-size: 9pt;
     font-weight: 700;
     line-height: 1.3;
