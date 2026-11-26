@@ -830,16 +830,37 @@ Enter as: Surname, First Name
         <div class="damage-title">Condition Report</div>
 <div class="damage-subtitle">Select one or more conditions, or add your own note</div>
 
-        <div class="damage-grid">
-            <button type="button" id="damage-option-dented" class="damage-option-btn" onclick="selectDamageOption('Dented')">Dented</button>
-<button type="button" id="damage-option-scratched" class="damage-option-btn" onclick="selectDamageOption('Scratched')">Scratched</button>
-<button type="button" id="damage-option-marked" class="damage-option-btn" onclick="selectDamageOption('Marked')">Marked</button>
-<button type="button" id="damage-option-cracked" class="damage-option-btn" onclick="selectDamageOption('Cracked')">Cracked</button>
-<button type="button" id="damage-option-ecu" class="damage-option-btn" onclick="selectDamageOption('ECU')">ECU</button>
-<button type="button" id="damage-option-soiled" class="damage-option-btn" onclick="selectDamageOption('Soiled')">Soiled</button>
-<button type="button" id="damage-option-chipped" class="damage-option-btn" onclick="selectDamageOption('Chipped')">Chipped</button>
-<button type="button" id="damage-option-broken" class="damage-option-btn" onclick="selectDamageOption('Broken')">Broken</button>
-        </div>
+<div class="damage-grid">
+    <button type="button" id="damage-option-faded" class="damage-option-btn" onclick="selectDamageOption('Faded')">Faded</button>
+
+    <button type="button" id="damage-option-broken" class="damage-option-btn" onclick="selectDamageOption('Broken')">Broken</button>
+
+    <button type="button" id="damage-option-soiled" class="damage-option-btn" onclick="selectDamageOption('Soiled')">Soiled</button>
+
+    <button type="button" id="damage-option-scratched" class="damage-option-btn" onclick="selectDamageOption('Scratched')">Scratched</button>
+
+    <button type="button" id="damage-option-cu" class="damage-option-btn" onclick="selectDamageOption('CU')">CU - Contents / Condition Unknown</button>
+
+    <button type="button" id="damage-option-gouged" class="damage-option-btn" onclick="selectDamageOption('Gouged')">Gouged</button>
+
+    <button type="button" id="damage-option-marked" class="damage-option-btn" onclick="selectDamageOption('Marked')">Marked</button>
+
+    <button type="button" id="damage-option-bent" class="damage-option-btn" onclick="selectDamageOption('Bent')">Bent</button>
+
+    <button type="button" id="damage-option-rusty" class="damage-option-btn" onclick="selectDamageOption('Rusty')">Rusty</button>
+
+    <button type="button" id="damage-option-chipped" class="damage-option-btn" onclick="selectDamageOption('Chipped')">Chipped</button>
+
+    <button type="button" id="damage-option-loose" class="damage-option-btn" onclick="selectDamageOption('Loose')">Loose</button>
+
+    <button type="button" id="damage-option-torn" class="damage-option-btn" onclick="selectDamageOption('Torn')">Torn</button>
+
+    <button type="button" id="damage-option-worn" class="damage-option-btn" onclick="selectDamageOption('Worn')">Worn</button>
+
+    <button type="button" id="damage-option-ecu" class="damage-option-btn" onclick="selectDamageOption('ECU')">ECU</button>
+
+    <button type="button" id="damage-option-dented" class="damage-option-btn" onclick="selectDamageOption('Dented')">Dented</button>
+</div>
 
         <textarea
             id="damage-custom-note"
