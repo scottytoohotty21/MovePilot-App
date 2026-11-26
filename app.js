@@ -12413,7 +12413,7 @@ function getAgilityDrValue(entry) {
         return "Yes";
     }
 
-    return "N/A";
+    return "N";
 }
 
 function getAgilityInventoryRowHtml(entry) {
@@ -12479,7 +12479,7 @@ function getAgilityInventoryTablesHtml(filteredItems) {
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
-                <td class="num">N/A</td>
+               <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
             </tr>
