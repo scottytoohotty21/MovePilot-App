@@ -6757,14 +6757,21 @@ function saveNoteModal() {
 }
 function getConditionOptionMap() {
     return {
-        "Dented": "damage-option-dented",
-        "Scratched": "damage-option-scratched",
-        "Marked": "damage-option-marked",
-        "Cracked": "damage-option-cracked",
-        "ECU": "damage-option-ecu",
+        "Faded": "damage-option-faded",
+        "Broken": "damage-option-broken",
         "Soiled": "damage-option-soiled",
+        "Scratched": "damage-option-scratched",
+        "CU": "damage-option-cu",
+        "Gouged": "damage-option-gouged",
+        "Marked": "damage-option-marked",
+        "Bent": "damage-option-bent",
+        "Rusty": "damage-option-rusty",
         "Chipped": "damage-option-chipped",
-        "Broken": "damage-option-broken"
+        "Loose": "damage-option-loose",
+        "Torn": "damage-option-torn",
+        "Worn": "damage-option-worn",
+        "ECU": "damage-option-ecu",
+        "Dented": "damage-option-dented"
     };
 }
 
@@ -11813,16 +11820,26 @@ function getAgilityCorporatePdfCss() {
 function getAgilityConditionCode(value) {
     const raw = String(value || "").trim();
 
-    if (!raw) return "NWT";
+    if (!raw) {
+        return "NWT";
+    }
 
     const codes = {
-        "Dented": "D",
-        "Scratched": "Sc",
-        "Marked": "M",
-        "Soiled": "So",
-        "Chipped": "CH",
+        "Faded": "F",
         "Broken": "Br",
-        "ECU": "ECU"
+        "Soiled": "So",
+        "Scratched": "Sc",
+        "CU": "CU",
+        "Gouged": "G",
+        "Marked": "M",
+        "Bent": "Be",
+        "Rusty": "R",
+        "Chipped": "CH",
+        "Loose": "L",
+        "Torn": "T",
+        "Worn": "W",
+        "ECU": "ECU",
+        "Dented": "D"
     };
 
     const parts = raw
