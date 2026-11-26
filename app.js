@@ -11828,11 +11828,25 @@ function getAgilityCorporatePdfCss() {
             font-weight: 700;
         }
 
-        .agility-condition-key {
+  .agility-condition-key {
     font-size: 6.5pt;
-    line-height: 1.4;
+    line-height: 1.35;
     padding-top: 2mm;
     padding-bottom: 2mm;
+}
+
+.agility-condition-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 4mm;
+    margin-top: 1.2mm;
+    white-space: nowrap;
+}
+
+.agility-condition-row-short {
+    justify-content: center;
+    gap: 25mm;
 }
 
         .agility-warning {
@@ -12387,29 +12401,38 @@ we will confirm with you shortly subject to availability.
                     </div>
 
                     <div class="agility-section-body agility-condition-key">
-                        no reference assumes normal household wear (NWT).<br>
 
-                        NWT - Normal Wear and Tear &nbsp;&nbsp;
-                        F - Faded &nbsp;&nbsp;
-                        Br - Broken &nbsp;&nbsp;
-                        So - Soiled &nbsp;&nbsp;
-                        Sc - Scratched<br>
+    no reference assumes normal household wear (NWT).
 
-                        CU - Contents/Condition Unknown &nbsp;&nbsp;
-                        G - Gouged &nbsp;&nbsp;
-                        M - Marked &nbsp;&nbsp;
-                        Be - Bent &nbsp;&nbsp;
-                        R - Rusty<br>
+    <div class="agility-condition-row">
+        <span>NWT - Normal Wear and Tear</span>
+        <span>F - Faded</span>
+        <span>Br - Broken</span>
+        <span>So - Soiled</span>
+        <span>Sc - Scratched</span>
+    </div>
 
-                        CH - Chipped &nbsp;&nbsp;
-                        L - Loose &nbsp;&nbsp;
-                        T - Torn &nbsp;&nbsp;
-                        W - Worn<br>
+    <div class="agility-condition-row">
+        <span>CU - Contents/Condition Unknown</span>
+        <span>G - Gouged</span>
+        <span>M - Marked</span>
+        <span>Be - Bent</span>
+        <span>R - Rusty</span>
+    </div>
 
-                        ECU - Electrical Condition Unknown &nbsp;&nbsp;
-                        D - Dented
-                    </div>
-                </div>
+    <div class="agility-condition-row">
+        <span>CH - Chipped</span>
+        <span>L - Loose</span>
+        <span>T - Torn</span>
+        <span>W - Worn</span>
+    </div>
+
+    <div class="agility-condition-row agility-condition-row-short">
+        <span>ECU - Electrical Condition Unknown</span>
+        <span>D - Dented</span>
+    </div>
+
+</div>
 
                 <div class="agility-warning">
                     Please note: if any items are added or amended to this list
