@@ -11829,9 +11829,11 @@ function getAgilityCorporatePdfCss() {
         }
 
         .agility-condition-key {
-            font-size: 6.5pt;
-            line-height: 1.35;
-        }
+    font-size: 6.5pt;
+    line-height: 1.4;
+    padding-top: 2mm;
+    padding-bottom: 2mm;
+}
 
         .agility-warning {
             margin-top: 4mm;
@@ -12385,7 +12387,7 @@ we will confirm with you shortly subject to availability.
                     </div>
 
                     <div class="agility-section-body agility-condition-key">
-                        no reference assumes normal household wear (NWT).<br><br>
+                        no reference assumes normal household wear (NWT).<br>
 
                         NWT - Normal Wear and Tear &nbsp;&nbsp;
                         F - Faded &nbsp;&nbsp;
