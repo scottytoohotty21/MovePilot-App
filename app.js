@@ -11869,41 +11869,6 @@ function getAgilityPackedBy(entry) {
     return "BISHOPS";
 }
 
-function getAgilityInventoryRowHtml(entry) {
-    const room = entry.roomName || "-";
-    const item = entry.itemName || "-";
-
-    const unitVolume = Number(
-        entry.unitVolume ||
-        entry.volume ||
-        0
-    );
-
-    const totalVolume = Number(
-        entry.totalVolume ||
-        (unitVolume * Number(entry.qty || 0)) ||
-        0
-    );
-
-    const sizeCbm = formatCbmFromCuft(unitVolume);
-    const totalCbm = formatCbmFromCuft(totalVolume);
-
-    return `
-        <tr>
-            <td>${escapeHtml(room)}</td>
-            <td>${escapeHtml(item)}</td>
-            <td class="num">${escapeHtml(sizeCbm)}</td>
-            <td class="num">${Number(entry.qty || 0)}</td>
-            <td class="num">${escapeHtml(totalCbm)}</td>
-            <td class="num">${escapeHtml(getAgilityConditionCode(entry.damage))}</td>
-            <td class="num">${escapeHtml(getAgilityPackedBy(entry))}</td>
-            <td class="num">${escapeHtml(entry.dr || entry.dR || entry.deliveryRemoval || "")}</td>
-            <td class="num">${escapeHtml(entry.load || "")}</td>
-            <td class="num">${escapeHtml(entry.unload || "")}</td>
-        </tr>
-    `;
-}
-
 
 function formatAgilityDateForPdf(value) {
     const raw = String(value || "").trim();
@@ -12456,7 +12421,7 @@ function getAgilityInventoryRowHtml(entry) {
     const size = entry.unitVolume || "";
     const qty = entry.qty || "";
     const total = entry.totalVolume || "";
-    const cond = entry.damage || "";
+    const cond = getAgilityConditionCode(entry.damage);
     const packedBy = "";
     const dr = getAgilityDrValue(entry);
     const load = "";
