@@ -11533,7 +11533,7 @@ function buildListedInventoryPdfContext(filteredItems) {
 function getAgilityCorporatePdfCss() {
     return `
         .agility-pdf {
-    width: 190mm;
+    width: 194mm;
     margin: 0 auto;
     background: #ffffff;
     color: #111827;
@@ -11693,6 +11693,11 @@ function getAgilityCorporatePdfCss() {
     width: 100%;
     table-layout: fixed;
     font-size: 7.2pt;
+}
+    .agility-inventory-table td:nth-child(6) {
+    font-size: 7.5pt;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .agility-inventory-table th {
@@ -12493,11 +12498,11 @@ function getAgilityInventoryTablesHtml(filteredItems) {
     const tableHead = `
         <colgroup>
             <col style="width: 9.5%;">
-            <col style="width: 26.5%;">
+            <col style="width: 25%;">
             <col style="width: 6.5%;">
             <col style="width: 7%;">
             <col style="width: 11.5%;">
-            <col style="width: 7.5%;">
+            <col style="width: 9%;">
             <col style="width: 12.5%;">
             <col style="width: 5.5%;">
             <col style="width: 7.5%;">
