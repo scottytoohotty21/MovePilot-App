@@ -11791,31 +11791,31 @@ function getAgilityCorporatePdfCss() {
         }
 
         .agility-signatures {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8mm;
-            margin-top: 5mm;
-            page-break-inside: avoid;
-        }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8mm;
+    margin-top: 3mm;
+    page-break-inside: avoid;
+}
 
-        .agility-signature-box {
-            min-height: 30mm;
-            border-bottom: 1px solid #111827;
-            position: relative;
-        }
+.agility-signature-box {
+    min-height: 23mm;
+    border-bottom: 1px solid #111827;
+    position: relative;
+}
 
-        .agility-signature-label {
-            font-weight: 900;
-            margin-bottom: 2mm;
-        }
+.agility-signature-label {
+    font-weight: 900;
+    margin-bottom: 2mm;
+}
 
-        .agility-signature-image {
-            max-width: 75mm;
-            max-height: 22mm;
-            object-fit: contain;
-            object-position: left center;
-            display: block;
-        }
+.agility-signature-image {
+    max-width: 75mm;
+    max-height: 18mm;
+    object-fit: contain;
+    object-position: left center;
+    display: block;
+}
 
         .agility-signature-empty {
             color: #6b7280;
