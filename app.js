@@ -6755,6 +6755,7 @@ function saveNoteModal() {
 
     closeNoteModal();
 }
+
 function getConditionOptionMap() {
     return {
         "Faded": "damage-option-faded",
