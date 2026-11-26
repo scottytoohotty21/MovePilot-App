@@ -11887,109 +11887,7 @@ function getAgilityInventoryRowHtml(entry) {
     `;
 }
 
-function getAgilityInventoryTablesHtml(filteredItems) {
-    const activeItems = filteredItems.filter(function(entry) {
-        return entry && !entry.excluded;
-    });
 
-    const standardItems = activeItems.filter(function(entry) {
-        return String(entry.kind || "").toLowerCase() !== "misc";
-    });
-
-    const additionalItems = activeItems.filter(function(entry) {
-        return String(entry.kind || "").toLowerCase() === "misc";
-    });
-
-    const renderTableRows = function(items) {
-        if (!items.length) {
-            return `
-                <tr>
-                    <td colspan="10" style="text-align:center;color:#6b7280;">
-                        No items recorded
-                    </td>
-                </tr>
-            `;
-        }
-
-        return items.map(getAgilityInventoryRowHtml).join("");
-    };
-
-   const tableHead = `
-    <colgroup>
-        <col style="width: 9.5%;">
-        <col style="width: 26.5%;">
-        <col style="width: 6.5%;">
-        <col style="width: 7%;">
-        <col style="width: 11.5%;">
-        <col style="width: 7.5%;">
-        <col style="width: 12.5%;">
-        <col style="width: 5.5%;">
-        <col style="width: 7.5%;">
-        <col style="width: 10%;">
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th>Room</th>
-            <th>Item</th>
-            <th>Size</th>
-            <th>Qty</th>
-            <th>Total</th>
-            <th>Cond</th>
-            <th>Packedby</th>
-            <th>D/R</th>
-            <th>Load</th>
-            <th>Unload</th>
-        </tr>
-    </thead>
-`;
-
-    return `
-        <div class="agility-section">
-            <div class="agility-section-title">
-                Inventory for ${escapeHtml(
-                    (currentJob.customer && currentJob.customer.displayName) ||
-                    currentJob.name ||
-                    ""
-                )}
-            </div>
-
-            <div class="agility-section-body">
-                <table class="agility-inventory-table">
-                    ${tableHead}
-                    <tbody>
-                        ${renderTableRows(standardItems)}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-               <div class="agility-section">
-            <div class="agility-section-title">
-                Additional Items
-            </div>
-
-            <div class="agility-section-body">
-                <table class="agility-inventory-table">
-                    ${tableHead}
-                    <tbody>
-                        ${renderTableRows(additionalItems)}
-                    </tbody>
-                </table>
-
-                <div class="agility-additional-signature">
-                    <span class="agility-additional-signature-label">
-                        Customer Signature
-                    </span>
-
-                    <span class="agility-additional-signature-line">
-                        ________________________________
-                    </span>
-                </div>
-            </div>
-        </div>
-    `;
-}
 function formatAgilityDateForPdf(value) {
     const raw = String(value || "").trim();
 
@@ -12564,13 +12462,29 @@ function getAgilityInventoryRowHtml(entry) {
 }
 
 function getAgilityInventoryTablesHtml(filteredItems) {
-    const items = Array.isArray(filteredItems) ? filteredItems : [];
-
-    const inventoryRows = items
-        .map(function(entry) {
-            return getAgilityInventoryRowHtml(entry);
+    const activeItems = Array.isArray(filteredItems)
+        ? filteredItems.filter(function(entry) {
+            return entry && !entry.excluded;
         })
-        .join("");
+        : [];
+
+    const standardItems = activeItems.filter(function(entry) {
+        return String(entry.kind || "").toLowerCase() !== "misc";
+    });
+
+    const renderTableRows = function(items) {
+        if (!items.length) {
+            return `
+                <tr>
+                    <td colspan="10" style="text-align:center;color:#6b7280;">
+                        No items recorded
+                    </td>
+                </tr>
+            `;
+        }
+
+        return items.map(getAgilityInventoryRowHtml).join("");
+    };
 
     const additionalRows = Array.from({ length: 14 }, function() {
         return `
@@ -12589,63 +12503,89 @@ function getAgilityInventoryTablesHtml(filteredItems) {
         `;
     }).join("");
 
-    return `
-        <div class="agility-inventory-section">
+    const tableHead = `
+        <colgroup>
+            <col style="width: 9.5%;">
+            <col style="width: 26.5%;">
+            <col style="width: 6.5%;">
+            <col style="width: 7%;">
+            <col style="width: 11.5%;">
+            <col style="width: 7.5%;">
+            <col style="width: 12.5%;">
+            <col style="width: 5.5%;">
+            <col style="width: 7.5%;">
+            <col style="width: 10%;">
+        </colgroup>
 
-            <div class="agility-inventory-title">
-                Inventory for
+        <thead>
+            <tr>
+                <th>Room</th>
+                <th>Item</th>
+                <th>Size</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Cond</th>
+                <th>Packedby</th>
+                <th>D/R</th>
+                <th>Load</th>
+                <th>Unload</th>
+            </tr>
+        </thead>
+    `;
+
+    return `
+        <div class="agility-section">
+
+            <div class="agility-section-title">
+                Inventory for ${escapeHtml(
+                    (currentJob.customer && currentJob.customer.displayName) ||
+                    currentJob.name ||
+                    ""
+                )}
             </div>
 
-            <table class="agility-inventory-table">
-                <thead>
-                    <tr>
-                        <th>Room</th>
-                        <th>Item</th>
-                        <th>Size</th>
-                        <th>Qty</th>
-                        <th>Total</th>
-                        <th>Cond</th>
-                        <th>Packedby</th>
-                        <th>D/R</th>
-                        <th>Load</th>
-                        <th>Unload</th>
-                    </tr>
-                </thead>
+            <div class="agility-section-body">
+                <table class="agility-inventory-table">
+                    ${tableHead}
 
-                <tbody>
-                    ${inventoryRows}
-                </tbody>
-            </table>
+                    <tbody>
+                        ${renderTableRows(standardItems)}
+                    </tbody>
+                </table>
+            </div>
 
-            <div class="agility-additional-title">
+        </div>
+
+        <div class="agility-section">
+
+            <div class="agility-section-title">
                 Additional Items
             </div>
 
-            <table class="agility-inventory-table">
-                <thead>
-                    <tr>
-                        <th>Room</th>
-                        <th>Item</th>
-                        <th>Size</th>
-                        <th>Qty</th>
-                        <th>Total</th>
-                        <th>Cond</th>
-                        <th>Packedby</th>
-                        <th>D/R</th>
-                        <th>Load</th>
-                        <th>Unload</th>
-                    </tr>
-                </thead>
+            <div class="agility-section-body">
 
-                <tbody>
-                    ${additionalRows}
-                </tbody>
-            </table>
+                <table class="agility-inventory-table">
+                    ${tableHead}
 
+                    <tbody>
+                        ${additionalRows}
+                    </tbody>
+                </table>
+
+                <div class="agility-additional-signature">
+                    <span class="agility-additional-signature-label">
+                        Customer Signature
+                    </span>
+
+                    <span class="agility-additional-signature-line">
+                        ________________________________
+                    </span>
+                </div>
+
+            </div>
         </div>
     `;
-}
-function createListedInventoryPdfWrapper(pdfContext) {
+}function createListedInventoryPdfWrapper(pdfContext) {
     const wrapper = document.createElement("div");
     wrapper.style.position = "fixed";
     wrapper.style.left = "-10000px";
