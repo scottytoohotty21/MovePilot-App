@@ -11538,7 +11538,7 @@ function getAgilityCorporatePdfCss() {
     background: #ffffff;
     color: #111827;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 8.5pt;
+    font-size: 9pt;
     line-height: 1.3;
 }
 
@@ -11567,11 +11567,46 @@ function getAgilityCorporatePdfCss() {
         }
 
         .agility-meta-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2mm;
-            margin-bottom: 3mm;
-        }
+    margin-bottom: 3mm;
+}
+
+.agility-meta-line {
+    display: flex;
+    align-items: baseline;
+    gap: 2mm;
+    margin-bottom: 2mm;
+}
+
+.agility-meta-line .agility-field-label {
+    margin-bottom: 0;
+    font-size: 7.5pt;
+}
+
+.agility-meta-line .agility-field-value {
+    font-size: 10pt;
+    font-weight: 700;
+}
+
+.agility-meta-details {
+    display: flex;
+    gap: 12mm;
+}
+
+.agility-meta-detail {
+    display: flex;
+    align-items: baseline;
+    gap: 2mm;
+}
+
+.agility-meta-detail .agility-field-label {
+    margin-bottom: 0;
+    font-size: 7.5pt;
+}
+
+.agility-meta-detail .agility-field-value {
+    font-size: 9.5pt;
+    font-weight: 700;
+}
 
         .agility-field {
             border: 1px solid #9ca3af;
@@ -11599,12 +11634,24 @@ function getAgilityCorporatePdfCss() {
         }
 
         .agility-address-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2mm;
-            margin-bottom: 3mm;
-        }
+    margin-bottom: 3mm;
+}
 
+.agility-address-block {
+    margin-bottom: 3mm;
+}
+
+.agility-address-block .agility-field-label {
+    font-size: 7.5pt;
+    font-weight: 900;
+    margin-bottom: 1mm;
+}
+
+.agility-address-block .agility-field-value {
+    font-size: 9pt;
+    font-weight: 700;
+    line-height: 1.3;
+}
         .agility-volume-line {
             border: 1px solid #9ca3af;
             padding: 2.5mm;
@@ -12059,56 +12106,65 @@ function createAgilityCorporatePdfWrapper(pdfContext) {
                 
                 <div class="agility-meta-grid">
 
-                    <div class="agility-field agility-wide">
-                        <div class="agility-field-label">
-                            Inventory For
-                        </div>
-                        <div class="agility-field-value">
-                            ${escapeHtml(pdfContext.inventoryFor)}
-                        </div>
-                    </div>
+    <div class="agility-meta-line">
+        <div class="agility-field-label">
+            Inventory For
+        </div>
 
-                    <div class="agility-field">
-                        <div class="agility-field-label">
-                            Taken On
-                        </div>
-                        <div class="agility-field-value">
-                            ${escapeHtml(pdfContext.takenOn || "-")}
-                        </div>
-                    </div>
+        <div class="agility-field-value">
+            ${escapeHtml(pdfContext.inventoryFor || "-")}
+        </div>
+    </div>
 
-                    <div class="agility-field">
-                        <div class="agility-field-label">
-                            Taken By
-                        </div>
-                        <div class="agility-field-value">
-                            ${escapeHtml(pdfContext.takenBy || "-")}
-                        </div>
-                    </div>
+    <div class="agility-meta-details">
 
-                </div>
+        <div class="agility-meta-detail">
+            <div class="agility-field-label">
+                Taken On
+            </div>
 
-                <div class="agility-address-grid">
+            <div class="agility-field-value">
+                ${escapeHtml(pdfContext.takenOn || "-")}
+            </div>
+        </div>
 
-                    <div class="agility-field">
-                        <div class="agility-field-label">
-                            From
-                        </div>
-                        <div class="agility-field-value">
-                            ${escapeHtml(pdfContext.fromAddress || "-")}
-                        </div>
-                    </div>
+        <div class="agility-meta-detail">
+            <div class="agility-field-label">
+                Taken By
+            </div>
 
-                    <div class="agility-field">
-                        <div class="agility-field-label">
-                            To
-                        </div>
-                        <div class="agility-field-value">
-                            ${escapeHtml(pdfContext.toAddress || "-")}
-                        </div>
-                    </div>
+            <div class="agility-field-value">
+                ${escapeHtml(pdfContext.takenBy || "-")}
+            </div>
+        </div>
 
-                </div>
+    </div>
+
+</div>
+
+<div class="agility-address-grid">
+
+    <div class="agility-address-block">
+        <div class="agility-field-label">
+            From
+        </div>
+
+        <div class="agility-field-value">
+            ${escapeHtml(pdfContext.fromAddress || "-")}
+        </div>
+    </div>
+
+    <div class="agility-address-block">
+        <div class="agility-field-label">
+            To
+        </div>
+
+        <div class="agility-field-value">
+            ${escapeHtml(pdfContext.toAddress || "-")}
+        </div>
+    </div>
+
+</div>
 
                 <div class="agility-volume-line">
                     Volume per Inventory:
