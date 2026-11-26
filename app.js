@@ -11773,11 +11773,10 @@ function getAgilityCorporatePdfCss() {
 }
 
         .agility-notice {
-            border: 1px solid #9ca3af;
-            padding: 2.5mm;
-            margin-bottom: 3mm;
-            page-break-inside: avoid;
-        }
+    padding: 0;
+    margin-bottom: 4mm;
+    page-break-inside: avoid;
+}
 
         .agility-notice-title {
             font-size: 8pt;
