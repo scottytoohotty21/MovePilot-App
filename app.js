@@ -11533,14 +11533,14 @@ function buildListedInventoryPdfContext(filteredItems) {
 function getAgilityCorporatePdfCss() {
     return `
         .agility-pdf {
-            width: 190mm;
-            margin: 0 auto;
-            background: #ffffff;
-            color: #111827;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 8.5pt;
-            line-height: 1.25;
-        }
+    width: 190mm;
+    margin: 0 auto;
+    background: #ffffff;
+    color: #111827;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8.5pt;
+    line-height: 1.3;
+}
 
         .agility-page {
             width: 100%;
@@ -11581,17 +11581,18 @@ function getAgilityCorporatePdfCss() {
         }
 
         .agility-field-label {
-            font-size: 6.5pt;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: #4b5563;
-            margin-bottom: 1mm;
-        }
+    font-size: 6.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #4b5563;
+    letter-spacing: 0.15pt;
+    margin-bottom: 1mm;
+}
 
         .agility-field-value {
-            font-size: 9pt;
-            font-weight: 700;
-        }
+    font-size: 8.5pt;
+    font-weight: 700;
+}
 
         .agility-wide {
             grid-column: 1 / -1;
@@ -11631,13 +11632,14 @@ function getAgilityCorporatePdfCss() {
         }
 
         .agility-section-title {
-            background: #e5e7eb;
-            border-bottom: 1px solid #9ca3af;
-            padding: 2mm;
-            font-size: 8pt;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
+    background: #e5e7eb;
+    border-bottom: 1px solid #9ca3af;
+    padding: 2mm;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15pt;
+}
 
         .agility-section-body {
             padding: 2.5mm;
@@ -11679,33 +11681,35 @@ function getAgilityCorporatePdfCss() {
             vertical-align: top;
         }
 
-        .agility-exclusions-table th,
-        .agility-inventory-table th {
-            background: #f3f4f6;
-            font-weight: 900;
-            text-transform: uppercase;
-            font-size: 6.5pt;
-        }
-
-        .agility-inventory-table {
-    width: 100%;
-    table-layout: fixed;
-    font-size: 7pt;
+       .agility-exclusions-table th,
+.agility-inventory-table th {
+    background: #f3f4f6;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 6.5pt;
 }
 
-        .agility-inventory-table th {
-            font-size: 6pt;
-        }
+.agility-inventory-table {
+    width: 100%;
+    table-layout: fixed;
+    font-size: 7.2pt;
+}
 
-        .agility-inventory-table .num {
-            text-align: center;
-        }
-            .agility-additional-title {
+.agility-inventory-table th {
+    font-size: 6.2pt;
+}
+
+.agility-inventory-table .num {
+    text-align: center;
+}
+
+.agility-additional-title {
     margin-top: 3mm;
     margin-bottom: 1.5mm;
-    font-weight: 900;
-    font-size: 8pt;
+    font-weight: 700;
+    font-size: 7.5pt;
     text-transform: uppercase;
+    letter-spacing: 0.15pt;
 }
 
         .agility-notice {
