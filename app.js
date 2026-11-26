@@ -12408,11 +12408,7 @@ we will confirm with you shortly subject to availability.
                             ${getPrintableSurveyorSignatureHtml()}
                         </div>
 
-                        <div class="agility-date-line">
-                            Surveyor:
-                            ${getPrintableSurveyorNameHtml()}
-                        </div>
-                    </div>
+                                            </div>
 
                 </div>
 
