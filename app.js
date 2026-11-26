@@ -11662,17 +11662,16 @@ function getAgilityCorporatePdfCss() {
     line-height: 1.3;
 }
         .agility-volume-line {
-            border: 1px solid #9ca3af;
-            padding: 2.5mm;
-            font-weight: 900;
-            margin-bottom: 3mm;
-        }
+    padding: 0;
+    font-weight: 700;
+    margin-bottom: 3mm;
+}
 
         .agility-date-note {
-            border: 1px solid #d1d5db;
-            padding: 2.5mm;
-            margin-bottom: 3mm;
-        }
+    padding: 0;
+    margin-bottom: 3mm;
+    line-height: 1.35;
+}
 
         .agility-two-column {
             display: grid;
