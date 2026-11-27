@@ -2470,8 +2470,40 @@ body {
             text-transform: uppercase;
         }
         .listed-report-options-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: end;
+}
+
+.listed-report-setting {
+    min-width: 0;
+}
+
+.listed-report-option-check {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 42px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-bottom-color: #94a3b8;
+    color: #334155;
+    font-size: 11px;
+    font-weight: 800;
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.listed-report-option-check input {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    accent-color: #3b82f6;
 }
 
 .listed-report-option-check {
