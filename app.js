@@ -8503,20 +8503,42 @@ function updateListedReportFormatUI() {
                     </div>
                 </div>
 
-                <!-- TAKEN ON / BY -->
+                                <!-- TAKEN ON / BY / COLLECTION / DELIVERY -->
 
-                <div class="col-span-6">
+                <div class="col-span-3">
                     <label class="mini-label">Taken On</label>
                     <div class="input-field bg-slate-50">
                         ${escapeHtml(takenOn || "-")}
                     </div>
                 </div>
 
-                <div class="col-span-6">
+                <div class="col-span-3">
                     <label class="mini-label">Taken By</label>
                     <div class="input-field bg-slate-50">
                         ${escapeHtml(takenBy || "-")}
                     </div>
+                </div>
+
+                <div class="col-span-3">
+                    <label class="mini-label">Collection Date</label>
+                    <input
+                        type="date"
+                        id="listed-agility-collection-date"
+                        class="input-field"
+                        value="${options.agilityCollectionDate || ''}"
+                        onchange="handleListedAgilityCollectionDateChange(this.value)"
+                    >
+                </div>
+
+                <div class="col-span-3">
+                    <label class="mini-label">Delivery Date</label>
+                    <input
+                        type="date"
+                        id="listed-agility-delivery-date"
+                        class="input-field"
+                        value="${options.agilityDeliveryDate || ''}"
+                        onchange="handleListedAgilityDeliveryDateChange(this.value)"
+                    >
                 </div>
 
                 <!-- FROM / TO -->
