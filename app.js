@@ -8638,7 +8638,7 @@ function updateListedReportFormatUI() {
 
                 <div class="col-span-3">
                     <label class="mini-label">
-                        Bishops Packed Wardrobe Ctns
+                        Bishops Packed W/R Ctns
                     </label>
                     <div class="input-field bg-slate-50 font-black">
                         ${agilitySummary.bishopsPackedWardrobeCtns}
