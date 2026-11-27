@@ -11799,9 +11799,19 @@ function getAgilityCorporatePdfCss() {
 }
 
 .agility-signature-box {
+    height: 23mm;
     min-height: 23mm;
     border-bottom: 1px solid #111827;
     position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+    .agility-signature-box img {
+    max-height: 16mm;
+    max-width: 75mm;
+    object-fit: contain;
+    object-position: left center;
+    display: block;
 }
 
 .agility-signature-label {
