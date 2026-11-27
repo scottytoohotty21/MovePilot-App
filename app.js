@@ -11807,7 +11807,11 @@ function getAgilityCorporatePdfCss() {
 .agility-signature-label {
     font-weight: 900;
     margin-bottom: 2mm;
+    white-space: nowrap;
 }
+   .agility-signature-box .pdf-surveyor-signature .pdf-small-note {
+    display: none;
+} 
 
 .agility-signature-image {
     max-width: 75mm;
