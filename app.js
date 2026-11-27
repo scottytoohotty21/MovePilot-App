@@ -11889,7 +11889,7 @@ function getAgilityCorporatePdfCss() {
             border-top: 1px solid #111827;
             padding-top: 2mm;
             font-weight: 700;
-            font-size: 9pt;
+            font-size: 8pt;
         }
 
         .agility-page-number {
