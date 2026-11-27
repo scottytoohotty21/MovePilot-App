@@ -11889,7 +11889,7 @@ function getAgilityCorporatePdfCss() {
             border-top: 1px solid #111827;
             padding-top: 2mm;
             font-weight: 700;
-            font-size: 7pt;
+            font-size: 9pt;
         }
 
         .agility-page-number {
@@ -12379,12 +12379,16 @@ we will confirm with you shortly subject to availability.
                     </div>
 
                     <div class="agility-notice-text">
-                        I acknowledge that I have visited
-                        https://grms.agilitylogistics.com and viewed the JSP 800
-                        Removal Policy or confirm I will do so. I acknowledge that
-                        within JSP800 I have read and understood the prohibited
-                        list which is published on page 44 of the document.
-                    </div>
+    I acknowledge that I have visited
+    <a
+        href="https://grms.agilitylogistics.com"
+        target="_blank"
+        rel="noopener noreferrer"
+    >https://grms.agilitylogistics.com</a>
+    and viewed the JSP 800 Removal Policy or confirm I will do so.
+    I acknowledge that within JSP800 I have read and understood the
+    prohibited list which is published on page 44 of the document.
+</div>
                 </div>
 
                 <div class="agility-signatures">
