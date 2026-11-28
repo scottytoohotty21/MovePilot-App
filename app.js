@@ -35,7 +35,7 @@ const BRANCH_DEPOTS = {
     Solent: "Unit 8, Voyager Park, Portfield Rd, Portsmouth PO3 5GF",
     York: "Old Office Block Moor Lane Trading Estate, Sherburn in Elmet, Leeds LS25 6ES"
 };
-const PACK_OPTIONS = ["Owner Pack", "Fragile (china & Glassware) pack", "Full Packing", "Full Export Pack and Wrap", "Unload Only"];
+const PACK_OPTIONS = ["Owner Pack", "Fragile (china & Glassware) pack", "Full packing, no unpacking", "Full Export Pack and Wrap", "Unload Only"];
 const SALUTATIONS = ["Mr", "Miss", "Mrs", "Ms", "Other"];
         
 const DEFAULT_ROOMS = [
