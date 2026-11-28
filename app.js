@@ -35,6 +35,18 @@ const BRANCH_DEPOTS = {
     Solent: "Unit 8, Voyager Park, Portfield Rd, Portsmouth PO3 5GF",
     York: "Old Office Block Moor Lane Trading Estate, Sherburn in Elmet, Leeds LS25 6ES"
 };
+const STORAGE_LOCATION_OPTIONS = [
+      "Self Store / Bespoke",
+    "Aylesbury",
+    "Crawley",
+    "Edinburgh",
+    "Ely",
+    "Exeter",
+    "Guildford",
+    "London",
+    "Solent",
+    "York"
+];
 const PACK_OPTIONS = ["Owner Pack", "Fragile (china & Glassware) pack", "Full packing, no unpacking", "Full Export Pack and Wrap", "Unload Only"];
 const SALUTATIONS = ["Mr", "Miss", "Mrs", "Ms", "Other"];
         
@@ -2031,6 +2043,8 @@ function renderAddressUI() {
 const isSaved = prop.isSaved;
 const status = isSaved ? 'disabled' : '';
 const isCollectionAddress = prop.id === currentJob.properties[0].id;
+const isStoreAddress =
+    String(prop.label || "").toLowerCase().includes("store");
             const wrapper = document.getElementById('content-address');
             isSaved ? wrapper.classList.add('is-saved') : wrapper.classList.remove('is-saved');
 
@@ -2054,7 +2068,28 @@ saveBtn.setAttribute('aria-label', isSaved ? 'Unlock address' : 'Lock address');
     </div>
     ${(!prop.isCore && !isSaved) ? `<button onclick="deleteProperty(${prop.id})" class="address-property-delete">Delete Address</button>` : ''}
 </div>
+${isStoreAddress ? `
+    <div class="bg-white border border-slate-200 rounded-xl p-4 mb-3">
+        <label class="mini-label">Storage Location</label>
 
+        <select
+            ${status}
+            class="input-field"
+            onchange="handleStorageLocationChange(this.value)"
+        >
+            <option value="">- Select storage location -</option>
+
+            ${STORAGE_LOCATION_OPTIONS.map(location => `
+                <option
+                    value="${escapeHtml(location)}"
+                    ${String(prop.storageLocation || "") === location ? "selected" : ""}
+                >
+                    ${escapeHtml(location)}
+                </option>
+            `).join("")}
+        </select>
+    </div>
+` : ''}
     ${isCollectionAddress ? `
     <div class="bg-white border border-slate-200 rounded-xl p-4">
         <div class="grid grid-cols-12 gap-3">
@@ -5087,6 +5122,34 @@ function updatePropData(f, v) {
         const hdrName = document.getElementById('hdr-name');
         if (hdrName) hdrName.innerText = currentJob.customer.displayName || currentJob.name || "";
     }
+}
+
+function handleStorageLocationChange(value) {
+    const prop = currentJob.properties.find(p => p.id === activePropId);
+    if (!prop) return;
+
+    prop.storageLocation = value;
+
+    if (value === "Self Store / Bespoke") {
+        prop.line1 = "";
+        prop.road = "";
+        prop.city = "";
+        prop.county = "";
+        prop.postcode = "";
+        prop.country = "United Kingdom";
+    } else {
+        const storageAddress = BRANCH_DEPOTS[value] || "";
+
+        prop.line1 = storageAddress;
+        prop.road = "";
+        prop.city = "";
+        prop.county = "";
+        prop.postcode = "";
+        prop.country = "United Kingdom";
+    }
+
+    saveToDevice();
+    renderAddressUI();
 }
 
 function loadProperty(id) {
