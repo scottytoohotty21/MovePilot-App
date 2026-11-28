@@ -35,8 +35,90 @@ const BRANCH_DEPOTS = {
     Solent: "Unit 8, Voyager Park, Portfield Rd, Portsmouth PO3 5GF",
     York: "Old Office Block Moor Lane Trading Estate, Sherburn in Elmet, Leeds LS25 6ES"
 };
+const STORAGE_LOCATIONS = {
+    Aylesbury: {
+        line1: "AGM Bishop's Move Aylesbury",
+        road: "Smeaton Cl",
+        city: "Aylesbury",
+        county: "",
+        postcode: "HP19 8UN",
+        country: "United Kingdom"
+    },
+
+    Crawley: {
+        line1: "AGM Bishop's Move Crawley",
+        road: "5 Kelvin Way",
+        city: "Crawley",
+        county: "",
+        postcode: "RH10 9SP",
+        country: "United Kingdom"
+    },
+
+    Edinburgh: {
+        line1: "AGM Bishop's Move Edinburgh",
+        road: "4 Eastfield Farm Rd",
+        city: "Penicuik",
+        county: "",
+        postcode: "EH26 8EZ",
+        country: "United Kingdom"
+    },
+
+    Ely: {
+        line1: "AGM Bishop's Move Ely",
+        road: "Unit 40, Lancaster Way Business Park",
+        city: "Ely",
+        county: "",
+        postcode: "CB6 3NW",
+        country: "United Kingdom"
+    },
+
+    Exeter: {
+        line1: "AGM Bishop's Move Exeter",
+        road: "Windsor Court, Manaton Close, Matford Business Park",
+        city: "Exeter",
+        county: "Devon",
+        postcode: "EX2 8PF",
+        country: "United Kingdom"
+    },
+
+    Guildford: {
+        line1: "AGM Bishop's Move Guildford",
+        road: "Slyfield Industrial Estate, Unit 4b, Opus Park, Moorfield Rd",
+        city: "Guildford",
+        county: "",
+        postcode: "GU1 1SZ",
+        country: "United Kingdom"
+    },
+
+    London: {
+        line1: "AGM Bishop's Move London",
+        road: "",
+        city: "",
+        county: "",
+        postcode: "",
+        country: "United Kingdom"
+    },
+
+    Solent: {
+        line1: "AGM Bishop's Move Solent",
+        road: "Unit 8, Voyager Park, Portfield Rd",
+        city: "Portsmouth",
+        county: "",
+        postcode: "PO3 5GF",
+        country: "United Kingdom"
+    },
+
+    York: {
+        line1: "AGM Bishop's Move York",
+        road: "Old Office Block Moor Lane Trading Estate",
+        city: "Sherburn in Elmet",
+        county: "",
+        postcode: "LS25 6ES",
+        country: "United Kingdom"
+    }
+};
 const STORAGE_LOCATION_OPTIONS = [
-      "Self Store / Bespoke",
+    "Self Store / Bespoke",
     "Aylesbury",
     "Crawley",
     "Edinburgh",
@@ -5138,20 +5220,21 @@ function handleStorageLocationChange(value) {
         prop.postcode = "";
         prop.country = "United Kingdom";
     } else {
-        const storageAddress = BRANCH_DEPOTS[value] || "";
+        const storage = STORAGE_LOCATIONS[value];
 
-        prop.line1 = storageAddress;
-        prop.road = "";
-        prop.city = "";
-        prop.county = "";
-        prop.postcode = "";
-        prop.country = "United Kingdom";
+        if (!storage) return;
+
+        prop.line1 = storage.line1;
+        prop.road = storage.road;
+        prop.city = storage.city;
+        prop.county = storage.county;
+        prop.postcode = storage.postcode;
+        prop.country = storage.country;
     }
 
     saveToDevice();
     renderAddressUI();
 }
-
 function loadProperty(id) {
     activePropId = parseInt(id);
     renderAddressUI();
