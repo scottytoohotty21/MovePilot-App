@@ -1183,6 +1183,7 @@ const inventoryCategories = {
 function createEmptySequenceSchedule() {
     return {
         moveDate: "",
+        scheduleMode: "manual",
         loftVol: 0,
         loadRate: 125,
         unloadRate: 132,
@@ -16353,6 +16354,8 @@ function ensureSequenceScheduleShape(seq) {
     if (seq.schedule.loadRate === undefined) seq.schedule.loadRate = defaults.loadRate;
     if (seq.schedule.unloadRate === undefined) seq.schedule.unloadRate = defaults.unloadRate;
     if (seq.schedule.loadingVariant === undefined) seq.schedule.loadingVariant = defaults.loadingVariant;
+    if (seq.schedule.scheduleMode === undefined) seq.schedule.scheduleMode = defaults.scheduleMode;
+    if (seq.schedule.scheduleMode === undefined) seq.schedule.scheduleMode = defaults.scheduleMode;   
     if (seq.schedule.operatingBranch === undefined) seq.schedule.operatingBranch = defaults.operatingBranch;
     if (seq.schedule.exportWrapVol === undefined) seq.schedule.exportWrapVol = defaults.exportWrapVol;
 
@@ -16386,6 +16389,41 @@ function ensureSequenceScheduleShape(seq) {
     if (seq.schedule.special.customItemNote === undefined) seq.schedule.special.customItemNote = defaults.special.customItemNote;
 
     return seq.schedule;
+}
+function getScheduleMode() {
+    const seq = getActiveSequenceRecord();
+    if (!seq) return "manual";
+
+    const schedule = ensureSequenceScheduleShape(seq);
+
+    if (
+        schedule.scheduleMode !== "manual" &&
+        schedule.scheduleMode !== "auto"
+    ) {
+        schedule.scheduleMode = "manual";
+    }
+
+    return schedule.scheduleMode;
+}
+
+function isScheduleAutoMode() {
+    return getScheduleMode() === "auto";
+}
+
+function setScheduleMode(mode) {
+    const seq = getActiveSequenceRecord();
+    if (!seq) return;
+
+    const schedule = ensureSequenceScheduleShape(seq);
+
+    const newMode = String(mode || "").toLowerCase() === "auto"
+        ? "auto"
+        : "manual";
+
+    schedule.scheduleMode = newMode;
+
+    saveToDevice();
+    renderScheduleCalculator();
 }
 
 function createManualScheduleRow(overrides) {
