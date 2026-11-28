@@ -16962,6 +16962,119 @@ function saveManualScheduleToActiveSequence() {
 
     saveToDevice();
 }
+function renderScheduleModeSelector() {
+    const dropdown = document.getElementById("schedule-seq-select");
+
+    if (!dropdown) return;
+
+    const existing = document.getElementById("schedule-mode-selector");
+
+    if (existing) {
+        const mode = getScheduleMode();
+
+        const manualButton = existing.querySelector("[data-schedule-mode='manual']");
+        const autoButton = existing.querySelector("[data-schedule-mode='auto']");
+        const description = existing.querySelector(".schedule-mode-description");
+
+        if (manualButton) {
+            manualButton.style.fontWeight = mode === "manual" ? "700" : "500";
+            manualButton.style.opacity = mode === "manual" ? "1" : "0.65";
+        }
+
+        if (autoButton) {
+            autoButton.style.fontWeight = mode === "auto" ? "700" : "500";
+            autoButton.style.opacity = mode === "auto" ? "1" : "0.65";
+        }
+
+        if (description) {
+            description.textContent = mode === "auto"
+                ? "Auto Plan selected — automatic scheduling will be used."
+                : "Manual selected — you control the schedule rows yourself.";
+        }
+
+        return;
+    }
+
+    const wrapper = document.createElement("div");
+
+    wrapper.id = "schedule-mode-selector";
+
+    wrapper.style.cssText = [
+        "margin: 0 0 16px 0",
+        "padding: 14px 16px",
+        "border: 1px solid #dbe3ec",
+        "border-radius: 12px",
+        "background: #f8fafc"
+    ].join(";");
+
+    wrapper.innerHTML = `
+        <div style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:16px;
+            flex-wrap:wrap;
+        ">
+            <div>
+                <div style="
+                    font-size:13px;
+                    font-weight:700;
+                    margin-bottom:4px;
+                ">
+                    Schedule Mode
+                </div>
+
+                <div
+                    class="schedule-mode-description"
+                    style="
+                        font-size:12px;
+                        color:#64748b;
+                    "
+                ></div>
+            </div>
+
+            <div style="
+                display:flex;
+                gap:8px;
+                align-items:center;
+            ">
+                <button
+                    type="button"
+                    data-schedule-mode="manual"
+                    onclick="setScheduleMode('manual')"
+                    style="
+                        padding:8px 14px;
+                        border:1px solid #cbd5e1;
+                        border-radius:8px;
+                        background:#ffffff;
+                        cursor:pointer;
+                    "
+                >
+                    Manual
+                </button>
+
+                <button
+                    type="button"
+                    data-schedule-mode="auto"
+                    onclick="setScheduleMode('auto')"
+                    style="
+                        padding:8px 14px;
+                        border:1px solid #cbd5e1;
+                        border-radius:8px;
+                        background:#ffffff;
+                        cursor:pointer;
+                    "
+                >
+                    Auto Plan
+                </button>
+            </div>
+        </div>
+    `;
+
+    dropdown.parentNode.insertBefore(wrapper, dropdown);
+
+    renderScheduleModeSelector();
+}
 
 function renderScheduleSequenceDropdown() {
     const dropdown = document.getElementById("schedule-seq-select");
@@ -20522,9 +20635,10 @@ function renderQuoteFringeWarning() {
 function renderScheduleCalculator(){
     const state = getState();
 
-renderScheduleSequenceDropdown();
+    renderScheduleSequenceDropdown();
+    renderScheduleModeSelector();
 
-const scheduleAutoBuildUpdateCard = document.getElementById("schedule-auto-build-update-card");
+    const scheduleAutoBuildUpdateCard = document.getElementById("schedule-auto-build-update-card");
 if (scheduleAutoBuildUpdateCard) {
     scheduleAutoBuildUpdateCard.innerHTML = getScheduleAutoBuildUpdateCardHtml();
 }
