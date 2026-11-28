@@ -12,7 +12,7 @@
 // -----------------------------------------------------------------------------
 const PROPERTY_TYPES = ["House", "Apartment", "Bungalow", "Office", "Shop"];
 const VEHICLE_TYPES = ["Shuttle van", "Transit van", "Luton / Low Loader", "7.5 tonne", "12 tonne", "15 tonne", "18 tonne", "20ft container", "40ft container"];
-const MOVE_TYPES = ["Dom-local", "Dom-Distance", "Dom-To Store", "Dom-Ex Store", "Euro Part Load", "Euro Direct", "GPG", "LCL", "FCL"];
+const MOVE_TYPES = ["Dom-local", "Dom-Distance", "Dom-To Store", "Dom-Ex Store", "Euro Part Load", "Euro Direct", "GPG", "LCL", "FCL", "Airfreight"];
 const OPERATING_BRANCHES = [
     "Aylesbury",
     "Crawley",
