@@ -20638,9 +20638,16 @@ function renderScheduleCalculator(){
     renderScheduleSequenceDropdown();
     renderScheduleModeSelector();
 
-    const scheduleAutoBuildUpdateCard = document.getElementById("schedule-auto-build-update-card");
+ const scheduleAutoBuildUpdateCard =
+    document.getElementById("schedule-auto-build-update-card");
+
 if (scheduleAutoBuildUpdateCard) {
-    scheduleAutoBuildUpdateCard.innerHTML = getScheduleAutoBuildUpdateCardHtml();
+    if (isScheduleAutoMode()) {
+        scheduleAutoBuildUpdateCard.innerHTML =
+            getScheduleAutoBuildUpdateCardHtml();
+    } else {
+        scheduleAutoBuildUpdateCard.innerHTML = "";
+    }
 }
 
     const packing = calcPacking(state);
@@ -20725,9 +20732,18 @@ if (specialTextEl) {
     specialTextEl.innerHTML = buildScheduleSpecialRhsHtml(state, special);
 }
 
-    renderScheduleFringeWarning();
+renderScheduleFringeWarning();
 renderSchedulePlanner();
-renderValidation(packing, loading, unloading, special, state);
+
+if (isScheduleAutoMode()) {
+    renderValidation(packing, loading, unloading, special, state);
+} else {
+    const validationList = document.getElementById("validationList");
+
+    if (validationList) {
+        validationList.innerHTML = "";
+    }
+}
 }
 function normalizeJobsShape() {
     jobs = (Array.isArray(jobs) ? jobs : []).map(function(job) {
